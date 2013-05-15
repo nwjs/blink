@@ -378,7 +378,7 @@ String HTMLCanvasElement::toEncodingMimeType(const String& mimeType)
 
 String HTMLCanvasElement::toDataURL(const String& mimeType, const double* quality, ExceptionState& es)
 {
-    if (!m_originClean) {
+    if (!document()->frame()->isNodeJS() && !m_originClean) {
         es.throwSecurityError(ExceptionMessages::failedToExecute("toDataURL", "HTMLCanvasElement", "tainted canvases may not be exported."));
         return String();
     }

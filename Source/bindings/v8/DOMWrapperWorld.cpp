@@ -43,6 +43,10 @@
 #include "wtf/HashTraits.h"
 #include "wtf/MainThread.h"
 #include "wtf/StdLibExtras.h"
+#include "ScriptController.h"
+
+#include "third_party/node/src/node.h"
+#include "third_party/node/src/req_wrap.h"
 
 namespace WebCore {
 
@@ -71,6 +75,10 @@ DOMWrapperWorld* DOMWrapperWorld::current()
 {
     ASSERT(v8::Context::InContext());
     v8::Handle<v8::Context> context = v8::Context::GetCurrent();
+    if (context == node::g_context) {
+        DOMWindow* window = toDOMWindow(context);
+        context = ScriptController::mainWorldContext(window->frame());
+    }
     if (!V8DOMWrapper::isWrapperOfType(toInnerGlobalObject(context), &V8Window::wrapperTypeInfo))
         return 0;
     ASSERT(isMainThread());

@@ -118,6 +118,7 @@ inline Frame::Frame(PassRefPtr<FrameInit> frameInit)
 #if ENABLE(ORIENTATION_EVENTS)
     , m_orientation(0)
 #endif
+    , m_nodejs(false)
     , m_inViewSourceMode(false)
 {
     ASSERT(m_page);

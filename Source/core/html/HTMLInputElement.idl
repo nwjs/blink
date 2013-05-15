@@ -93,6 +93,7 @@
     [Reflect, TreatNullAs=NullString] attribute DOMString align;
     [Reflect, RuntimeEnabled=DirectoryUpload] attribute boolean webkitdirectory;
     [Reflect, TreatNullAs=NullString] attribute DOMString useMap;
+    [Reflect] attribute boolean nwdirectory;
     [Reflect] attribute boolean incremental;
     [Conditional=INPUT_SPEECH, Reflect, RuntimeEnabled=SpeechInput] attribute boolean webkitSpeech;
     [Conditional=INPUT_SPEECH, Reflect, RuntimeEnabled=SpeechInput] attribute boolean webkitGrammar;

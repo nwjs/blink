@@ -43,6 +43,7 @@ class Page;
 class ScriptController;
 class ScriptPreprocessor;
 class ScriptSourceCode;
+class Frame;
 
 class PageScriptDebugServer : public ScriptDebugServer {
     WTF_MAKE_NONCOPYABLE(PageScriptDebugServer);
@@ -68,6 +69,7 @@ public:
     virtual PassOwnPtr<ScriptSourceCode> preprocess(Frame*, const ScriptSourceCode&);
     virtual String preprocessEventListener(Frame*, const String& source, const String& url, const String& functionName);
 
+    void rescanScripts(Frame *frame);
 private:
     PageScriptDebugServer();
     virtual ~PageScriptDebugServer() { }

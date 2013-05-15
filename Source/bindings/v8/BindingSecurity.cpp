@@ -38,11 +38,17 @@
 #include "core/frame/Frame.h"
 #include "core/page/Settings.h"
 #include "weborigin/SecurityOrigin.h"
+#include "third_party/node/src/node.h"
+#include "third_party/node/src/req_wrap.h"
 
 namespace WebCore {
 
 static bool isDocumentAccessibleFromDOMWindow(Document* targetDocument, DOMWindow* activeWindow)
 {
+    if (v8::Context::GetCalling() == node::g_context ||
+        v8::Context::GetEntered() == node::g_context)
+        return true;
+
     if (!targetDocument)
         return false;
 

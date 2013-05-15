@@ -114,6 +114,7 @@ inline Frame::Frame(Page* page, HTMLFrameOwnerElement* ownerElement, FrameLoader
 #if ENABLE(ORIENTATION_EVENTS)
     , m_orientation(0)
 #endif
+    , m_nodejs(false)
     , m_inViewSourceMode(false)
 {
     ASSERT(page);

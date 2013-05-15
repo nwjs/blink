@@ -43,6 +43,9 @@
 #include "core/page/DOMWindow.h"
 #include "wtf/RefPtr.h"
 
+#include "third_party/node/src/node.h"
+#include "third_party/node/src/req_wrap.h"
+
 namespace WebCore {
 
 static v8::Local<v8::Object> createInjectedScriptHostV8Wrapper(InjectedScriptHost* host, v8::Isolate* isolate)
@@ -101,6 +104,8 @@ bool InjectedScriptManager::canAccessInspectedWindow(ScriptState* scriptState)
 {
     v8::HandleScope handleScope;
     v8::Local<v8::Context> context = scriptState->context();
+    if (context == node::g_context)
+        return true;
     v8::Local<v8::Object> global = context->Global();
     if (global.IsEmpty())
         return false;

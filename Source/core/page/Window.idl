@@ -47,7 +47,7 @@
 
     Selection getSelection();
 
-    [CheckSecurityForNode] readonly attribute Element frameElement;
+    [CheckSecurityForNode CustomGetter] readonly attribute Element frameElement;
 
     [DoNotCheckSecurity, CallWith=ScriptExecutionContext] void focus();
     [DoNotCheckSecurity] void blur();
@@ -117,8 +117,8 @@
     [Replaceable, DoNotCheckSecurityOnGetter] readonly attribute  Window frames;
 
     [Replaceable, DoNotCheckSecurityOnGetter, CustomSetter] readonly attribute Window opener;
-    [Replaceable, DoNotCheckSecurityOnGetter] readonly attribute Window parent;
-    [DoNotCheckSecurityOnGetter, Unforgeable] readonly attribute Window top;
+    [Replaceable, DoNotCheckSecurityOnGetter, CustomGetter] readonly attribute Window parent;
+    [DoNotCheckSecurityOnGetter, Unforgeable, CustomGetter] readonly attribute Window top;
 
     // DOM Level 2 AbstractView Interface
     readonly attribute Document document;

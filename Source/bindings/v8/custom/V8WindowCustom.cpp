@@ -32,6 +32,7 @@
 #include "V8Window.h"
 
 #include "V8HTMLCollection.h"
+#include "V8HTMLFrameElement.h"
 #include "V8Node.h"
 #include "bindings/v8/BindingSecurity.h"
 #include "bindings/v8/ScheduledAction.h"
@@ -150,6 +151,62 @@ void WindowSetTimeoutImpl(const v8::FunctionCallbackInfo<v8::Value>& args, bool 
 
     v8SetReturnValue(args, id);
 }
+
+void V8Window::parentAttrGetterCustom(v8::Local<v8::String> name, const v8::PropertyCallbackInfo<v8::Value>& info)
+{
+    v8::Handle<v8::Object> holder = info.This()->FindInstanceInPrototypeChain(V8Window::GetTemplate(info.GetIsolate(), worldTypeInMainThread(info.GetIsolate())));
+    if (holder.IsEmpty())
+        return;
+
+    DOMWindow* imp = V8Window::toNative(info.Holder());
+    Frame* frame = imp->frame();
+    ASSERT(frame);
+    if (frame->isNwFakeTop()) {
+      v8SetReturnValue(info, toV8Fast(imp, info, imp));
+      return;
+    }
+    v8SetReturnValue(info, toV8Fast(imp->parent(), info, imp));
+}
+
+void V8Window::topAttrGetterCustom(v8::Local<v8::String> name, const v8::PropertyCallbackInfo<v8::Value>& info)
+{
+    v8::Handle<v8::Object> holder = info.This()->FindInstanceInPrototypeChain(V8Window::GetTemplate(info.GetIsolate(), worldTypeInMainThread(info.GetIsolate())));
+    if (holder.IsEmpty())
+        return;
+
+    DOMWindow* imp = V8Window::toNative(info.Holder());
+    Frame* frame = imp->frame();
+    ASSERT(frame);
+    for (Frame* f = frame; f; f = f->tree()->parent()) {
+      if (f->isNwFakeTop()) {
+        v8SetReturnValue(info, toV8Fast(f->document()->domWindow(), info, imp));
+        return;
+      }
+    }
+    v8SetReturnValue(info, toV8Fast(imp->top(), info, imp));
+}
+
+void V8Window::frameElementAttrGetterCustom(v8::Local<v8::String> name, const v8::PropertyCallbackInfo<v8::Value>& info)
+{
+    v8::Handle<v8::Object> holder = info.This()->FindInstanceInPrototypeChain(V8Window::GetTemplate(info.GetIsolate(), worldTypeInMainThread(info.GetIsolate())));
+    if (holder.IsEmpty())
+        return;
+
+    DOMWindow* imp = V8Window::toNative(holder);
+    Frame* frame = imp->frame();
+    if (!BindingSecurity::shouldAllowAccessToFrame(frame))
+        return;
+
+    ASSERT(frame);
+
+    if (frame->isNwFakeTop())
+      return;
+    if (!BindingSecurity::shouldAllowAccessToNode(BindingState::instance(), imp->frameElement()))
+      return;
+
+    v8SetReturnValue(info, toV8Fast(imp->frameElement(), info, imp));
+}
+
 
 void V8Window::eventAttrGetterCustom(v8::Local<v8::String> name, const v8::PropertyCallbackInfo<v8::Value>& info)
 {

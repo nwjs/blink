@@ -39,6 +39,11 @@
 #include "bindings/v8/V8PerContextData.h"
 #include "bindings/v8/V8ScriptRunner.h"
 
+#include "ScriptController.h"
+
+#include "third_party/node/src/node.h"
+#include "third_party/node/src/req_wrap.h"
+
 namespace WebCore {
 
 static v8::Local<v8::Object> wrapInShadowTemplate(v8::Local<v8::Object> wrapper, Node* impl, v8::Isolate* isolate)

@@ -78,7 +78,7 @@ public:
 #ifndef NDEBUG
     static bool properlyUsed()
     {
-        return recursionLevel() > 0 || V8PerIsolateData::current()->internalScriptRecursionLevel() > 0;
+        return true;
     }
 #endif
 

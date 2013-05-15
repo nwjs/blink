@@ -88,6 +88,9 @@ public:
 
     Settings* settings() const; // can be null
 
+    void setNodeJS(bool node) { m_nodejs = node; }
+    bool isNodeJS() const { return m_nodejs; }
+
 protected:
     Frame(FrameHost*, HTMLFrameOwnerElement*);
 
@@ -104,6 +107,8 @@ private:
     int64_t m_frameID;
 
     blink::WebLayer* m_remotePlatformLayer;
+
+    bool m_nodejs;
 };
 
 inline DOMWindow* Frame::domWindow() const

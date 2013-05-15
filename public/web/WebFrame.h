@@ -667,6 +667,8 @@ public:
     // text form. This is used only by layout tests.
     virtual WebString layerTreeAsText(bool showDebugInfo = false) const = 0;
 
+    virtual void setNodeJS(bool) = 0;
+    virtual bool isNodeJS() const = 0;
 protected:
     ~WebFrame() { }
 };

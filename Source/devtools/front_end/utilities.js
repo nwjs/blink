@@ -1475,7 +1475,7 @@ function loadXHR(url, async, callback)
     xhr.send(null);
 
     if (!async) {
-        if (xhr.status === 200)
+        if (xhr.status === 200 || xhr.status === 0)
             return xhr.responseText;
         return null;
     }

@@ -92,6 +92,7 @@ interface HTMLInputElement : HTMLElement {
 
     // Non-standard attributes
     [Reflect] attribute boolean webkitdirectory;
+    [Reflect] attribute boolean nwdirectory;
     [Reflect] attribute boolean incremental;
     [Conditional=INPUT_SPEECH, Reflect, RuntimeEnabled=SpeechInput] attribute boolean webkitSpeech;
     [Conditional=INPUT_SPEECH, Reflect, RuntimeEnabled=SpeechInput] attribute boolean webkitGrammar;

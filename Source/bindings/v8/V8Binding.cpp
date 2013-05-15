@@ -65,6 +65,9 @@
 #include "wtf/text/StringHash.h"
 #include "wtf/text/WTFString.h"
 
+#include "third_party/node/src/node.h"
+#include "third_party/node/src/req_wrap.h"
+
 namespace WebCore {
 
 v8::Handle<v8::Value> throwError(V8ErrorType errorType, const String& message, v8::Isolate* isolate)
@@ -479,8 +482,23 @@ DOMWindow* toDOMWindow(v8::Handle<v8::Value> value, v8::Isolate* isolate)
     return 0;
 }
 
+static DOMWindow* DOMWindowFromNode(v8::Handle<v8::Context> context)
+{
+    v8::Context::Scope context_scope(node::g_context);
+    v8::Handle<v8::Object> global = node::g_context->Global();
+    v8::Local<v8::Value> val_window = global->Get(v8::String::New("window"));
+    ASSERT (!val_window->IsUndefined());
+    v8::Local<v8::Object> window = v8::Local<v8::Object>::Cast(val_window);
+    global = window->FindInstanceInPrototypeChain(V8DOMWindow::GetTemplate(context->GetIsolate(), IsolatedWorld));
+    ASSERT (!global.IsEmpty());
+    return V8DOMWindow::toNative(global);
+}
+
 DOMWindow* toDOMWindow(v8::Handle<v8::Context> context)
 {
+    if (context == node::g_context) {
+        return DOMWindowFromNode(context);
+    }
     if (context.IsEmpty())
         return 0;
     return toDOMWindow(context->Global(), context->GetIsolate());
@@ -541,12 +559,12 @@ ExecutionContext* callingExecutionContext(v8::Isolate* isolate)
 LocalFrame* toFrameIfNotDetached(v8::Handle<v8::Context> context)
 {
     DOMWindow* window = toDOMWindow(context);
-    if (window && window->isCurrentlyDisplayedInFrame())
-        return window->frame();
+          // if (window && window->isCurrentlyDisplayedInFrame())
+    return window->frame();
     // We return 0 here because |context| is detached from the LocalFrame. If we
     // did return |frame| we could get in trouble because the frame could be
     // navigated to another security origin.
-    return 0;
+    //return 0;
 }
 
 v8::Local<v8::Context> toV8Context(ExecutionContext* context, DOMWrapperWorld& world)

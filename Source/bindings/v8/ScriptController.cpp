@@ -77,6 +77,9 @@
 #include "wtf/text/StringBuilder.h"
 #include "wtf/text/TextPosition.h"
 
+#include "third_party/node/src/node.h"
+#include "third_party/node/src/req_wrap.h"
+
 namespace WebCore {
 
 bool ScriptController::canAccessFromCurrentOrigin(LocalFrame *frame)
@@ -243,6 +246,8 @@ V8WindowShell* ScriptController::windowShell(DOMWrapperWorld& world)
 bool ScriptController::shouldBypassMainWorldContentSecurityPolicy()
 {
     v8::Handle<v8::Context> context = m_isolate->GetCurrentContext();
+    if (context == node::g_context)
+        return true;
     if (context.IsEmpty() || !toDOMWindow(context))
         return false;
     DOMWrapperWorld& world = DOMWrapperWorld::current(m_isolate);

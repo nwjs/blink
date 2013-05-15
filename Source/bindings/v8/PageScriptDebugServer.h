@@ -43,6 +43,7 @@ class Page;
 class ScriptController;
 class ScriptPreprocessor;
 class ScriptSourceCode;
+class Frame;
 
 class PageScriptDebugServer FINAL : public ScriptDebugServer {
     WTF_MAKE_NONCOPYABLE(PageScriptDebugServer);
@@ -71,6 +72,7 @@ public:
     virtual void muteWarningsAndDeprecations() OVERRIDE;
     virtual void unmuteWarningsAndDeprecations() OVERRIDE;
 
+    void rescanScripts(Frame *frame);
 private:
     PageScriptDebugServer();
     virtual ~PageScriptDebugServer() { }

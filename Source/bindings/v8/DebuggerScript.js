@@ -132,7 +132,7 @@ DebuggerScript.getScripts = function(contextData)
     var scripts = Debug.scripts();
     for (var i = 0; i < scripts.length; ++i) {
         var script = scripts[i];
-        if (script.context_data && script.context_data.lastIndexOf(idSuffix) != -1)
+        //if (script.context_data && script.context_data.lastIndexOf(idSuffix) != -1)
             result.push(DebuggerScript._formatScript(script));
     }
     return result;
@@ -145,14 +145,16 @@ DebuggerScript._formatScript = function(script)
     var endLine = script.line_offset + lineCount - 1;
     var endColumn;
     // V8 will not count last line if script source ends with \n.
-    if (script.source[script.source.length - 1] === '\n') {
-        endLine += 1;
-        endColumn = 0;
-    } else {
-        if (lineCount === 1)
-            endColumn = script.source.length + script.column_offset;
-        else
-            endColumn = script.source.length - (lineEnds[lineCount - 2] + 1);
+    if (typeof script.source != "undefined") {
+        if (script.source[script.source.length - 1] === '\n') {
+            endLine += 1;
+            endColumn = 0;
+        } else {
+            if (lineCount === 1)
+                endColumn = script.source.length + script.column_offset;
+            else
+                endColumn = script.source.length - (lineEnds[lineCount - 2] + 1);
+        }
     }
 
     return {

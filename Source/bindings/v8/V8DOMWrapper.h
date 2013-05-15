@@ -37,6 +37,9 @@
 #include "wtf/RawPtr.h"
 #include "wtf/text/AtomicString.h"
 
+#include "third_party/node/src/node.h"
+#include "third_party/node/src/req_wrap.h"
+
 namespace WebCore {
 
 struct WrapperTypeInfo;
@@ -138,6 +141,10 @@ struct WrapperTypeInfo;
             // FIXME: Remove all empty creationContexts from caller sites.
             // If a creationContext is empty, we will end up creating a new object
             // in the context currently entered. This is wrong.
+            if (m_context == node::g_context) {
+                DOMWindow* window = toDOMWindow(m_context);
+                m_context = ScriptController::mainWorldContext(window->frame());
+            }
             if (creationContext.IsEmpty())
                 return;
             v8::Handle<v8::Context> contextForWrapper = creationContext->CreationContext();

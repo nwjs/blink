@@ -50,32 +50,6 @@ void WebCoreStringResourceBase::visitStrings(ExternalStringVisitor* visitor)
         visitor->visitJSExternalString(m_atomicString.impl());
 }
 
-template<class StringClass> struct StringTraits {
-    static const StringClass& fromStringResource(WebCoreStringResourceBase*);
-    template<bool oneByte>
-    static StringClass fromV8String(v8::Handle<v8::String>, int);
-};
-
-template<>
-struct StringTraits<String> {
-    static const String& fromStringResource(WebCoreStringResourceBase* resource)
-    {
-        return resource->webcoreString();
-    }
-    template<bool oneByte>
-    static String fromV8String(v8::Handle<v8::String>, int);
-};
-
-template<>
-struct StringTraits<AtomicString> {
-    static const AtomicString& fromStringResource(WebCoreStringResourceBase* resource)
-    {
-        return resource->atomicString();
-    }
-    template<bool oneByte>
-    static AtomicString fromV8String(v8::Handle<v8::String>, int);
-};
-
 template<>
 String StringTraits<String>::fromV8String<false>(v8::Handle<v8::String> v8String, int length)
 {

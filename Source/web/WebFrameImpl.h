@@ -301,6 +301,8 @@ public:
     SharedWorkerRepositoryClientImpl* sharedWorkerRepositoryClient() const { return m_sharedWorkerRepositoryClient.get(); }
 
     void setInputEventsTransformForEmulation(const WebCore::IntSize&, float);
+    void setNodeJS(bool node) { frame()->setNodeJS(node); }
+    bool isNodeJS() const { return frame()->isNodeJS(); }
 
     static void selectWordAroundPosition(WebCore::LocalFrame*, WebCore::VisiblePosition);
 

@@ -45,6 +45,8 @@ struct WebFileChooserParams {
     // If |saveAs| is true, the dialog allows the user to select a possibly
     // non-existent file. This can be used for a "Save As" dialog.
     bool saveAs;
+    // If |extractDirectory| is true, directory chosen will be seen as file.
+    bool extractDirectory;
     // |title| is the title for a file chooser dialog. It can be an empty string.
     WebString title;
     // |initialValue| is a filename which the dialog should select by default.
@@ -77,6 +79,7 @@ struct WebFileChooserParams {
         , directory(false)
         , saveAs(false)
         , useMediaCapture(false)
+        , extractDirectory(true)
     {
     }
 };

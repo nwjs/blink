@@ -677,6 +677,9 @@ public:
     static WebFrame* fromFrame(Frame*);
 #endif
 
+    virtual void setNodeJS(bool) = 0;
+    virtual bool isNodeJS() const = 0;
+
 protected:
     explicit WebFrame();
     virtual ~WebFrame();

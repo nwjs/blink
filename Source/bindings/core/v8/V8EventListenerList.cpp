@@ -35,6 +35,11 @@
 #include "bindings/core/v8/V8Window.h"
 #include "bindings/core/v8/V8WorkerGlobalScopeEventListener.h"
 
+#include "ScriptController.h"
+
+#include "third_party/node/src/node.h"
+#include "third_party/node/src/req_wrap.h"
+
 namespace blink {
 
 PassRefPtr<EventListener> V8EventListenerList::getEventListener(ScriptState* scriptState, v8::Local<v8::Value> value, bool isAttribute, ListenerLookupType lookup)
@@ -46,7 +51,13 @@ PassRefPtr<EventListener> V8EventListenerList::getEventListener(ScriptState* scr
         ASSERT(!isAttribute);
         return V8EventListenerList::findWrapper(value, scriptState);
     }
-    if (toDOMWindow(scriptState->context()))
+    v8::HandleScope scope(scriptState->context()->GetIsolate());
+    v8::Local<v8::Context> context = scriptState->context();
+    if (context == node::g_context) {
+        LocalDOMWindow* window = toDOMWindow(context);
+        context = ScriptController::mainWorldContext(window->frame());
+    }
+    if (toDOMWindow(context())
         return V8EventListenerList::findOrCreateWrapper<V8EventListener>(value, isAttribute, scriptState);
     return V8EventListenerList::findOrCreateWrapper<V8WorkerGlobalScopeEventListener>(value, isAttribute, scriptState);
 }

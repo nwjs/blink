@@ -53,8 +53,10 @@ static ScriptCallFrame toScriptCallFrame(v8::Handle<v8::StackFrame> frame)
     String scriptId = stringBuilder.toString();
     String sourceName;
     v8::Local<v8::String> sourceNameValue(frame->GetScriptNameOrSourceURL());
-    if (!sourceNameValue.IsEmpty())
-        sourceName = toCoreString(sourceNameValue);
+    if (!sourceNameValue.IsEmpty()) {
+        int length = sourceNameValue->Length();
+        sourceName = StringTraits<String>::fromV8String<false>(sourceNameValue, length);
+    }
 
     String functionName;
     v8::Local<v8::String> functionNameValue(frame->GetFunctionName());

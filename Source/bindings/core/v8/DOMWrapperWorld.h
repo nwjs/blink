@@ -85,7 +85,12 @@ public:
             // If there is no initiazing window, worldOfInitializingWindow is 0.
             return *worldOfInitializingWindow;
         }
-        return world(isolate->GetCurrentContext());
+        v8::Handle<v8::Context> context = isolate->GetCurrentContext();
+        if (context == node::g_context) {
+            DOMWindow* window = toDOMWindow(context);
+            context = ScriptController::mainWorldContext(window->frame());
+        }
+        return world(context);
     }
 
     static DOMWrapperWorld& mainWorld();

@@ -43,6 +43,11 @@
 #include "wtf/HashTraits.h"
 #include "wtf/StdLibExtras.h"
 
+#include "ScriptController.h"
+
+#include "third_party/node/src/node.h"
+#include "third_party/node/src/req_wrap.h"
+
 namespace blink {
 
 unsigned DOMWrapperWorld::isolatedWorldCount = 0;

@@ -52,6 +52,9 @@
 #include "wtf/TemporaryChange.h"
 #include "wtf/text/StringBuilder.h"
 
+#include "third_party/node/src/node.h"
+#include "third_party/node/src/req_wrap.h"
+
 namespace blink {
 
 static LocalFrame* retrieveFrameWithGlobalObjectCheck(v8::Handle<v8::Context> context)
@@ -66,10 +69,25 @@ static LocalFrame* retrieveFrameWithGlobalObjectCheck(v8::Handle<v8::Context> co
     // because there is no way in the embedder side to check if the context is half-baked or not.
     if (isMainThread() && DOMWrapperWorld::windowIsBeingInitialized())
         return 0;
+    v8::HandleScope handle_scope;
 
     v8::Handle<v8::Value> global = V8Window::findInstanceInPrototypeChain(context->Global(), context->GetIsolate());
-    if (global.IsEmpty())
-        return 0;
+
+    if (global.IsEmpty()) {
+        v8::Context::Scope context_scope(node::g_context);
+        global = node::g_context->Global();
+        v8::Local<v8::Value> val_window = global->Get(v8::String::New("window"));
+        if (val_window->IsUndefined())
+            return 0;
+        v8::Local<v8::Object> window = v8::Local<v8::Object>::Cast(val_window);
+        global = window->FindInstanceInPrototypeChain(V8DOMWindow::GetTemplate(context->GetIsolate(), worldTypeInMainThread(context->GetIsolate())));
+        if (global.IsEmpty())
+            return 0;
+        DOMWindow* win = V8DOMWindow::toNative(global);
+        if (!win)
+            return 0;
+        return win->frame();
+    }
 
     return toFrameIfNotDetached(context);
 }
@@ -106,9 +124,13 @@ PageScriptDebugServer::~PageScriptDebugServer()
 {
 }
 
-void PageScriptDebugServer::addListener(ScriptDebugListener* listener, Page* page)
+void PageScriptDebugServer::rescanScripts(Frame* frame)
 {
-    ScriptController& scriptController = page->deprecatedLocalMainFrame()->script();
+    ScriptDebugListener* listener = m_listenersMap.get(frame->page());
+    if (!listener)
+        return;
+    ScriptController& scriptController = *frame->script();
+
     if (!scriptController.canExecuteScripts(NotAboutToExecuteScript))
         return;
 
@@ -139,6 +161,25 @@ void PageScriptDebugServer::addListener(ScriptDebugListener* listener, Page* pag
     v8::Handle<v8::Array> scriptsArray = v8::Handle<v8::Array>::Cast(value);
     for (unsigned i = 0; i < scriptsArray->Length(); ++i)
         dispatchDidParseSource(listener, v8::Handle<v8::Object>::Cast(scriptsArray->Get(v8::Integer::New(m_isolate, i))), CompileSuccess);
+}
+
+void PageScriptDebugServer::addListener(ScriptDebugListener* listener, Page* page)
+{
+    ScriptController* scriptController = page->mainFrame()->script();
+    if (!scriptController->canExecuteScripts(NotAboutToExecuteScript))
+        return;
+
+    v8::HandleScope scope;
+    v8::Local<v8::Context> debuggerContext = v8::Debug::GetDebugContext();
+    v8::Context::Scope contextScope(debuggerContext);
+
+    if (!m_listenersMap.size()) {
+        ensureDebuggerScriptCompiled();
+        ASSERT(!m_debuggerScript.get()->IsUndefined());
+        v8::Debug::SetDebugEventListener2(&PageScriptDebugServer::v8DebugEventCallback, v8::External::New(this));
+    }
+    m_listenersMap.set(page, listener);
+    rescanScripts(page->mainFrame());
 }
 
 void PageScriptDebugServer::removeListener(ScriptDebugListener* listener, Page* page)

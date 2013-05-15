@@ -158,6 +158,32 @@ template <typename StringType>
 StringType v8StringToWebCoreString(v8::Handle<v8::String>, ExternalMode);
 String int32ToWebCoreString(int value);
 
+template<class StringClass> struct StringTraits {
+    static const StringClass& fromStringResource(WebCoreStringResourceBase*);
+    template <typename V8StringTrait>
+    static StringClass fromV8String(v8::Handle<v8::String>, int);
+};
+
+template<>
+struct StringTraits<String> {
+    static const String& fromStringResource(WebCoreStringResourceBase* resource)
+    {
+        return resource->webcoreString();
+    }
+    template <typename V8StringTrait>
+    static String fromV8String(v8::Handle<v8::String>, int);
+};
+
+template<>
+struct StringTraits<AtomicString> {
+    static const AtomicString& fromStringResource(WebCoreStringResourceBase* resource)
+    {
+        return resource->atomicString();
+    }
+    template <typename V8StringTrait>
+    static AtomicString fromV8String(v8::Handle<v8::String>, int);
+};
+
 // V8StringResource is an adapter class that converts V8 values to Strings
 // or AtomicStrings as appropriate, using multiple typecast operators.
 enum V8StringResourceMode {

@@ -84,7 +84,8 @@ public:
 #if ENABLE(ASSERT)
     static bool properlyUsed(v8::Isolate* isolate)
     {
-        return recursionLevel(isolate) > 0 || V8PerIsolateData::from(isolate)->internalScriptRecursionLevel() > 0;
+        return true;
+        // return recursionLevel(isolate) > 0 || V8PerIsolateData::from(isolate)->internalScriptRecursionLevel() > 0;
     }
 #endif
 

@@ -37,6 +37,9 @@
 #include "wtf/text/AtomicString.h"
 #include <v8.h>
 
+#include "third_party/node/src/node.h"
+#include "third_party/node/src/req_wrap.h"
+
 namespace blink {
 
 class ScriptWrappableBase;
@@ -149,6 +152,10 @@ public:
         : m_didEnterContext(false)
         , m_context(isolate->GetCurrentContext())
     {
+        if (m_context == node::g_context) {
+            DOMWindow* window = toDOMWindow(m_context);
+            m_context = ScriptController::mainWorldContext(window->frame());
+        }
         // creationContext should not be empty. Because if we have an
         // empty creationContext, we will end up creating
         // a new object in the context currently entered. This is wrong.

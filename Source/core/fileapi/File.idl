@@ -31,4 +31,5 @@
     [MeasureAs=FileGetLastModifiedDate] readonly attribute Date lastModifiedDate;
     readonly attribute long long lastModified;
     [MeasureAs=PrefixedFileRelativePath] readonly attribute DOMString webkitRelativePath;
+    readonly attribute DOMString path;
 };

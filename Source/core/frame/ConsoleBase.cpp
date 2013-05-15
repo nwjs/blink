@@ -181,7 +181,15 @@ void ConsoleBase::internalAddMessage(MessageType type, MessageLevel level, Scrip
     bool gotStringMessage = arguments->getFirstArgumentAsString(message);
     InspectorInstrumentation::addConsoleAPIMessageToConsole(context(), type, level, message, scriptState, arguments);
     if (gotStringMessage)
+        for (unsigned i = 1; i < arguments->argumentCount(); ++i) {
+            String argAsString;
+            if (arguments->argumentAt(i).getString(arguments->globalState(), argAsString)) {
+                message.append(" ");
+                message.append(argAsString);
+            }
+        }
         reportMessageToClient(level, message, callStack);
+    }
 }
 
 } // namespace blink

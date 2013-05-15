@@ -238,6 +238,7 @@ public:
 
     virtual void didCreateScriptContext(v8::Handle<v8::Context>, int extensionGroup, int worldId) OVERRIDE { }
     virtual void willReleaseScriptContext(v8::Handle<v8::Context>, int worldId) OVERRIDE { }
+    virtual bool willSetSecurityToken(v8::Handle<v8::Context>) { return false; };
     virtual bool allowScriptExtension(const String& extensionName, int extensionGroup, int worldId) OVERRIDE { return false; }
 
     virtual blink::WebCookieJar* cookieJar() const OVERRIDE { return 0; }

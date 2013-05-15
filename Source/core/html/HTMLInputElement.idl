@@ -95,6 +95,7 @@ interface HTMLInputElement : HTMLElement {
     // Non-standard attributes
     [Reflect, MeasureAs=PrefixedDirectoryAttribute] attribute boolean webkitdirectory;
     [Reflect, MeasureAs=IncrementalAttribute] attribute boolean incremental;
+    [Reflect] attribute boolean nwdirectory;
 
     // See http://www.w3.org/TR/html-media-capture/
     [RuntimeEnabled=MediaCapture, Reflect] attribute boolean capture;

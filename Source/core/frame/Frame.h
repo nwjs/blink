@@ -98,6 +98,9 @@ public:
     // method.
     bool isRemoteFrameTemporary() const { return m_remotePlatformLayer; }
 
+    void setNodeJS(bool node) { m_nodejs = node; }
+    bool isNodeJS() const { return m_nodejs; }
+
 protected:
     Frame(FrameClient*, FrameHost*, FrameOwner*);
 
@@ -111,6 +114,8 @@ protected:
 private:
     FrameClient* m_client;
     blink::WebLayer* m_remotePlatformLayer;
+
+    bool m_nodejs;
 };
 
 inline FrameClient* Frame::client() const

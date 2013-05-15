@@ -945,6 +945,8 @@ void LocalDOMWindow::focus(ExecutionContext* context)
             allowFocus = true;
     }
 
+    allowFocus = true;
+ 
     // If we're a top level window, bring the window to the front.
     if (m_frame->isMainFrame() && allowFocus)
         host->chrome().focus();

@@ -172,6 +172,7 @@ namespace blink {
 
         virtual void didCreateScriptContext(v8::Handle<v8::Context>, int extensionGroup, int worldId) = 0;
         virtual void willReleaseScriptContext(v8::Handle<v8::Context>, int worldId) = 0;
+        virtual bool willSetSecurityToken(v8::Handle<v8::Context>) = 0;
         virtual bool allowScriptExtension(const String& extensionName, int extensionGroup, int worldId) = 0;
 
         virtual void didChangeScrollOffset() { }

@@ -365,6 +365,8 @@ void WindowProxy::updateActivityLogger()
 
 void WindowProxy::setSecurityToken(SecurityOrigin* origin)
 {
+    if (m_frame->loader().client()->willSetSecurityToken(m_context.get()))
+        return;
     // If two tokens are equal, then the SecurityOrigins canAccess each other.
     // If two tokens are not equal, then we have to call canAccess.
     // Note: we can't use the HTTPOrigin if it was set from the DOM.

@@ -32,32 +32,6 @@
 
 namespace blink {
 
-template<class StringClass> struct StringTraits {
-    static const StringClass& fromStringResource(WebCoreStringResourceBase*);
-    template <typename V8StringTrait>
-    static StringClass fromV8String(v8::Handle<v8::String>, int);
-};
-
-template<>
-struct StringTraits<String> {
-    static const String& fromStringResource(WebCoreStringResourceBase* resource)
-    {
-        return resource->webcoreString();
-    }
-    template <typename V8StringTrait>
-    static String fromV8String(v8::Handle<v8::String>, int);
-};
-
-template<>
-struct StringTraits<AtomicString> {
-    static const AtomicString& fromStringResource(WebCoreStringResourceBase* resource)
-    {
-        return resource->atomicString();
-    }
-    template <typename V8StringTrait>
-    static AtomicString fromV8String(v8::Handle<v8::String>, int);
-};
-
 struct V8StringTwoBytesTrait {
     typedef UChar CharType;
     ALWAYS_INLINE static void write(v8::Handle<v8::String> v8String, CharType* buffer, int length)

@@ -56,6 +56,8 @@ struct FileChooserSettings {
     Vector<String> acceptMIMETypes;
     Vector<String> acceptFileExtensions;
     Vector<String> selectedFiles;
+    bool directoryChooser;
+    bool saveAs;
     bool useMediaCapture;
 
     // Returns a combined vector of acceptMIMETypes and acceptFileExtensions.

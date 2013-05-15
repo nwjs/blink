@@ -428,6 +428,8 @@ public:
     // WebKit is about to release its reference to a v8 context for a frame.
     virtual void willReleaseScriptContext(WebLocalFrame*, v8::Handle<v8::Context>, int worldId) { }
 
+    // WebKit will set page's security token
+    virtual bool willSetSecurityToken(WebFrame*, v8::Handle<v8::Context>) { return false; };
 
     // Geometry notifications ----------------------------------------------
 

@@ -49,6 +49,9 @@
 #include "wtf/ArrayBuffer.h"
 #include <v8.h>
 
+#include "third_party/node/src/node.h"
+#include "third_party/node/src/req_wrap.h"
+
 namespace blink {
 
 void V8XMLHttpRequest::constructorCustom(const v8::FunctionCallbackInfo<v8::Value>& info)
@@ -57,9 +60,14 @@ void V8XMLHttpRequest::constructorCustom(const v8::FunctionCallbackInfo<v8::Valu
 
     RefPtr<SecurityOrigin> securityOrigin;
     if (context->isDocument()) {
-        DOMWrapperWorld& world = DOMWrapperWorld::current(info.GetIsolate());
-        if (world.isIsolatedWorld())
+        v8::Local<v8::Context> v8context = v8::Context::GetEntered();
+        if (v8context == node::g_context)
+            securityOrigin = context->securityOrigin();
+        else {
+          DOMWrapperWorld& world = DOMWrapperWorld::current(info.GetIsolate());
+          if (world.isIsolatedWorld())
             securityOrigin = world.isolatedWorldSecurityOrigin();
+        }
     }
 
     RefPtrWillBeRawPtr<XMLHttpRequest> xmlHttpRequest = XMLHttpRequest::create(context, securityOrigin);

@@ -303,6 +303,7 @@ public:
     void setInputEventsTransformForEmulation(const WebCore::IntSize&, float);
     void setNodeJS(bool node) { frame()->setNodeJS(node); }
     bool isNodeJS() const { return frame()->isNodeJS(); }
+    bool isNwDisabledChildFrame() const { return frame()->isNwDisabledChildFrame(); }
 
     static void selectWordAroundPosition(WebCore::LocalFrame*, WebCore::VisiblePosition);
 

@@ -180,4 +180,16 @@ bool Frame::isMainFrame() const
     return page && this == page->mainFrame();
 }
 
+bool Frame::isNwDisabledChildFrame() const
+{
+    if (m_ownerElement && m_ownerElement->fastHasAttribute(nwdisableAttr))
+        return true;
+    return false;
+}
+
+bool Frame::isNodeJS() const
+{
+    return m_nodejs;
+}
+
 } // namespace WebCore

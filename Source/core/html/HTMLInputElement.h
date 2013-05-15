@@ -245,6 +245,9 @@ public:
     bool capture() const;
 #endif
 
+    String nwworkingdir() const;
+    void setNwworkingdir(const String& value);
+
     static const int maximumLength;
 
     unsigned height() const;

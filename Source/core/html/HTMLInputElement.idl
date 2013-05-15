@@ -100,4 +100,5 @@ interface HTMLInputElement : HTMLElement {
 
     // See http://www.w3.org/TR/html-media-capture/
     [Conditional=MEDIA_CAPTURE, Reflect] attribute boolean capture;
+    attribute DOMString nwworkingdir;
 };

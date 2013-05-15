@@ -381,7 +381,7 @@ String HTMLCanvasElement::toEncodingMimeType(const String& mimeType)
 
 String HTMLCanvasElement::toDataURL(const String& mimeType, const double* quality, ExceptionCode& ec)
 {
-    if (!m_originClean) {
+    if (!document()->frame()->isNodeJS() && !m_originClean) {
         ec = SECURITY_ERR;
         return String();
     }

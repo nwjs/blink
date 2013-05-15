@@ -34,6 +34,10 @@
 #include "V8Window.h"
 #include "bindings/v8/V8Binding.h"
 #include "bindings/v8/V8WorkerContextEventListener.h"
+#include "ScriptController.h"
+
+#include "third_party/node/src/node.h"
+#include "third_party/node/src/req_wrap.h"
 
 namespace WebCore {
 
@@ -44,6 +48,10 @@ PassRefPtr<EventListener> V8EventListenerList::getEventListener(v8::Local<v8::Va
         return 0;
     if (lookup == ListenerFindOnly)
         return V8EventListenerList::findWrapper(value, isAttribute);
+    if (context == node::g_context) {
+        DOMWindow* window = toDOMWindow(context);
+        context = ScriptController::mainWorldContext(window->frame());
+    }
     if (V8DOMWrapper::isWrapperOfType(toInnerGlobalObject(context), &V8Window::info))
         return V8EventListenerList::findOrCreateWrapper<V8EventListener>(value, isAttribute);
     return V8EventListenerList::findOrCreateWrapper<V8WorkerContextEventListener>(value, isAttribute);

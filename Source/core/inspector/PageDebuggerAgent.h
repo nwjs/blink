@@ -57,10 +57,11 @@ protected:
     virtual void enable();
     virtual void disable();
 
+    virtual PageScriptDebugServer& scriptDebugServer();
+
 private:
     virtual void startListeningScriptDebugServer();
     virtual void stopListeningScriptDebugServer();
-    virtual PageScriptDebugServer& scriptDebugServer();
     virtual void muteConsole();
     virtual void unmuteConsole();
     virtual void addConsoleMessage(MessageSource, MessageLevel, const String& message, const String& sourceURL);

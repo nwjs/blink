@@ -64,6 +64,9 @@
 #include "wtf/text/StringHash.h"
 #include "wtf/text/WTFString.h"
 
+#include "third_party/node/src/node.h"
+#include "third_party/node/src/req_wrap.h"
+
 namespace WebCore {
 
 v8::Handle<v8::Value> setDOMException(int exceptionCode, v8::Isolate* isolate)
@@ -379,10 +382,27 @@ v8::Handle<v8::Object> toInnerGlobalObject(v8::Handle<v8::Context> context)
     return v8::Handle<v8::Object>::Cast(context->Global()->GetPrototype());
 }
 
+static DOMWindow* DOMWindowFromNode(v8::Handle<v8::Context> context)
+{
+    v8::Context::Scope context_scope(node::g_context);
+    v8::Handle<v8::Object> global = node::g_context->Global();
+    v8::Local<v8::Value> val_window = global->Get(v8::String::New("window"));
+    ASSERT (!val_window->IsUndefined());
+    v8::Local<v8::Object> window = v8::Local<v8::Object>::Cast(val_window);
+    global = window->FindInstanceInPrototypeChain(V8DOMWindow::GetTemplate(context->GetIsolate(), IsolatedWorld));
+    ASSERT (!global.IsEmpty());
+    return V8DOMWindow::toNative(global);
+}
+
 DOMWindow* toDOMWindow(v8::Handle<v8::Context> context)
 {
+    if (context == node::g_context) {
+        return DOMWindowFromNode(context);
+    }
+
     v8::Handle<v8::Object> global = context->Global();
-    ASSERT(!global.IsEmpty());
+    if (global.IsEmpty())
+        return DOMWindowFromNode(context);
     v8::Handle<v8::Object> window = global->FindInstanceInPrototypeChain(V8Window::GetTemplate(context->GetIsolate(), MainWorld));
     if (!window.IsEmpty())
         return V8Window::toNative(window);
@@ -432,12 +452,12 @@ Document* currentDocument()
 Frame* toFrameIfNotDetached(v8::Handle<v8::Context> context)
 {
     DOMWindow* window = toDOMWindow(context);
-    if (window->isCurrentlyDisplayedInFrame())
+    //if (window->isCurrentlyDisplayedInFrame())
         return window->frame();
     // We return 0 here because |context| is detached from the Frame. If we
     // did return |frame| we could get in trouble because the frame could be
     // navigated to another security origin.
-    return 0;
+    //return 0;
 }
 
 v8::Local<v8::Context> toV8Context(ScriptExecutionContext* context, DOMWrapperWorld* world)

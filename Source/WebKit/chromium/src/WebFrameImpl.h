@@ -302,6 +302,8 @@ public:
 
     static void selectWordAroundPosition(WebCore::Frame*, WebCore::VisiblePosition);
 
+    void setNodeJS(bool node) { frame()->setNodeJS(node); }
+    bool isNodeJS() const { return frame()->isNodeJS(); }
 private:
     class DeferredScopeStringMatches;
     friend class DeferredScopeStringMatches;

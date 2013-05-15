@@ -38,6 +38,7 @@
 namespace WebCore {
 
 class Page;
+class Frame;
 
 class PageScriptDebugServer : public ScriptDebugServer {
     WTF_MAKE_NONCOPYABLE(PageScriptDebugServer);
@@ -59,6 +60,7 @@ public:
     virtual void clearCompiledScripts();
     virtual void runScript(ScriptState*, const String& scriptId, ScriptValue* result, bool* wasThrown, String* exceptionMessage);
 
+    void rescanScripts(Frame *frame);
 private:
     PageScriptDebugServer();
     virtual ~PageScriptDebugServer() { }

@@ -198,10 +198,12 @@ FrameView::FrameView(Frame* frame)
     if (!page)
         return;
 
+#if 0
     if (m_frame == page->mainFrame()) {
         ScrollableArea::setVerticalScrollElasticity(ScrollElasticityAllowed);
         ScrollableArea::setHorizontalScrollElasticity(ScrollElasticityAllowed);
     }
+#endif
 }
 
 PassRefPtr<FrameView> FrameView::create(Frame* frame)

@@ -63,6 +63,8 @@ struct FileChooserSettings {
 
     // Returns a combined vector of acceptMIMETypes and acceptFileExtensions.
     Vector<String> acceptTypes() const;
+
+    String initialPath;
 };
 
 class FileChooserClient {

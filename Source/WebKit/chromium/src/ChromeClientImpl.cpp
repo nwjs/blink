@@ -660,6 +660,8 @@ void ChromeClientImpl::runOpenPanel(Frame* frame, PassRefPtr<FileChooser> fileCh
 #else
     params.capture = WebString();
 #endif
+    params.initialPath = fileChooser->settings().initialPath;
+
     WebFileChooserCompletionImpl* chooserCompletion =
         new WebFileChooserCompletionImpl(fileChooser);
 

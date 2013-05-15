@@ -155,6 +155,7 @@ void FileInputType::handleDOMActivateEvent(Event* event)
 #if ENABLE(MEDIA_CAPTURE)
         settings.capture = input->capture();
 #endif
+        settings.initialPath = input->nwworkingdir();
         chrome->runOpenPanel(input->document()->frame(), newFileChooser(settings));
     }
     event->setDefaultHandled();

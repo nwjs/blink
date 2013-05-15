@@ -62,6 +62,8 @@ struct FileChooserSettings {
 
     // Returns a combined vector of acceptMIMETypes and acceptFileExtensions.
     Vector<String> PLATFORM_EXPORT acceptTypes() const;
+
+    String initialPath;
 };
 
 class PLATFORM_EXPORT FileChooserClient {

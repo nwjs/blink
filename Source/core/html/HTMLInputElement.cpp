@@ -1705,6 +1705,16 @@ bool HTMLInputElement::shouldAppearIndeterminate() const
     return m_inputType->supportsIndeterminateAppearance() && indeterminate();
 }
 
+String HTMLInputElement::nwworkingdir() const
+{
+    return fastGetAttribute(nwworkingdirAttr);
+}
+
+void HTMLInputElement::setNwworkingdir(const String& value)
+{
+    setAttribute(nwworkingdirAttr, value);
+}
+
 bool HTMLInputElement::isInRequiredRadioButtonGroup()
 {
     ASSERT(isRadioButton());

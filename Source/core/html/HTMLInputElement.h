@@ -237,6 +237,9 @@ public:
 
     String defaultToolTip() const;
 
+    String nwworkingdir() const;
+    void setNwworkingdir(const String& value);
+
     static const int maximumLength;
 
     unsigned height() const;

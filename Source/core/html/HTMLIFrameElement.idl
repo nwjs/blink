@@ -32,8 +32,9 @@ interface HTMLIFrameElement : HTMLElement {
     [Reflect, TreatNullAs=NullString, URL, PerWorldBindings, ActivityLogging=SetterForIsolatedWorlds] attribute DOMString src;
     [Reflect, TreatNullAs=NullString] attribute DOMString srcdoc;
     [Reflect, TreatNullAs=NullString] attribute DOMString width;
+    [Reflect] attribute boolean nwdisable;
 
-    // Introduced in DOM Level 2:
+  // Introduced in DOM Level 2:
     [CheckSecurityForNode] readonly attribute Document contentDocument;
 
     // Extensions

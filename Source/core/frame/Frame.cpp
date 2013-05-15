@@ -672,6 +672,7 @@ PassOwnPtr<DragImage> Frame::dragImageForSelection()
     return DragImage::create(image.get());
 }
 
+
 double Frame::devicePixelRatio() const
 {
     if (!m_page)
@@ -681,6 +682,18 @@ double Frame::devicePixelRatio() const
     if (RuntimeEnabledFeatures::devicePixelRatioIncludesZoomEnabled())
         ratio *= pageZoomFactor();
     return ratio;
+}
+
+bool Frame::isNwDisabledChildFrame() const
+{
+    if (m_ownerElement && m_ownerElement->fastHasAttribute(nwdisableAttr))
+        return true;
+    return false;
+}
+
+bool Frame::isNodeJS() const
+{
+    return m_nodejs;
 }
 
 } // namespace WebCore

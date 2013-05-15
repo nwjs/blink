@@ -1746,6 +1746,16 @@ bool HTMLInputElement::capture() const
 }
 #endif
 
+String HTMLInputElement::nwworkingdir() const
+{
+    return fastGetAttribute(nwworkingdirAttr);
+}
+
+void HTMLInputElement::setNwworkingdir(const String& value)
+{
+    setAttribute(nwworkingdirAttr, value);
+}
+
 bool HTMLInputElement::isInRequiredRadioButtonGroup()
 {
     ASSERT(isRadioButton());

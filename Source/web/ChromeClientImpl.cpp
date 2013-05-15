@@ -651,6 +651,8 @@ void ChromeClientImpl::runOpenPanel(Frame* frame, PassRefPtr<FileChooser> fileCh
 #if ENABLE(MEDIA_CAPTURE)
     params.useMediaCapture = fileChooser->settings().useMediaCapture;
 #endif
+    params.initialPath = fileChooser->settings().initialPath;
+
     WebFileChooserCompletionImpl* chooserCompletion =
         new WebFileChooserCompletionImpl(fileChooser);
 

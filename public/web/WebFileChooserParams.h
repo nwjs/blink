@@ -74,6 +74,9 @@ struct WebFileChooserParams {
     WebString capture;
     bool useMediaCapture;
 
+    // initial path of the file dialog
+    WebString initialPath;
+
     WebFileChooserParams()
         : multiSelect(false)
         , directory(false)

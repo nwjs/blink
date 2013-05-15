@@ -99,6 +99,11 @@ public:
     // Allows this WebSecurityOrigin access to local resources.
     WEBKIT_EXPORT void grantLoadLocalResources() const;
 
+    // Explicitly grant the ability to access very other SecurityOrigin.
+    //
+    // WARNING: This is an extremely powerful ability. Use with caution!
+    WEBKIT_EXPORT void grantUniversalAccess() const;
+
 #if WEBKIT_IMPLEMENTATION
     WebSecurityOrigin(const WTF::PassRefPtr<WebCore::SecurityOrigin>&);
     WebSecurityOrigin& operator=(const WTF::PassRefPtr<WebCore::SecurityOrigin>&);

@@ -250,11 +250,19 @@ Frame* FrameTree::find(const AtomicString& name) const
     if (name == "_self" || name == "_current" || name.isEmpty())
         return m_thisFrame;
 
-    if (name == "_top")
+    if (name == "_top") {
+        for (Frame* f = m_thisFrame; f; f = f->tree()->parent()) {
+            if (f->isNwFakeTop())
+                return f;
+        }
         return top();
+    }
 
-    if (name == "_parent")
+    if (name == "_parent") {
+        if (m_thisFrame->isNwFakeTop())
+            return m_thisFrame;
         return parent() ? parent() : m_thisFrame;
+    }
 
     // Since "_blank" should never be any frame's name, the following just amounts to an optimization.
     if (name == "_blank")

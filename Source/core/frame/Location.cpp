@@ -118,12 +118,15 @@ String Location::origin() const
 PassRefPtrWillBeRawPtr<DOMStringList> Location::ancestorOrigins() const
 {
     RefPtrWillBeRawPtr<DOMStringList> origins = DOMStringList::create();
-    if (!m_frame)
+    if (!m_frame || m_frame->isNwFakeTop())
         return origins.release();
     // FIXME: We do not yet have access to remote frame's origin.
     for (Frame* frame = m_frame->tree().parent(); frame; frame = frame->tree().parent()) {
-        if (frame->isLocalFrame())
+        if (frame->isLocalFrame()) {
             origins->append(toLocalFrame(frame)->document()->securityOrigin()->toString());
+            if (frame->isNwFakeTop())
+                break;
+        }
     }
     return origins.release();
 }

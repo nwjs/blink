@@ -213,6 +213,13 @@ bool Frame::isNwDisabledChildFrame() const
     return false;
 }
 
+bool Frame::isNwFakeTop() const
+{
+    if (m_ownerElement && m_ownerElement->fastHasAttribute(nwfaketopAttr))
+        return true;
+    return false;
+}
+
 bool Frame::isNodeJS() const
 {
     return m_nodejs;

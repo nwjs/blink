@@ -126,8 +126,8 @@
     [Replaceable, DoNotCheckSecurity] readonly attribute  Window frames;
 
     [DoNotCheckSecurity, Custom=Setter] attribute Window opener;
-    [Replaceable, DoNotCheckSecurity] readonly attribute Window parent;
-    [DoNotCheckSecurity, Unforgeable] readonly attribute Window top;
+    [Replaceable, DoNotCheckSecurity, Custom=Setter] readonly attribute Window parent;
+    [DoNotCheckSecurity, Unforgeable, Custom=Setter] readonly attribute Window top;
 
     // DOM Level 2 AbstractView Interface
     readonly attribute Document document;

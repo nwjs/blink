@@ -1812,10 +1812,10 @@ PassRefPtrWillBeRawPtr<LocalDOMWindow> LocalDOMWindow::open(const String& urlStr
     // In those cases, we schedule a location change right now and return early.
     Frame* targetFrame = 0;
     if (frameName == "_top")
-        targetFrame = m_frame->tree().top();
+        targetFrame = m_frame->isNwFakeTop() ? m_frame : m_frame->tree().find("_top");
     else if (frameName == "_parent") {
         if (Frame* parent = m_frame->tree().parent())
-            targetFrame = parent;
+            targetFrame = m_frame->isNwFakeTop() ? m_frame : parent;
         else
             targetFrame = m_frame;
     }

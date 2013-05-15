@@ -206,4 +206,17 @@ HTMLFrameOwnerElement* Frame::deprecatedLocalOwner() const
     return m_owner && m_owner->isLocal() ? toHTMLFrameOwnerElement(m_owner) : 0;
 }
 
+bool Frame::isNwDisabledChildFrame() const
+{
+    if (m_ownerElement && m_ownerElement->fastHasAttribute(nwdisableAttr))
+        return true;
+    return false;
+}
+
+bool Frame::isNodeJS() const
+{
+    return m_nodejs;
+}
+
 } // namespace blink
+

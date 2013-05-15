@@ -106,6 +106,11 @@ public:
     // Allows this WebSecurityOrigin access to local resources.
     BLINK_EXPORT void grantLoadLocalResources() const;
 
+    // Explicitly grant the ability to access very other SecurityOrigin.
+    //
+    // WARNING: This is an extremely powerful ability. Use with caution!
+    BLINK_EXPORT void grantUniversalAccess() const;
+
 #if BLINK_IMPLEMENTATION
     WebSecurityOrigin(const WTF::PassRefPtr<SecurityOrigin>&);
     WebSecurityOrigin& operator=(const WTF::PassRefPtr<SecurityOrigin>&);

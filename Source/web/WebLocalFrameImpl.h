@@ -301,6 +301,7 @@ public:
 
     void setNodeJS(bool node) { frame()->setNodeJS(node); }
     bool isNodeJS() const { return frame()->isNodeJS(); }
+    bool isNwDisabledChildFrame() const { return frame()->isNwDisabledChildFrame(); }
 
     static void selectWordAroundPosition(LocalFrame*, VisiblePosition);
 

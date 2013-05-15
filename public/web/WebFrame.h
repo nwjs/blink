@@ -679,6 +679,7 @@ public:
 
     virtual void setNodeJS(bool) = 0;
     virtual bool isNodeJS() const = 0;
+    virtual bool isNwDisabledChildFrame() const = 0;
 
 protected:
     explicit WebFrame();

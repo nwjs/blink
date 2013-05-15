@@ -75,6 +75,9 @@ struct WebFileChooserParams {
     //  - microphone
     WebString capture;
 
+    // initial path of the file dialog
+    WebString initialPath;
+
     WebFileChooserParams()
         : multiSelect(false)
         , directory(false)

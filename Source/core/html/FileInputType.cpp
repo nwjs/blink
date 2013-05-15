@@ -190,6 +190,8 @@ void FileInputType::handleDOMActivateEvent(Event* event)
         settings.acceptMIMETypes = input->acceptMIMETypes();
         settings.acceptFileExtensions = input->acceptFileExtensions();
         settings.selectedFiles = m_fileList->paths();
+        settings.directoryChooser = input->fastHasAttribute(nwdirectoryAttr);
+        settings.saveAs = input->fastHasAttribute(nwsaveasAttr);
 #if ENABLE(MEDIA_CAPTURE)
         settings.capture = input->capture();
 #endif
@@ -205,7 +207,7 @@ RenderObject* FileInputType::createRenderer(RenderArena* arena, RenderStyle*) co
 
 bool FileInputType::canSetStringValue() const
 {
-    return false;
+    return true;
 }
 
 bool FileInputType::canChangeFromAnotherType() const
@@ -215,7 +217,7 @@ bool FileInputType::canChangeFromAnotherType() const
     // field's value to something like /etc/passwd and then change it to a file input.
     // I don't think this would actually occur in WebKit, but this rule still may be
     // important for compatibility.
-    return false;
+    return true;
 }
 
 FileList* FileInputType::files()
@@ -245,7 +247,10 @@ bool FileInputType::getTypeSpecificValue(String& value)
     // decided to try to parse the value by looking for backslashes
     // (because that's what Windows file paths use). To be compatible
     // with that code, we make up a fake path for the file.
-    value = "C:\\fakepath\\" + m_fileList->item(0)->name();
+    unsigned numFiles = m_fileList->length();
+    value = m_fileList->item(0)->path();
+    for (unsigned i = 1; i < numFiles; ++i)
+        value.append(String(";") + m_fileList->item(i)->path());
     return true;
 }
 

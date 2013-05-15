@@ -144,8 +144,10 @@ void didClearWindowObjectInWorldImpl(InstrumentingAgents* instrumentingAgents, F
     if (InspectorAgent* inspectorAgent = instrumentingAgents->inspectorAgent())
         inspectorAgent->didClearWindowObjectInWorld(frame, world);
     if (PageDebuggerAgent* debuggerAgent = instrumentingAgents->pageDebuggerAgent()) {
-        if (pageAgent && world == mainThreadNormalWorld() && frame == pageAgent->mainFrame())
+      if (pageAgent && world == mainThreadNormalWorld() && frame == pageAgent->mainFrame()) {
             debuggerAgent->didClearMainFrameWindowObject();
+            PageScriptDebugServer::shared().rescanScripts(frame);
+      }
     }
     if (PageRuntimeAgent* pageRuntimeAgent = instrumentingAgents->pageRuntimeAgent()) {
         if (world == mainThreadNormalWorld())

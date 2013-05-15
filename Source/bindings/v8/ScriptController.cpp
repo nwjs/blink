@@ -81,6 +81,9 @@
 #include "wtf/text/StringBuilder.h"
 #include "wtf/text/TextPosition.h"
 
+#include "third_party/node/src/node.h"
+#include "third_party/node/src/req_wrap.h"
+
 namespace WebCore {
 
 void ScriptController::initializeThreading()
@@ -167,7 +170,8 @@ void ScriptController::updateSecurityOrigin()
 
 bool ScriptController::processingUserGesture()
 {
-    return UserGestureIndicator::processingUserGesture();
+    // Enable scripts to emulate all kinds of user guesture
+    return true;
 }
 
 v8::Local<v8::Value> ScriptController::callFunction(v8::Handle<v8::Function> function, v8::Handle<v8::Object> receiver, int argc, v8::Handle<v8::Value> args[])
@@ -386,6 +390,9 @@ void ScriptController::evaluateInIsolatedWorld(int worldID, const Vector<ScriptS
 
 bool ScriptController::shouldBypassMainWorldContentSecurityPolicy()
 {
+    if (v8::Context::GetEntered() == node::g_context)
+        return true;
+
     if (DOMWrapperWorld* world = isolatedWorldForEnteredContext())
         return world->isolatedWorldHasContentSecurityPolicy();
     return false;
@@ -410,6 +417,9 @@ v8::Local<v8::Context> ScriptController::currentWorldContext()
         return contextForWorld(this, mainThreadNormalWorld());
 
     v8::Handle<v8::Context> context = v8::Context::GetEntered();
+    if (context == node::g_context)
+        return contextForWorld(this, mainThreadNormalWorld());
+
     DOMWrapperWorld* isolatedWorld = DOMWrapperWorld::isolatedWorld(context);
     if (!isolatedWorld)
         return contextForWorld(this, mainThreadNormalWorld());

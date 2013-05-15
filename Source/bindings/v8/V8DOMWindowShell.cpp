@@ -384,6 +384,9 @@ void V8DOMWindowShell::clearDocumentProperty()
 
 void V8DOMWindowShell::setSecurityToken()
 {
+    if (m_frame->loader()->client()->willSetSecurityToken(m_context.get()))
+        return;
+
     ASSERT(m_world->isMainWorld());
 
     Document* document = m_frame->document();

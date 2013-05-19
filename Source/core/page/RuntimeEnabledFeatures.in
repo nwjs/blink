@@ -40,7 +40,7 @@ PeerConnection default=true, depends_on=MediaStream
 Quota
 RequestAutocomplete
 ScriptedSpeech
-SeamlessIFrames
+SeamlessIFrames default=true
 SessionStorage default=true
 SharedWorker custom
 SpeechInput default=true

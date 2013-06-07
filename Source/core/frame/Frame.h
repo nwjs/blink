@@ -102,6 +102,8 @@ public:
     bool isNodeJS() const;
     bool isNwDisabledChildFrame() const;
     bool isNwFakeTop() const;
+    void setDevtoolsJail(Frame* iframe) { m_devtoolsJail = iframe; }
+    Frame* getDevtoolsJail() { return m_devtoolsJail; }
 
 protected:
     Frame(FrameClient*, FrameHost*, FrameOwner*);
@@ -118,6 +120,7 @@ private:
     blink::WebLayer* m_remotePlatformLayer;
 
     bool m_nodejs;
+    Frame* m_devtoolsJail;
 };
 
 inline FrameClient* Frame::client() const

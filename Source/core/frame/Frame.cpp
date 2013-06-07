@@ -64,6 +64,7 @@ Frame::Frame(FrameClient* client, FrameHost* host, FrameOwner* owner)
     , m_client(client)
     , m_remotePlatformLayer(0)
     , m_nodejs(false)
+    , m_devtoolsJail(NULL)
 {
     ASSERT(page());
 

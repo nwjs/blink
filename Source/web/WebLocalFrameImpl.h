@@ -303,6 +303,8 @@ public:
     bool isNodeJS() const { return frame()->isNodeJS(); }
     bool isNwDisabledChildFrame() const { return frame()->isNwDisabledChildFrame(); }
     bool isNwFakeTop() const { return frame()->isNwFakeTop(); }
+    void setDevtoolsJail(WebFrame* iframe) { frame()->setDevtoolsJail(static_cast<const WebFrameImpl*>(iframe)->frame()); }
+    WebFrame* getDevtoolsJail() { return fromFrame(frame()->getDevtoolsJail()); }
 
     static void selectWordAroundPosition(LocalFrame*, VisiblePosition);
 

@@ -36,6 +36,7 @@
 #include "bindings/v8/ScriptController.h"
 #include "bindings/v8/V8Binding.h"
 #include "bindings/v8/V8RecursionScope.h"
+#include "core/html/HTMLFrameOwnerElement.h"
 #include "core/inspector/InspectorInstrumentation.h"
 #include "core/inspector/ScriptDebugListener.h"
 #include "core/page/Frame.h"
@@ -110,11 +111,18 @@ void PageScriptDebugServer::rescanScripts(Frame* frame)
         return;
     v8::Local<v8::Context> context = shell->context();
     v8::Handle<v8::Function> getScriptsFunction = v8::Local<v8::Function>::Cast(m_debuggerScript.get()->Get(v8::String::NewSymbol("getScripts")));
-    v8::Handle<v8::Value> argv[] = { context->GetEmbedderData(0) };
+
+    v8::Local<v8::String> prefix;
+    Frame* jail;
+    if ((jail = frame->getDevtoolsJail()) && jail->ownerElement()) {
+      String id = jail->ownerElement()->getIdAttribute();
+      prefix = v8::String::New(id.ascii().data());
+    }
+    v8::Handle<v8::Value> argv[] = { context->GetEmbedderData(0), prefix };
     v8::Handle<v8::Value> value;
     {
         V8RecursionScope::MicrotaskSuppression scope;
-        value = getScriptsFunction->Call(m_debuggerScript.get(), 1, argv);
+        value = getScriptsFunction->Call(m_debuggerScript.get(), 2, argv);
     }
     if (value.IsEmpty())
         return;

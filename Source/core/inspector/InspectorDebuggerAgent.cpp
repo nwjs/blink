@@ -1141,7 +1141,8 @@ void InspectorDebuggerAgent::didParseSource(const String& scriptId, const Script
     bool hasSourceURL = !sourceURL.isEmpty();
     String scriptURL = hasSourceURL ? sourceURL : script.url;
     bool* hasSourceURLParam = hasSourceURL ? &hasSourceURL : 0;
-    m_frontend->scriptParsed(scriptId, scriptURL, script.startLine, script.startColumn, script.endLine, script.endColumn, isContentScript, sourceMapURLParam, hasSourceURLParam);
+    String context_data = script.context_data;
+    m_frontend->scriptParsed(scriptId, scriptURL, script.startLine, script.startColumn, script.endLine, script.endColumn, isContentScript, sourceMapURLParam, hasSourceURLParam, &context_data);
 
     m_scripts.set(scriptId, script);
 

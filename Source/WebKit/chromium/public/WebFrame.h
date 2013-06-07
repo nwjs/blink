@@ -658,6 +658,8 @@ public:
     virtual bool isNodeJS() const = 0;
     virtual bool isNwDisabledChildFrame() const = 0;
     virtual bool isNwFakeTop() const = 0;
+    virtual void setDevtoolsJail(WebFrame*) = 0;
+    virtual WebFrame* getDevtoolsJail() = 0;
 protected:
     ~WebFrame() { }
 };

@@ -51,6 +51,7 @@
 #include "core/fetch/MemoryCache.h"
 #include "core/frame/Frame.h"
 #include "core/frame/FrameView.h"
+#include "core/html/HTMLFrameOwnerElement.h"
 #include "core/inspector/InjectedScriptHost.h"
 #include "core/inspector/InspectorController.h"
 #include "core/page/Page.h"
@@ -279,8 +280,21 @@ void WebDevToolsAgentImpl::didCreateScriptContext(WebFrameImpl* webframe, int wo
     // Skip non main world contexts.
     if (worldId)
         return;
+    WebCore::Frame* f = webframe->frame();
+    String prefix;
+    while (f) {
+      if (f->ownerElement()) {
+        String id = f->ownerElement()->getIdAttribute();
+        if (!id.isEmpty())
+          prefix = id + "." + prefix;
+        else
+          prefix = "(null)." + prefix;
+      }else
+        prefix = "(null)." + prefix;
+      f = f->tree()->parent();
+    }
     if (WebCore::Frame* frame = webframe->frame())
-        frame->script().setContextDebugId(m_hostId);
+        frame->script().setContextDebugId(m_hostId, prefix.ascii().data());
 }
 
 void WebDevToolsAgentImpl::webViewResized(const WebSize& size)

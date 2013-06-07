@@ -530,6 +530,10 @@ void ScriptDebugServer::dispatchDidParseSource(ScriptDebugListener* listener, v8
     script.endColumn = object->Get(v8::String::NewSymbol("endColumn"))->ToInteger()->Value();
     script.isContentScript = object->Get(v8::String::NewSymbol("isContentScript"))->ToBoolean()->Value();
 
+    v8String = object->Get(v8::String::NewSymbol("context_data"))->ToString();
+    length = v8String->Length();
+    script.context_data = StringTraits<String>::fromV8String<false>(v8String, length);
+
     listener->didParseSource(sourceID, script);
 }
 

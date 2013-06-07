@@ -170,6 +170,8 @@ namespace WebCore {
         bool isNodeJS() const;
         bool isNwDisabledChildFrame() const;
         bool isNwFakeTop() const;
+        void setDevtoolsJail(Frame* iframe) { m_devtoolsJail = iframe; }
+        Frame* getDevtoolsJail() { return m_devtoolsJail; }
 
     // ========
 
@@ -204,6 +206,7 @@ namespace WebCore {
         bool m_inViewSourceMode;
 
         bool m_nodejs;
+        Frame* m_devtoolsJail;
     };
 
     inline void Frame::init()

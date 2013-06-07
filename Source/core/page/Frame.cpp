@@ -144,6 +144,7 @@ inline Frame::Frame(Page* page, HTMLFrameOwnerElement* ownerElement, FrameLoader
 #endif
     , m_nodejs(false)
     , m_inViewSourceMode(false)
+    , m_devtoolsJail(NULL)
 {
     ASSERT(page);
 

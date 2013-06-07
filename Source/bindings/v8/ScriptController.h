@@ -145,7 +145,7 @@ public:
     static void registerExtensionIfNeeded(v8::Extension*);
     static V8Extensions& registeredExtensions();
 
-    bool setContextDebugId(int);
+    bool setContextDebugId(int, const char* prefix = NULL);
     static int contextDebugId(v8::Handle<v8::Context>);
 
     v8::Isolate* isolate() const { return m_isolate; }

@@ -43,6 +43,7 @@
 #include "core/frame/LocalFrame.h"
 #include "core/frame/PageConsole.h"
 #include "core/frame/UseCounter.h"
+#include "core/html/HTMLFrameOwnerElement.h"
 #include "core/inspector/InspectorInstrumentation.h"
 #include "core/inspector/ScriptDebugListener.h"
 #include "core/page/Page.h"
@@ -139,7 +140,14 @@ void PageScriptDebugServer::rescanScripts(Frame* frame)
         return;
     v8::Local<v8::Context> context = shell->context();
     v8::Handle<v8::Function> getScriptsFunction = v8::Local<v8::Function>::Cast(debuggerScript->Get(v8AtomicString(m_isolate, "getScripts")));
-    v8::Handle<v8::Value> argv[] = { context->GetEmbedderData(0) };
+
+    v8::Local<v8::String> prefix;
+    Frame* jail;
+    if ((jail = frame->getDevtoolsJail()) && jail->ownerElement()) {
+      String id = jail->ownerElement()->getIdAttribute();
+      prefix = v8::String::New(id.ascii().data());
+    }
+    v8::Handle<v8::Value> argv[] = { context->GetEmbedderData(0), prefix };
     v8::Handle<v8::Value> value = V8ScriptRunner::callInternalFunction(getScriptsFunction, debuggerScript, WTF_ARRAY_LENGTH(argv), argv, m_isolate);
     if (value.IsEmpty())
         return;

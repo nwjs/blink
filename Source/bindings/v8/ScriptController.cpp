@@ -461,14 +461,15 @@ void ScriptController::collectIsolatedContexts(Vector<std::pair<ScriptState*, Se
     }
 }
 
-bool ScriptController::setContextDebugId(int debugId)
+bool ScriptController::setContextDebugId(int debugId, const char* prefix)
 {
     ASSERT(debugId > 0);
     if (!m_windowShell->isContextInitialized())
         return false;
     v8::HandleScope scope(m_isolate);
     v8::Local<v8::Context> context = m_windowShell->context();
-    return V8PerContextDebugData::setContextDebugData(context, "page", debugId);
+    std::string prefix_str(prefix);
+    return V8PerContextDebugData::setContextDebugData(context, (prefix_str + "page").c_str(), debugId);
 }
 
 int ScriptController::contextDebugId(v8::Handle<v8::Context> context)

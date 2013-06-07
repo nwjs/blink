@@ -1277,10 +1277,11 @@ void InspectorDebuggerAgent::didParseSource(const String& scriptId, const Script
     String* sourceMapURLParam = sourceMapURL.isNull() ? 0 : &sourceMapURL;
 
     bool* hasSourceURLParam = hasSourceURL ? &hasSourceURL : 0;
+    String context_data = script.context_data;
     if (!hasSyntaxError)
-        m_frontend->scriptParsed(scriptId, scriptURL, script.startLine, script.startColumn, script.endLine, script.endColumn, isContentScript, sourceMapURLParam, hasSourceURLParam);
+        m_frontend->scriptParsed(scriptId, scriptURL, script.startLine, script.startColumn, script.endLine, script.endColumn, isContentScript, sourceMapURLParam, hasSourceURLParam, &context_data);
     else
-        m_frontend->scriptFailedToParse(scriptId, scriptURL, script.startLine, script.startColumn, script.endLine, script.endColumn, isContentScript, sourceMapURLParam, hasSourceURLParam);
+        m_frontend->scriptFailedToParse(scriptId, scriptURL, script.startLine, script.startColumn, script.endLine, script.endColumn, isContentScript, sourceMapURLParam, hasSourceURLParam, &context_data);
 
     m_scripts.set(scriptId, script);
 

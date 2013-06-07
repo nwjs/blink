@@ -65,6 +65,7 @@ public:
         int endLine;
         int endColumn;
         bool isContentScript;
+        String context_data;
     };
 
     enum SkipPauseRequest {

@@ -155,7 +155,7 @@ void PageScriptDebugServer::rescanScripts(Frame* frame)
     v8::Local<v8::Context> context = windowProxy->context();
     v8::Handle<v8::Function> getScriptsFunction = v8::Local<v8::Function>::Cast(debuggerScript->Get(v8AtomicString(m_isolate, "getScripts")));
 
-    v8::Local<v8::String> prefix;
+    v8::Local<v8::String> prefix = v8::String::New("");
     Frame* jail;
     if ((jail = frame->getDevtoolsJail()) && jail->ownerElement()) {
         String id = jail->ownerElement()->getIdAttribute();

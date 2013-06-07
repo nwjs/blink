@@ -120,6 +120,7 @@ inline Frame::Frame(PassRefPtr<FrameInit> frameInit)
 #endif
     , m_nodejs(false)
     , m_inViewSourceMode(false)
+    , m_devtoolsJail(NULL)
 {
     ASSERT(m_page);
 

@@ -48,6 +48,7 @@
 #include "third_party/node/src/node.h"
 #include "third_party/node/src/req_wrap.h"
 
+
 namespace WebCore {
 
 static Frame* retrieveFrameWithGlobalObjectCheck(v8::Handle<v8::Context> context)
@@ -112,12 +113,13 @@ void PageScriptDebugServer::rescanScripts(Frame* frame)
     v8::Local<v8::Context> context = shell->context();
     v8::Handle<v8::Function> getScriptsFunction = v8::Local<v8::Function>::Cast(m_debuggerScript.get()->Get(v8::String::NewSymbol("getScripts")));
 
-    v8::Local<v8::String> prefix;
+    v8::Handle<v8::Value> prefix = v8::String::New("");
     Frame* jail;
     if ((jail = frame->getDevtoolsJail()) && jail->ownerElement()) {
       String id = jail->ownerElement()->getIdAttribute();
       prefix = v8::String::New(id.ascii().data());
     }
+
     v8::Handle<v8::Value> argv[] = { context->GetEmbedderData(0), prefix };
     v8::Handle<v8::Value> value;
     {

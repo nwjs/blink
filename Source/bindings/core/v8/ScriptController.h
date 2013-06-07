@@ -145,7 +145,7 @@ public:
     static void registerExtensionIfNeeded(v8::Extension*);
     static V8Extensions& registeredExtensions();
 
-    void setWorldDebugId(int worldId, int debuggerId);
+    void setWorldDebugId(int worldId, int debuggerId, const char* prefix = NULL);
 
     v8::Isolate* isolate() const { return m_isolate; }
 

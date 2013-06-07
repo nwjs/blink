@@ -116,7 +116,7 @@ DebuggerScript._setScopeVariableValue = function(scopeHolder, scopeIndex, variab
     return undefined;
 }
 
-DebuggerScript.getScripts = function(contextData)
+DebuggerScript.getScripts = function(contextData, prefix)
 {
     var result = [];
 
@@ -132,8 +132,9 @@ DebuggerScript.getScripts = function(contextData)
     var scripts = Debug.scripts();
     for (var i = 0; i < scripts.length; ++i) {
         var script = scripts[i];
-        //if (script.context_data && script.context_data.lastIndexOf(idSuffix) != -1)
-            result.push(DebuggerScript._formatScript(script));
+        if (script.context_data && script.context_data.lastIndexOf(idSuffix) != -1)
+            if (!prefix || script.context_data.lastIndexOf(prefix) != -1)
+                result.push(DebuggerScript._formatScript(script));
     }
     return result;
 }
@@ -167,7 +168,8 @@ DebuggerScript._formatScript = function(script)
         startColumn: script.column_offset,
         endLine: endLine,
         endColumn: endColumn,
-        isContentScript: !!script.context_data && script.context_data.indexOf("injected") == 0
+        isContentScript: !!script.context_data && script.context_data.indexOf("injected") == 0,
+        context_data: script.context_data
     };
 }
 

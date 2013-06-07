@@ -74,6 +74,7 @@ Frame::Frame(FrameHost* host, HTMLFrameOwnerElement* ownerElement)
     , m_frameID(generateFrameID())
     , m_remotePlatformLayer(0)
     , m_nodejs(false)
+    , m_devtoolsJail(NULL)
 {
     ASSERT(page());
 

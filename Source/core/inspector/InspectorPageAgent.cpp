@@ -474,13 +474,13 @@ void InspectorPageAgent::reload(ErrorString*, const bool* const optionalIgnoreCa
 {
     m_pendingScriptToEvaluateOnLoadOnce = optionalScriptToEvaluateOnLoad ? *optionalScriptToEvaluateOnLoad : "";
     m_pendingScriptPreprocessor = optionalScriptPreprocessor ? *optionalScriptPreprocessor : "";
-    m_page->mainFrame()->loader().reload(optionalIgnoreCache && *optionalIgnoreCache ? EndToEndReload : NormalReload);
+    mainFrame()->loader().reload(optionalIgnoreCache && *optionalIgnoreCache ? EndToEndReload : NormalReload);
 }
 
 void InspectorPageAgent::navigate(ErrorString*, const String& url)
 {
     UserGestureIndicator indicator(DefinitelyProcessingNewUserGesture);
-    LocalFrame* frame = m_page->mainFrame();
+    LocalFrame* frame = mainFrame();
     FrameLoadRequest request(frame->document(), ResourceRequest(frame->document()->completeURL(url)));
     frame->loader().load(request);
 }
@@ -611,13 +611,13 @@ void InspectorPageAgent::getCookies(ErrorString*, RefPtr<TypeBuilder::Array<Type
 void InspectorPageAgent::deleteCookie(ErrorString*, const String& cookieName, const String& url)
 {
     KURL parsedURL(ParsedURLString, url);
-    for (LocalFrame* frame = m_page->mainFrame(); frame; frame = frame->tree().traverseNext(m_page->mainFrame()))
+    for (LocalFrame* frame = mainFrame(); frame; frame = frame->tree().traverseNext(m_page->mainFrame()))
         WebCore::deleteCookie(frame->document(), parsedURL, cookieName);
 }
 
 void InspectorPageAgent::getResourceTree(ErrorString*, RefPtr<TypeBuilder::Page::FrameResourceTree>& object)
 {
-    object = buildObjectForFrameTree(m_page->mainFrame());
+    object = buildObjectForFrameTree(mainFrame());
 }
 
 void InspectorPageAgent::getResourceContent(ErrorString* errorString, const String& frameId, const String& url, String* content, bool* base64Encoded)
@@ -822,7 +822,7 @@ void InspectorPageAgent::setScriptExecutionDisabled(ErrorString*, bool value)
 
 void InspectorPageAgent::didClearWindowObjectInMainWorld(LocalFrame* frame)
 {
-    if (frame == m_page->mainFrame())
+    if (frame == mainFrame())
         m_injectedScriptManager->discardInjectedScripts();
 
     if (!m_frontend)
@@ -860,7 +860,7 @@ void InspectorPageAgent::didCommitLoad(LocalFrame*, DocumentLoader* loader)
     // FIXME: If "frame" is always guarenteed to be in the same Page as loader->frame()
     // then all we need to check here is loader->frame()->isMainFrame()
     // and we don't need "frame" at all.
-    if (loader->frame() == m_page->mainFrame()) {
+    if (loader->frame() == mainFrame()) {
         m_scriptToEvaluateOnLoadOnce = m_pendingScriptToEvaluateOnLoadOnce;
         m_scriptPreprocessorSource = m_pendingScriptPreprocessor;
         m_pendingScriptToEvaluateOnLoadOnce = String();
@@ -886,7 +886,9 @@ void InspectorPageAgent::frameDetachedFromParent(LocalFrame* frame)
 
 LocalFrame* InspectorPageAgent::mainFrame()
 {
-    return m_page->mainFrame();
+    Frame* main_frame = m_page->mainFrame();
+    Frame* jail_frame = main_frame->getDevtoolsJail();
+    return jail_frame ? jail_frame : main_frame;
 }
 
 LocalFrame* InspectorPageAgent::frameForId(const String& frameId)
@@ -926,7 +928,7 @@ String InspectorPageAgent::loaderId(DocumentLoader* loader)
 
 LocalFrame* InspectorPageAgent::findFrameWithSecurityOrigin(const String& originRawString)
 {
-    for (LocalFrame* frame = m_page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (LocalFrame* frame = mainFrame(); frame; frame = frame->tree().traverseNext()) {
         RefPtr<SecurityOrigin> documentOrigin = frame->document()->securityOrigin();
         if (documentOrigin->toRawString() == originRawString)
             return frame;
@@ -1179,8 +1181,8 @@ void InspectorPageAgent::setEmulatedMedia(ErrorString*, const String& media)
 
     m_state->setString(PageAgentState::pageAgentEmulatedMedia, media);
     Document* document = 0;
-    if (m_page->mainFrame())
-        document = m_page->mainFrame()->document();
+    if (mainFrame())
+        document = mainFrame()->document();
     if (document) {
         document->mediaQueryAffectingValueChanged();
         document->styleResolverChanged(RecalcStyleImmediately);
@@ -1219,7 +1221,7 @@ bool InspectorPageAgent::forceCompositingMode(ErrorString* errorString)
     if (settings.forceCompositingMode())
         return true;
     settings.setForceCompositingMode(true);
-    LocalFrame* mainFrame = m_page->mainFrame();
+    LocalFrame* mainFrame = mainFrame();
     if (mainFrame)
         mainFrame->view()->updateCompositingLayersAfterStyleChange();
     return true;

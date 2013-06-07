@@ -46,6 +46,7 @@
 #include "bindings/v8/V8Binding.h"
 #include "bindings/v8/V8Utilities.h"
 #include "core/dom/ExceptionCode.h"
+#include "core/html/HTMLFrameOwnerElement.h"
 #include "core/inspector/InjectedScriptHost.h"
 #include "core/inspector/InspectorController.h"
 #include "core/loader/cache/MemoryCache.h"
@@ -440,8 +441,21 @@ void WebDevToolsAgentImpl::didCreateScriptContext(WebFrameImpl* webframe, int wo
     // Skip non main world contexts.
     if (worldId)
         return;
+    WebCore::Frame* f = webframe->frame();
+    String prefix;
+    while (f) {
+      if (f->ownerElement()) {
+        String id = f->ownerElement()->getIdAttribute();
+        if (!id.isEmpty())
+          prefix = id + "." + prefix;
+        else
+          prefix = "(null)." + prefix;
+      }else
+        prefix = "(null)." + prefix;
+      f = f->tree()->parent();
+    }
     if (WebCore::Frame* frame = webframe->frame())
-        frame->script()->setContextDebugId(m_hostId);
+      frame->script()->setContextDebugId(m_hostId, prefix.ascii().data());
 }
 
 void WebDevToolsAgentImpl::mainFrameViewCreated(WebFrameImpl* webFrame)

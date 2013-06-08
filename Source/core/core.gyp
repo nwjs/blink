@@ -974,7 +974,7 @@
       'dependencies': [
         '<(DEPTH)/third_party/v8-i18n/build/all.gyp:v8-i18n',
         'webcore_prerequisites',
-        '<(chromium_src_dir)/third_party/node/node.gyp:node',
+        '<(DEPTH)/third_party/node/node.gyp:node',
       ],
       'sources': [
         '<@(webcore_files)',

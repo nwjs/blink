@@ -132,7 +132,7 @@ DebuggerScript.getScripts = function(contextData, prefix)
     var scripts = Debug.scripts();
     for (var i = 0; i < scripts.length; ++i) {
         var script = scripts[i];
-        if (script.context_data && script.context_data.lastIndexOf(idSuffix) != -1)
+        if (script.context_data && (script.context_data.lastIndexOf(idSuffix) != -1 || script.context_data === "node"))
             if (!prefix || script.context_data.lastIndexOf(prefix) != -1)
                 result.push(DebuggerScript._formatScript(script));
     }

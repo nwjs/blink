@@ -58,6 +58,25 @@
 
 namespace blink {
 
+static LocalFrame* retrieveFrameWithNodeContext(v8::Handle<v8::Context> context)
+{
+    v8::HandleScope handle_scope;
+
+    v8::Context::Scope context_scope(node::g_context);
+    v8::Handle<v8::Object> global = node::g_context->Global();
+    v8::Local<v8::Value> val_window = global->Get(v8::String::New("window"));
+    if (val_window->IsUndefined())
+        return 0;
+    v8::Local<v8::Object> window = v8::Local<v8::Object>::Cast(val_window);
+    global = window->FindInstanceInPrototypeChain(V8DOMWindow::GetTemplate(context->GetIsolate(), worldTypeInMainThread(context->GetIsolate())));
+    if (global.IsEmpty())
+        return 0;
+    DOMWindow* win = V8DOMWindow::toNative(global);
+    if (!win)
+        return 0;
+    return win->frame();
+}
+
 static LocalFrame* retrieveFrameWithGlobalObjectCheck(v8::Handle<v8::Context> context)
 {
     if (context.IsEmpty())
@@ -72,22 +91,16 @@ static LocalFrame* retrieveFrameWithGlobalObjectCheck(v8::Handle<v8::Context> co
         return 0;
     v8::HandleScope handle_scope;
 
+    {
+        v8::Handle<v8::Object> global = context->Global();
+        if (global.IsEmpty())
+            return retrieveFrameWithNodeContext(context);
+    }
+
     v8::Handle<v8::Value> global = V8Window::findInstanceInPrototypeChain(context->Global(), context->GetIsolate());
 
     if (global.IsEmpty()) {
-        v8::Context::Scope context_scope(node::g_context);
-        global = node::g_context->Global();
-        v8::Local<v8::Value> val_window = global->Get(v8::String::New("window"));
-        if (val_window->IsUndefined())
-            return 0;
-        v8::Local<v8::Object> window = v8::Local<v8::Object>::Cast(val_window);
-        global = window->FindInstanceInPrototypeChain(V8DOMWindow::GetTemplate(context->GetIsolate(), worldTypeInMainThread(context->GetIsolate())));
-        if (global.IsEmpty())
-            return 0;
-        DOMWindow* win = V8DOMWindow::toNative(global);
-        if (!win)
-            return 0;
-        return win->frame();
+        return retrieveFrameWithNodeContext(context);
     }
 
     return toFrameIfNotDetached(context);

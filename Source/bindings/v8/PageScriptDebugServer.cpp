@@ -52,6 +52,25 @@
 
 namespace WebCore {
 
+static Frame* retrieveFrameWithNodeContext(v8::Handle<v8::Context> context)
+{
+  v8::HandleScope handle_scope;
+
+  v8::Context::Scope context_scope(node::g_context);
+  v8::Handle<v8::Object> global = node::g_context->Global();
+  v8::Local<v8::Value> val_window = global->Get(v8::String::New("window"));
+  if (val_window->IsUndefined())
+    return 0;
+  v8::Local<v8::Object> window = v8::Local<v8::Object>::Cast(val_window);
+  global = window->FindInstanceInPrototypeChain(V8DOMWindow::GetTemplate(context->GetIsolate(), worldTypeInMainThread(context->GetIsolate())));
+  if (global.IsEmpty())
+    return 0;
+  DOMWindow* win = V8DOMWindow::toNative(global);
+  if (!win)
+    return 0;
+  return win->frame();
+}
+
 static Frame* retrieveFrameWithGlobalObjectCheck(v8::Handle<v8::Context> context)
 {
     if (context.IsEmpty())
@@ -60,25 +79,12 @@ static Frame* retrieveFrameWithGlobalObjectCheck(v8::Handle<v8::Context> context
     v8::HandleScope handle_scope;
     // Test that context has associated global dom window object.
     v8::Handle<v8::Object> global = context->Global();
-    if (global.IsEmpty()) {
-        v8::Context::Scope context_scope(node::g_context);
-        global = node::g_context->Global();
-        v8::Local<v8::Value> val_window = global->Get(v8::String::New("window"));
-        if (val_window->IsUndefined())
-            return 0;
-        v8::Local<v8::Object> window = v8::Local<v8::Object>::Cast(val_window);
-        global = window->FindInstanceInPrototypeChain(V8DOMWindow::GetTemplate(context->GetIsolate(), worldTypeInMainThread(context->GetIsolate())));
-        if (global.IsEmpty())
-            return 0;
-        DOMWindow* win = V8DOMWindow::toNative(global);
-        if (!win)
-            return 0;
-        return win->frame();
-    }
+    if (global.IsEmpty())
+      return retrieveFrameWithNodeContext(context);
 
     global = global->FindInstanceInPrototypeChain(V8Window::GetTemplate(context->GetIsolate(), worldTypeInMainThread(context->GetIsolate())));
     if (global.IsEmpty())
-        return 0;
+      return retrieveFrameWithNodeContext(context);
 
     return toFrameIfNotDetached(context);
 }

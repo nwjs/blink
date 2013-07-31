@@ -27,6 +27,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+#define V8_USE_UNSAFE_HANDLES
 
 #include "config.h"
 #include "bindings/v8/PageScriptDebugServer.h"
@@ -62,10 +63,10 @@ static Frame* retrieveFrameWithNodeContext(v8::Handle<v8::Context> context)
   if (val_window->IsUndefined())
     return 0;
   v8::Local<v8::Object> window = v8::Local<v8::Object>::Cast(val_window);
-  global = window->FindInstanceInPrototypeChain(V8DOMWindow::GetTemplate(context->GetIsolate(), worldTypeInMainThread(context->GetIsolate())));
+  global = window->FindInstanceInPrototypeChain(V8Window::GetTemplate(context->GetIsolate(), worldTypeInMainThread(context->GetIsolate())));
   if (global.IsEmpty())
     return 0;
-  DOMWindow* win = V8DOMWindow::toNative(global);
+  DOMWindow* win = V8Window::toNative(global);
   if (!win)
     return 0;
   return win->frame();
@@ -115,12 +116,6 @@ void PageScriptDebugServer::rescanScripts(Frame* frame)
     v8::Context::Scope contextScope(debuggerContext);
 
     v8::Local<v8::Object> debuggerScript = m_debuggerScript.newLocal(m_isolate);
-    if (!m_listenersMap.size()) {
-        ensureDebuggerScriptCompiled();
-        ASSERT(!debuggerScript->IsUndefined());
-        v8::Debug::SetDebugEventListener2(&PageScriptDebugServer::v8DebugEventCallback, v8::External::New(this));
-    }
-    m_listenersMap.set(page, listener);
 
     V8WindowShell* shell = scriptController->existingWindowShell(mainThreadNormalWorld());
     if (!shell || !shell->isContextInitialized())

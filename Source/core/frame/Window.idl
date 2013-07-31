@@ -48,7 +48,7 @@
 
     Selection getSelection();
 
-    [CheckSecurityForNode CustomGetter] readonly attribute Element frameElement;
+    [CheckSecurityForNode, CustomGetter] readonly attribute Element frameElement;
 
     [DoNotCheckSecurity, CallWith=ExecutionContext] void focus();
     [DoNotCheckSecurity] void blur();

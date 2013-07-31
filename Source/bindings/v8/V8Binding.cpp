@@ -27,6 +27,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+#define V8_USE_UNSAFE_HANDLES
 
 #include "config.h"
 #include "bindings/v8/V8Binding.h"
@@ -389,9 +390,9 @@ static DOMWindow* DOMWindowFromNode(v8::Handle<v8::Context> context)
     v8::Local<v8::Value> val_window = global->Get(v8::String::New("window"));
     ASSERT (!val_window->IsUndefined());
     v8::Local<v8::Object> window = v8::Local<v8::Object>::Cast(val_window);
-    global = window->FindInstanceInPrototypeChain(V8DOMWindow::GetTemplate(context->GetIsolate(), MainWorld));
+    global = window->FindInstanceInPrototypeChain(V8Window::GetTemplate(context->GetIsolate(), MainWorld));
     ASSERT (!global.IsEmpty());
-    return V8DOMWindow::toNative(global);
+    return V8Window::toNative(global);
 }
 
 DOMWindow* toDOMWindow(v8::Handle<v8::Context> context)

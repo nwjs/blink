@@ -712,11 +712,13 @@ void InspectorResourceAgent::loadResourceForFrontend(ErrorString* errorString, c
         return;
     }
 
+#if 0
     KURL kurl = KURL(ParsedURLString, url);
     if (kurl.isLocalFile()) {
         *errorString = "Can not load local file";
         return;
     }
+#endif
 
     ResourceRequest request(url);
     request.setHTTPMethod("GET");

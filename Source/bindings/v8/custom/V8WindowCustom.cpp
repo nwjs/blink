@@ -201,7 +201,7 @@ void V8Window::frameElementAttrGetterCustom(v8::Local<v8::String> name, const v8
 
     if (frame->isNwFakeTop())
       return;
-    if (!BindingSecurity::shouldAllowAccessToNode(BindingState::instance(), imp->frameElement()))
+    if (!BindingSecurity::shouldAllowAccessToNode(imp->frameElement()))
       return;
 
     v8SetReturnValue(info, toV8Fast(imp->frameElement(), info, imp));

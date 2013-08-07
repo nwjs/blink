@@ -55,6 +55,11 @@ public:
         return adoptRef(new File(path, srcURL, type));
     }
 
+    static PassRefPtr<File> create(const String& path, const String& name)
+    {
+      return createWithName(path, name, AllContentTypes);
+    }
+
     static PassRefPtr<File> createWithRelativePath(const String& path, const String& relativePath);
 
     // If filesystem files live in the remote filesystem, the port might pass the valid metadata (whose length field is non-negative) and cache in the File object.

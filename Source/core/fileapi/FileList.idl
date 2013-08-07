@@ -24,9 +24,12 @@
  */
 
 [
-    WillBeGarbageCollected
+ WillBeGarbageCollected,
+ Constructor,
 ] interface FileList {
     readonly attribute unsigned long length;
     getter File item(unsigned long index);
+    void clear();
+    void append(File item);
 };
 

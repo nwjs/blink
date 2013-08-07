@@ -71,6 +71,11 @@ public:
         return adoptRefWillBeNoop(new File(path, name, String(), IsNotUserVisible, true, size, lastModified, blobDataHandle));
     }
 
+    static PassRefPtrWillBeRawPtr<File> create(const String& path, const String& name)
+    {
+      return createWithName(path, name, AllContentTypes);
+    }
+
     static PassRefPtrWillBeRawPtr<File> createWithRelativePath(const String& path, const String& relativePath);
 
     // If filesystem files live in the remote filesystem, the port might pass the valid metadata (whose length field is non-negative) and cache in the File object.

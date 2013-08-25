@@ -10,11 +10,11 @@ function verifySpellTest(nretry)
         finishJSTest()
         return;
     }
-    if (!internals.markerCountForNode(destination.childNodes[0], "spelling")) {
+    if (!internals.markerCountForNode(window.destination.childNodes[0], "spelling")) {
         window.setTimeout(function() { verifySpellTest(nretry - 1); }, 0);
         return;
     }
-    testFunctionCallback(destination.childNodes[0]);
+    testFunctionCallback(window.destination.childNodes[0]);
     finishJSTest()
 }
 
@@ -31,8 +31,8 @@ function initSpellTest(testElementId, testText, testFunction)
     internals.settings.setSelectTrailingWhitespaceEnabled(false);
     internals.settings.setUnifiedTextCheckerEnabled(true);
     internals.settings.setEditingBehavior("win");
-    var destination = document.getElementById(testElementId);
-    destination.focus();
+    window.destination = document.getElementById(testElementId);
+    window.destination.focus();
     document.execCommand("InsertText", false, testText);
     window.setTimeout(function() { verifySpellTest(10); }, 0);
 }

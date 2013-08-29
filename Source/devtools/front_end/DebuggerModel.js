@@ -481,9 +481,9 @@ WebInspector.DebuggerModel.prototype = {
      * @param {string=} sourceMapURL
      * @param {boolean=} hasSourceURL
      */
-    _parsedScriptSource: function(scriptId, sourceURL, startLine, startColumn, endLine, endColumn, isContentScript, sourceMapURL, hasSourceURL)
+    _parsedScriptSource: function(scriptId, sourceURL, startLine, startColumn, endLine, endColumn, isContentScript, sourceMapURL, hasSourceURL, contextData)
     {
-        var script = new WebInspector.Script(scriptId, sourceURL, startLine, startColumn, endLine, endColumn, isContentScript, sourceMapURL, hasSourceURL);
+        var script = new WebInspector.Script(scriptId, sourceURL, startLine, startColumn, endLine, endColumn, isContentScript, sourceMapURL, hasSourceURL, contextData);
         this._registerScript(script);
         this.dispatchEventToListeners(WebInspector.DebuggerModel.Events.ParsedScriptSource, script);
     },
@@ -757,9 +757,9 @@ WebInspector.DebuggerDispatcher.prototype = {
      * @param {string=} sourceMapURL
      * @param {boolean=} hasSourceURL
      */
-    scriptParsed: function(scriptId, sourceURL, startLine, startColumn, endLine, endColumn, isContentScript, sourceMapURL, hasSourceURL)
+    scriptParsed: function(scriptId, sourceURL, startLine, startColumn, endLine, endColumn, isContentScript, sourceMapURL, hasSourceURL, contextData)
     {
-        this._debuggerModel._parsedScriptSource(scriptId, sourceURL, startLine, startColumn, endLine, endColumn, !!isContentScript, sourceMapURL, hasSourceURL);
+        this._debuggerModel._parsedScriptSource(scriptId, sourceURL, startLine, startColumn, endLine, endColumn, !!isContentScript, sourceMapURL, hasSourceURL, contextData);
     },
 
     /**

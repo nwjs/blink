@@ -37,7 +37,7 @@
  * @param {string=} sourceMapURL
  * @param {boolean=} hasSourceURL
  */
-WebInspector.Script = function(scriptId, sourceURL, startLine, startColumn, endLine, endColumn, isContentScript, sourceMapURL, hasSourceURL)
+WebInspector.Script = function(scriptId, sourceURL, startLine, startColumn, endLine, endColumn, isContentScript, sourceMapURL, hasSourceURL, contextData)
 {
     this.scriptId = scriptId;
     this.sourceURL = sourceURL;
@@ -52,6 +52,7 @@ WebInspector.Script = function(scriptId, sourceURL, startLine, startColumn, endL
     this._locations = new Set();
     /** @type {!Array.<!WebInspector.SourceMapping>} */
     this._sourceMappings = [];
+    this._contextData = contextData;
 }
 
 WebInspector.Script.Events = {

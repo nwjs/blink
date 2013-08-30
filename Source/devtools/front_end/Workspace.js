@@ -219,11 +219,14 @@ WebInspector.Project.prototype = {
     _fileAdded: function(event)
     {
         var fileDescriptor = /** @type {!WebInspector.FileDescriptor} */ (event.data);
+
         var path = fileDescriptor.parentPath ? fileDescriptor.parentPath + "/" + fileDescriptor.name : fileDescriptor.name;
         var uiSourceCode = this.uiSourceCode(path);
-        if (uiSourceCode)
+        if (uiSourceCode) {
+            // FIXME: Implement
+            console.log("devtools: script is skipped: " + JSON.stringify(fileDescriptor));
             return;
-
+        }
         uiSourceCode = new WebInspector.UISourceCode(this, fileDescriptor.parentPath, fileDescriptor.name, fileDescriptor.originURL, fileDescriptor.url, fileDescriptor.contentType, fileDescriptor.isEditable);
         uiSourceCode.isContentScript = fileDescriptor.isContentScript;
 

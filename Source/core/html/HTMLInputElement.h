@@ -248,6 +248,9 @@ public:
     String nwworkingdir() const;
     void setNwworkingdir(const String& value);
 
+    String nwsaveas() const;
+    void setNwsaveas(const String& value);
+
     static const int maximumLength;
 
     unsigned height() const;

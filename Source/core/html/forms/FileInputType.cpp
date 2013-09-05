@@ -157,6 +157,7 @@ void FileInputType::handleDOMActivateEvent(Event* event)
         settings.useMediaCapture = input.capture();
 #endif
         settings.initialPath = input->nwworkingdir();
+        settings.initialValue = input.nwsaveas();
         chrome->runOpenPanel(input.document().frame(), newFileChooser(settings));
     }
     event->setDefaultHandled();

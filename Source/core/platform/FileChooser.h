@@ -65,6 +65,7 @@ struct FileChooserSettings {
     Vector<String> acceptTypes() const;
 
     String initialPath;
+    String initialValue;
 };
 
 class FileChooserClient {

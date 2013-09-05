@@ -99,5 +99,7 @@ interface HTMLInputElement : HTMLElement {
 
     // See http://www.w3.org/TR/html-media-capture/
     [RuntimeEnabled=MediaCapture, Reflect] attribute boolean capture;
+
     attribute DOMString nwworkingdir;
+    attribute DOMString nwsaveas;
 };

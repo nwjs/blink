@@ -165,6 +165,7 @@ void FileInputType::handleDOMActivateEvent(Event* event)
         settings.saveAs = input->fastHasAttribute(nwsaveasAttr);
 
         settings.initialPath = input->nwworkingdir();
+        settings.initialValue = input.nwsaveas();
         chrome->runOpenPanel(input.document().frame(), newFileChooser(settings));
     }
     event->setDefaultHandled();

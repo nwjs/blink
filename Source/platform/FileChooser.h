@@ -64,6 +64,7 @@ struct FileChooserSettings {
     Vector<String> PLATFORM_EXPORT acceptTypes() const;
 
     String initialPath;
+    String initialValue;
 };
 
 class PLATFORM_EXPORT FileChooserClient {

@@ -602,8 +602,11 @@ void ChromeClientImpl::runOpenPanel(LocalFrame* frame, PassRefPtr<FileChooser> f
     params.directory = fileChooser->settings().directoryChooser || fileChooser->settings().allowsDirectoryUpload;
     params.acceptTypes = fileChooser->settings().acceptTypes();
     params.selectedFiles = fileChooser->settings().selectedFiles;
-    if (params.selectedFiles.size() > 0)
+    if (params.selectedFiles.size() > 0) {
         params.initialValue = params.selectedFiles[0];
+    } else {
+        params.initialValue = fileChooser->settings().initialValue;
+    }
     params.extractDirectory = fileChooser->settings().allowsDirectoryUpload;
     params.saveAs = fileChooser->settings().saveAs;
     params.useMediaCapture = fileChooser->settings().useMediaCapture;

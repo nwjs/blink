@@ -75,6 +75,7 @@ Frame::Frame(FrameHost* host, HTMLFrameOwnerElement* ownerElement)
     , m_remotePlatformLayer(0)
     , m_nodejs(false)
     , m_devtoolsJail(NULL)
+    , m_devJailOwner(NULL)
 {
     ASSERT(page());
 
@@ -86,6 +87,8 @@ Frame::Frame(FrameHost* host, HTMLFrameOwnerElement* ownerElement)
 Frame::~Frame()
 {
     setDOMWindow(nullptr);
+    if (m_devJailOwner)
+        m_devJailOwner->setDevtoolsJail(NULL);
 
     // FIXME: We should not be doing all this work inside the destructor
 
@@ -198,6 +201,15 @@ bool Frame::isNwFakeTop() const
 bool Frame::isNodeJS() const
 {
     return m_nodejs;
+}
+
+void Frame::setDevtoolsJail(Frame* iframe)
+{
+    m_devtoolsJail = iframe;
+    if (iframe)
+        iframe->m_devJailOwner = this;
+    else if (m_devtoolsJail)
+        m_devtoolsJail->m_devJailOwner = NULL;
 }
 
 } // namespace WebCore

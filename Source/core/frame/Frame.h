@@ -92,7 +92,7 @@ public:
     bool isNodeJS() const;
     bool isNwDisabledChildFrame() const;
     bool isNwFakeTop() const;
-    void setDevtoolsJail(Frame* iframe) { m_devtoolsJail = iframe; }
+    void setDevtoolsJail(Frame* iframe);
     Frame* getDevtoolsJail() { return m_devtoolsJail; }
 
 protected:
@@ -114,6 +114,7 @@ private:
 
     bool m_nodejs;
     Frame* m_devtoolsJail;
+    Frame* m_devJailOwner;
 };
 
 inline DOMWindow* Frame::domWindow() const

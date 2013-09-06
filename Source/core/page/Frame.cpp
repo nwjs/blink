@@ -145,6 +145,7 @@ inline Frame::Frame(Page* page, HTMLFrameOwnerElement* ownerElement, FrameLoader
     , m_nodejs(false)
     , m_inViewSourceMode(false)
     , m_devtoolsJail(NULL)
+    , m_devJailOwner(NULL)
 {
     ASSERT(page);
 
@@ -168,6 +169,8 @@ PassRefPtr<Frame> Frame::create(Page* page, HTMLFrameOwnerElement* ownerElement,
 
 Frame::~Frame()
 {
+    if (m_devJailOwner)
+        m_devJailOwner->setDevtoolsJail(NULL);
     setView(0);
     loader()->cancelAndClear();
 
@@ -746,6 +749,15 @@ bool Frame::isNwFakeTop() const
 bool Frame::isNodeJS() const
 {
     return m_nodejs;
+}
+
+void Frame::setDevtoolsJail(Frame* iframe)
+{
+    m_devtoolsJail = iframe;
+    if (iframe)
+        iframe->m_devJailOwner = this;
+    else if (m_devtoolsJail)
+        m_devtoolsJail->m_devJailOwner = NULL;
 }
 
 } // namespace WebCore

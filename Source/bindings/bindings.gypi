@@ -168,6 +168,7 @@
             'v8/custom/V8EntrySyncCustom.cpp',
             'v8/custom/V8EventCustom.cpp',
             'v8/custom/V8EventTargetCustom.cpp',
+            'v8/custom/V8FileListCustom.cpp',
             'v8/custom/V8FileReaderCustom.cpp',
             'v8/custom/V8FormDataCustom.cpp',
             'v8/custom/V8GeolocationCustom.cpp',

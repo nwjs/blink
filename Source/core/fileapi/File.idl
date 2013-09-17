@@ -24,7 +24,7 @@
  */
 
 [
-    Constructor(DOMString path, DOMString name),
+    CustomConstructor(DOMString path, DOMString name),
 ] interface File : Blob {
     readonly attribute DOMString name;
     readonly attribute DOMString path;

@@ -175,6 +175,7 @@
             'v8/custom/V8EventCustom.cpp',
             'v8/custom/V8EventTargetCustom.cpp',
             'v8/custom/V8ErrorEventCustom.cpp',
+            'v8/custom/V8FileCustom.cpp',
             'v8/custom/V8FileListCustom.cpp',
             'v8/custom/V8FileReaderCustom.cpp',
             'v8/custom/V8Float32ArrayCustom.h',

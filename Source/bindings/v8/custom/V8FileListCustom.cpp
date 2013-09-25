@@ -23,7 +23,7 @@ void V8FileList::constructorCustom(const v8::FunctionCallbackInfo<v8::Value>& ar
     RefPtr<FileList> impl = FileList::create();
     v8::Handle<v8::Object> wrapper = args.Holder();
 
-    V8DOMWrapper::associateObjectWithWrapper(impl.release(), &V8FileList::info, wrapper, args.GetIsolate(), WrapperConfiguration::Dependent);
+    V8DOMWrapper::associateObjectWithWrapper<V8FileList>(impl.release(), &V8FileList::info, wrapper, args.GetIsolate(), WrapperConfiguration::Dependent);
     args.GetReturnValue().Set(wrapper);
 }
 

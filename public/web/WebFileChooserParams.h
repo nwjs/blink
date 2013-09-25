@@ -81,8 +81,8 @@ struct WebFileChooserParams {
         : multiSelect(false)
         , directory(false)
         , saveAs(false)
-        , useMediaCapture(false)
         , extractDirectory(true)
+        , useMediaCapture(false)
     {
     }
 };

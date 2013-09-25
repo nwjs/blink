@@ -376,8 +376,10 @@ void V8WindowShell::clearDocumentProperty()
 
 void V8WindowShell::setSecurityToken()
 {
-    if (m_frame->loader()->client()->willSetSecurityToken(m_context.get()))
-        return;
+    v8::HandleScope handleScope(m_isolate);
+
+    if (m_frame->loader()->client()->willSetSecurityToken(m_context.newLocal(m_isolate)))
+       return;
 
     ASSERT(m_world->isMainWorld());
 
@@ -402,7 +404,6 @@ void V8WindowShell::setSecurityToken()
     // origins that should only allow access to themselves. In this
     // case, we use the global object as the security token to avoid
     // calling canAccess when a script accesses its own objects.
-    v8::HandleScope handleScope(m_isolate);
     v8::Handle<v8::Context> context = m_context.newLocal(m_isolate);
     if (token.isEmpty() || token == "null") {
         context->UseDefaultSecurityToken();

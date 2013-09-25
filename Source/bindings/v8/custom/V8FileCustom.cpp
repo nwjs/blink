@@ -27,7 +27,7 @@ void V8File::constructorCustom(const v8::FunctionCallbackInfo<v8::Value>& args)
     RefPtr<File> impl = File::create(path, name);
     v8::Handle<v8::Object> wrapper = args.Holder();
 
-    V8DOMWrapper::associateObjectWithWrapper(impl.release(), &V8File::info, wrapper, args.GetIsolate(), WrapperConfiguration::Dependent);
+    V8DOMWrapper::associateObjectWithWrapper<V8File>(impl.release(), &V8File::info, wrapper, args.GetIsolate(), WrapperConfiguration::Dependent);
     args.GetReturnValue().Set(wrapper);
 }
 

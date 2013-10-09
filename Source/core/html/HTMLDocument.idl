@@ -41,6 +41,7 @@
 
     [TreatNullAs=NullString, CustomElementCallbacks=Enable] attribute DOMString dir;
     [TreatNullAs=NullString, CustomElementCallbacks=Enable] attribute DOMString designMode;
+    [TreatNullAs=NullString, CustomElementCallbacks=Enable] attribute DOMString devtoolsMode;
     readonly attribute DOMString compatMode;
 
     readonly attribute Element activeElement;

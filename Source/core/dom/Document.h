@@ -824,6 +824,10 @@ public:
     InheritedBool getDesignMode() const;
     bool inDesignMode() const;
 
+    void setDevtoolsMode(InheritedBool value);
+    InheritedBool getDevtoolsMode() const;
+    bool inDevtoolsMode() const;
+
     Document* parentDocument() const;
     Document* topDocument() const;
 
@@ -1272,6 +1276,7 @@ private:
     RefPtr<TextResourceDecoder> m_decoder;
 
     InheritedBool m_designMode;
+    InheritedBool m_devtoolsMode;
 
     HashSet<LiveNodeListBase*> m_listsInvalidatedAtDocument;
     unsigned m_nodeListCounts[numNodeListInvalidationTypes];

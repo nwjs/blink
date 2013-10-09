@@ -109,6 +109,23 @@ void HTMLDocument::setDesignMode(const String& value)
     Document::setDesignMode(mode);
 }
 
+String HTMLDocument::devtoolsMode() const
+{
+    return inDevtoolsMode() ? "on" : "off";
+}
+
+void HTMLDocument::setDevtoolsMode(const String& value)
+{
+    InheritedBool mode;
+    if (equalIgnoringCase(value, "on"))
+        mode = on;
+    else if (equalIgnoringCase(value, "off"))
+        mode = off;
+    else
+        mode = inherit;
+    Document::setDevtoolsMode(mode);
+}
+
 Element* HTMLDocument::activeElement()
 {
     if (Element* element = treeScope()->adjustedFocusedElement())

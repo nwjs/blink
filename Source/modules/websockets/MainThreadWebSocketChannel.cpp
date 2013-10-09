@@ -565,7 +565,8 @@ bool MainThreadWebSocketChannel::processFrame()
         return false;
     }
 
-    InspectorInstrumentation::didReceiveWebSocketFrame(m_document, m_identifier, frame);
+    if (!m_document->inDevtoolsMode())
+      InspectorInstrumentation::didReceiveWebSocketFrame(m_document, m_identifier, frame);
 
     switch (frame.opCode) {
     case WebSocketFrame::OpCodeContinuation:

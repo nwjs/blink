@@ -47,6 +47,9 @@ public:
     String designMode() const;
     void setDesignMode(const String&);
 
+    String devtoolsMode() const;
+    void setDevtoolsMode(const String&);
+
     Element* activeElement();
     bool hasFocus();
 

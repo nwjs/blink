@@ -392,6 +392,7 @@ WebInspector.reload = function()
 
 WebInspector.loaded = function()
 {
+    document.devtoolsMode = 'on';
     InspectorBackend.loadFromJSONIfNeeded("../protocol.json");
     WebInspector.dockController = new WebInspector.DockController();
 

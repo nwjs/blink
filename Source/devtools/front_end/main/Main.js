@@ -163,7 +163,7 @@ WebInspector.Main.prototype = {
             new WebInspector.Toolbox();
             return;
         }
-
+        document.devtoolsMode = 'on';
         this._createSettings();
         this._createModuleManager();
         this._createAppUI();

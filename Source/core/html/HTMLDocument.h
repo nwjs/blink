@@ -41,6 +41,9 @@ public:
     }
     virtual ~HTMLDocument();
 
+    String devtoolsMode() const;
+    void setDevtoolsMode(const String&);
+
     const AtomicString& bgColor() const;
     void setBgColor(const AtomicString&);
     const AtomicString& fgColor() const;

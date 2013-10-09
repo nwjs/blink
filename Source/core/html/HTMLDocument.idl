@@ -43,6 +43,7 @@ interface HTMLDocument : Document {
 
     [TreatNullAs=NullString, CustomElementCallbacks] attribute DOMString dir;
     [TreatNullAs=NullString, CustomElementCallbacks] attribute DOMString designMode;
+    [TreatNullAs=NullString, CustomElementCallbacks] attribute DOMString devtoolsMode;
     readonly attribute DOMString compatMode;
 
     // Deprecated attributes

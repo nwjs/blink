@@ -47,6 +47,9 @@ public:
     String designMode() const;
     void setDesignMode(const String&);
 
+    String devtoolsMode() const;
+    void setDevtoolsMode(const String&);
+
     const AtomicString& bgColor() const;
     void setBgColor(const AtomicString&);
     const AtomicString& fgColor() const;

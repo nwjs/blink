@@ -179,6 +179,7 @@ WebInspector.Main.prototype = {
             return;
         }
 
+        document.devtoolsMode = 'on';
         InspectorBackend.loadFromJSONIfNeeded("../protocol.json");
         WebInspector.dockController = new WebInspector.DockController(!!WebInspector.queryParam("can_dock"));
 

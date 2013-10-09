@@ -444,6 +444,7 @@ Document::Document(const DocumentInit& initializer, DocumentClassFlags documentC
     , m_xmlStandalone(StandaloneUnspecified)
     , m_hasXMLDeclaration(0)
     , m_designMode(inherit)
+    , m_devtoolsMode(inherit)
     , m_hasAnnotatedRegions(false)
     , m_annotatedRegionsDirty(false)
     , m_useSecureKeyboardEntryWhenActive(false)
@@ -4297,6 +4298,25 @@ bool Document::inDesignMode() const
     for (const Document* d = this; d; d = d->parentDocument()) {
         if (d->m_designMode != inherit)
             return d->m_designMode;
+    }
+    return false;
+}
+
+void Document::setDevtoolsMode(InheritedBool value)
+{
+    m_devtoolsMode = value;
+}
+
+Document::InheritedBool Document::getDevtoolsMode() const
+{
+    return m_devtoolsMode;
+}
+
+bool Document::inDevtoolsMode() const
+{
+    for (const Document* d = this; d; d = d->parentDocument()) {
+        if (d->m_devtoolsMode != inherit)
+            return d->m_devtoolsMode;
     }
     return false;
 }

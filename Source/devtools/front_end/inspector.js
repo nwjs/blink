@@ -279,6 +279,7 @@ WebInspector.loaded = function()
         return;
     }
 
+    document.devtoolsMode = 'on';
     InspectorBackend.loadFromJSONIfNeeded("../protocol.json");
     WebInspector.dockController = new WebInspector.DockController();
 

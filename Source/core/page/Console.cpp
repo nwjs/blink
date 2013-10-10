@@ -78,12 +78,15 @@ static void internalAddMessage(Page* page, MessageType type, MessageLevel level,
     InspectorInstrumentation::addMessageToConsole(page, ConsoleAPIMessageSource, type, level, message, state, arguments);
 
     if (gotMessage) {
-        for (unsigned i = 1; i < arguments->argumentCount(); ++i) {
+        message = "";
+        for (unsigned i = 0; i < arguments->argumentCount(); ++i) {
             String argAsString;
-            if (arguments->argumentAt(i).getString(arguments->globalState(), argAsString)) {
-                message.append(" ");
-                message.append(argAsString);
-            }
+            RefPtr<JSONValue> value = arguments->argumentAt(i).toJSONValue(arguments->globalState());
+            if (!value)
+              continue;
+            if (i)
+              message.append(" ");
+            message.append(value->toJSONString());
         }
 
         page->chrome().client()->addMessageToConsole(ConsoleAPIMessageSource, type, level, message, lastCaller.lineNumber(), lastCaller.sourceURL());

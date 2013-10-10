@@ -178,13 +178,16 @@ void ConsoleBase::internalAddMessage(MessageType type, MessageLevel level, Scrip
     String message;
     bool gotStringMessage = arguments->getFirstArgumentAsString(message);
     InspectorInstrumentation::addMessageToConsole(context(), ConsoleAPIMessageSource, type, level, message, state, arguments);
-    if (gotStringMessage)
-        for (unsigned i = 1; i < arguments->argumentCount(); ++i) {
+    if (gotStringMessage) {
+        message = "";
+        for (unsigned i = 0; i < arguments->argumentCount(); ++i) {
             String argAsString;
-            if (arguments->argumentAt(i).getString(arguments->globalState(), argAsString)) {
+            RefPtr<JSONValue> value = arguments->argumentAt(i).toJSONValue(arguments->globalState());
+            if (!value)
+                continue;
+            if (i)
                 message.append(" ");
-                message.append(argAsString);
-            }
+            message.append(value->toJSONString());
         }
         reportMessageToClient(level, message, callStack);
     }

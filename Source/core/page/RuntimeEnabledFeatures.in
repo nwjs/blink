@@ -70,7 +70,7 @@ Quota status=stable
 OverlayScrollbars
 RequestAutocomplete status=test
 RowSpanLogicalHeightSpreading status=test
-ScriptedSpeech status=stable
+ScriptedSpeech status=test
 SeamlessIFrames status=experimental
 SessionStorage status=stable
 ShadowDOM status=experimental

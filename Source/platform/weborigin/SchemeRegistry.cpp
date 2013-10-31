@@ -36,8 +36,10 @@ static URLSchemesMap& localURLSchemes()
 {
     DEFINE_STATIC_LOCAL(URLSchemesMap, localSchemes, ());
 
-    if (localSchemes.isEmpty())
+    if (localSchemes.isEmpty()) {
         localSchemes.add("file");
+        localSchemes.add("app");
+    }
 
     return localSchemes;
 }

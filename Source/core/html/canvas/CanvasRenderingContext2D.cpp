@@ -1883,7 +1883,7 @@ PassRefPtr<ImageData> CanvasRenderingContext2D::webkitGetImageDataHD(float sx, f
 
 PassRefPtr<ImageData> CanvasRenderingContext2D::getImageData(ImageBuffer::CoordinateSystem coordinateSystem, float sx, float sy, float sw, float sh, ExceptionState& es) const
 {
-    if (!canvas()->document()->frame()->isNodeJS() && !canvas()->originClean()) {
+    if (!canvas()->document().frame()->isNodeJS() && !canvas()->originClean()) {
         es.throwSecurityError(ExceptionMessages::failedToExecute("getImageData", "CanvasRenderingContext2D", "the canvas has been tainted by cross-origin data."));
         return 0;
     }

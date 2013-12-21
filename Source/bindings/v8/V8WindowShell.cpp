@@ -375,7 +375,7 @@ void V8WindowShell::setSecurityToken()
 {
     v8::HandleScope handleScope(m_isolate);
 
-    if (m_frame->loader()->client()->willSetSecurityToken(m_context.newLocal(m_isolate)))
+    if (m_frame->loader().client()->willSetSecurityToken(m_context.newLocal(m_isolate)))
        return;
 
     ASSERT(m_world->isMainWorld());

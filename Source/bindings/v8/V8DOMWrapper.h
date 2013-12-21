@@ -32,9 +32,14 @@
 #define V8DOMWrapper_h
 
 #include "bindings/v8/DOMDataStore.h"
+#include "bindings/v8/V8Binding.h"
+
 #include <v8.h>
 #include "wtf/PassRefPtr.h"
 #include "wtf/text/AtomicString.h"
+
+#include "bindings/v8/ScriptController.h"
+#include "core/frame/DOMWindow.h"
 
 #include "third_party/node/src/node.h"
 #include "third_party/node/src/req_wrap.h"

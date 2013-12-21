@@ -443,7 +443,7 @@ v8::Handle<v8::Object> toInnerGlobalObject(v8::Handle<v8::Context> context)
 
 static DOMWindow* DOMWindowFromNode(v8::Handle<v8::Context> context)
 {
-    v8::Context::Scope context_scope(node::g_context);
+    v8::Context::Scope context_scope(node::g_context->GetIsolate(), node::g_context);
     v8::Handle<v8::Object> global = node::g_context->Global();
     v8::Local<v8::Value> val_window = global->Get(v8::String::New("window"));
     ASSERT (!val_window->IsUndefined());

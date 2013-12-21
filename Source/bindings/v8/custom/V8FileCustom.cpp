@@ -3,13 +3,13 @@
 #include "V8File.h"
 #include "bindings/v8/V8Binding.h"
 #include "core/dom/Document.h"
-#include "core/dom/ScriptExecutionContext.h"
-#include "core/page/Frame.h"
+#include "core/dom/ExecutionContext.h"
+#include "core/frame/Frame.h"
 
 namespace WebCore {
 void V8File::constructorCustom(const v8::FunctionCallbackInfo<v8::Value>& args)
 {
-    ScriptExecutionContext* context = getScriptExecutionContext();
+    ExecutionContext* context = getExecutionContext();
     if (context && context->isDocument()) {
         Document* document = toDocument(context);
         if (document->frame()->isNwDisabledChildFrame()) {
@@ -18,7 +18,7 @@ void V8File::constructorCustom(const v8::FunctionCallbackInfo<v8::Value>& args)
         }
     }
     if (args.Length() < 2) {
-        throwNotEnoughArgumentsError(args.GetIsolate());
+        throwTypeError(ExceptionMessages::failedToConstruct("File", ExceptionMessages::notEnoughArguments(1, args.Length())), args.GetIsolate());
         return;
     }
     V8TRYCATCH_FOR_V8STRINGRESOURCE_VOID(V8StringResource<>, path, args[0]);
@@ -27,7 +27,7 @@ void V8File::constructorCustom(const v8::FunctionCallbackInfo<v8::Value>& args)
     RefPtr<File> impl = File::create(path, name);
     v8::Handle<v8::Object> wrapper = args.Holder();
 
-    V8DOMWrapper::associateObjectWithWrapper<V8File>(impl.release(), &V8File::info, wrapper, args.GetIsolate(), WrapperConfiguration::Dependent);
+    V8DOMWrapper::associateObjectWithWrapper<V8File>(impl.release(), &wrapperTypeInfo, wrapper, args.GetIsolate(), WrapperConfiguration::Dependent);
     args.GetReturnValue().Set(wrapper);
 }
 

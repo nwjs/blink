@@ -154,7 +154,7 @@ void WindowSetTimeoutImpl(const v8::FunctionCallbackInfo<v8::Value>& info, bool 
     v8SetReturnValue(info, timerId);
 }
 
-void V8Window::parentAttrGetterCustom(const v8::PropertyCallbackInfo<v8::Value>& info)
+void V8Window::parentAttributeGetterCustom(const v8::PropertyCallbackInfo<v8::Value>& info)
 {
     v8::Handle<v8::Object> holder = info.This()->FindInstanceInPrototypeChain(V8Window::GetTemplate(info.GetIsolate(), worldTypeInMainThread(info.GetIsolate())));
     if (holder.IsEmpty())
@@ -164,13 +164,13 @@ void V8Window::parentAttrGetterCustom(const v8::PropertyCallbackInfo<v8::Value>&
     Frame* frame = imp->frame();
     ASSERT(frame);
     if (frame->isNwFakeTop()) {
-      v8SetReturnValue(info, toV8Fast(imp, info, imp));
+      v8SetReturnValueFast(info, imp, imp);
       return;
     }
-    v8SetReturnValue(info, toV8Fast(imp->parent(), info, imp));
+    v8SetReturnValueFast(info, imp->parent(), imp);
 }
 
-void V8Window::topAttrGetterCustom(const v8::PropertyCallbackInfo<v8::Value>& info)
+void V8Window::topAttributeGetterCustom(const v8::PropertyCallbackInfo<v8::Value>& info)
 {
     v8::Handle<v8::Object> holder = info.This()->FindInstanceInPrototypeChain(V8Window::GetTemplate(info.GetIsolate(), worldTypeInMainThread(info.GetIsolate())));
     if (holder.IsEmpty())
@@ -179,16 +179,16 @@ void V8Window::topAttrGetterCustom(const v8::PropertyCallbackInfo<v8::Value>& in
     DOMWindow* imp = V8Window::toNative(info.Holder());
     Frame* frame = imp->frame();
     ASSERT(frame);
-    for (Frame* f = frame; f; f = f->tree()->parent()) {
+    for (Frame* f = frame; f; f = f->tree().parent()) {
       if (f->isNwFakeTop()) {
-        v8SetReturnValue(info, toV8Fast(f->document()->domWindow(), info, imp));
+        v8SetReturnValueFast(info, f->document()->domWindow(), imp);
         return;
       }
     }
-    v8SetReturnValue(info, toV8Fast(imp->top(), info, imp));
+    v8SetReturnValueFast(info, imp->top(), imp);
 }
 
-void V8Window::frameElementAttrGetterCustom(v8::Local<v8::String> name, const v8::PropertyCallbackInfo<v8::Value>& info)
+void V8Window::frameElementAttributeGetterCustom(const v8::PropertyCallbackInfo<v8::Value>& info)
 {
     v8::Handle<v8::Object> holder = info.This()->FindInstanceInPrototypeChain(V8Window::GetTemplate(info.GetIsolate(), worldTypeInMainThread(info.GetIsolate())));
     if (holder.IsEmpty())
@@ -203,10 +203,11 @@ void V8Window::frameElementAttrGetterCustom(v8::Local<v8::String> name, const v8
 
     if (frame->isNwFakeTop())
       return;
-    if (!BindingSecurity::shouldAllowAccessToNode(imp->frameElement()))
+    ExceptionState es(info.GetIsolate());
+    if (!BindingSecurity::shouldAllowAccessToNode(imp->frameElement(), es))
       return;
 
-    v8SetReturnValue(info, toV8Fast(imp->frameElement(), info, imp));
+    v8SetReturnValueFast(info, imp->frameElement(), imp);
 }
 
 void V8Window::eventAttributeGetterCustom(const v8::PropertyCallbackInfo<v8::Value>& info)

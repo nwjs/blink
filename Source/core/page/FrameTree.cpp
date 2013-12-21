@@ -210,7 +210,7 @@ Frame* FrameTree::find(const AtomicString& name) const
         return m_thisFrame;
 
     if (name == "_top") {
-        for (Frame* f = m_thisFrame; f; f = f->tree()->parent()) {
+        for (Frame* f = m_thisFrame; f; f = f->tree().parent()) {
             if (f->isNwFakeTop())
                 return f;
         }

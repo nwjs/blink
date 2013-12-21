@@ -118,8 +118,8 @@ inline Frame::Frame(PassRefPtr<FrameInit> frameInit)
 #if ENABLE(ORIENTATION_EVENTS)
     , m_orientation(0)
 #endif
-    , m_nodejs(false)
     , m_inViewSourceMode(false)
+    , m_nodejs(false)
     , m_devtoolsJail(NULL)
     , m_devJailOwner(NULL)
 {
@@ -690,14 +690,14 @@ double Frame::devicePixelRatio() const
 
 bool Frame::isNwDisabledChildFrame() const
 {
-    if (m_ownerElement && m_ownerElement->fastHasAttribute(nwdisableAttr))
+  if (ownerElement() && ownerElement()->fastHasAttribute(nwdisableAttr))
         return true;
     return false;
 }
 
 bool Frame::isNwFakeTop() const
 {
-    if (m_ownerElement && m_ownerElement->fastHasAttribute(nwfaketopAttr))
+  if (ownerElement() && ownerElement()->fastHasAttribute(nwfaketopAttr))
         return true;
     return false;
 }

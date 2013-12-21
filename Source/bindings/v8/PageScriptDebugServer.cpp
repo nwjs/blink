@@ -60,7 +60,7 @@ static Frame* retrieveFrameWithNodeContext(v8::Handle<v8::Context> context)
 {
   v8::HandleScope handle_scope;
 
-  v8::Context::Scope context_scope(node::g_context);
+  v8::Context::Scope context_scope(node::g_context->GetIsolate(), node::g_context);
   v8::Handle<v8::Object> global = node::g_context->Global();
   v8::Local<v8::Value> val_window = global->Get(v8::String::New("window"));
   if (val_window->IsUndefined())
@@ -119,8 +119,8 @@ void PageScriptDebugServer::rescanScripts(Frame* frame)
     ScriptDebugListener* listener = m_listenersMap.get(frame->page());
     if (!listener)
         return;
-    ScriptController* scriptController = frame->script();
-    if (!scriptController->canExecuteScripts(NotAboutToExecuteScript))
+    ScriptController& scriptController = frame->script();
+    if (!scriptController.canExecuteScripts(NotAboutToExecuteScript))
         return;
 
     v8::HandleScope scope(m_isolate);
@@ -154,8 +154,8 @@ void PageScriptDebugServer::rescanScripts(Frame* frame)
 
 void PageScriptDebugServer::addListener(ScriptDebugListener* listener, Page* page)
 {
-    ScriptController* scriptController = page->mainFrame()->script();
-    if (!scriptController->canExecuteScripts(NotAboutToExecuteScript))
+    ScriptController& scriptController = page->mainFrame()->script();
+    if (!scriptController.canExecuteScripts(NotAboutToExecuteScript))
         return;
 
     v8::HandleScope scope;
@@ -164,7 +164,7 @@ void PageScriptDebugServer::addListener(ScriptDebugListener* listener, Page* pag
 
     if (!m_listenersMap.size()) {
         ensureDebuggerScriptCompiled();
-        ASSERT(!m_debuggerScript.get()->IsUndefined());
+        //ASSERT(!m_debuggerScript.get()->IsUndefined());
         v8::Debug::SetDebugEventListener2(&PageScriptDebugServer::v8DebugEventCallback, v8::External::New(this));
     }
     m_listenersMap.set(page, listener);

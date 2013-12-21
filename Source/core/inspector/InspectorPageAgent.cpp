@@ -1217,7 +1217,7 @@ void InspectorPageAgent::setForceCompositingMode(ErrorString* errorString, bool 
         return;
     m_didForceCompositingMode = force;
     settings.setForceCompositingMode(force);
-    Frame* mainFrame = mainFrame();
+    Frame* mainFrame = this->mainFrame();
     if (!mainFrame)
         return;
     mainFrame->view()->updateCompositingLayersAfterStyleChange();

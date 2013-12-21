@@ -38,7 +38,7 @@
 #include "wtf/StdLibExtras.h"
 
 #include "bindings/v8/ScriptController.h"
-#include "core/page/DOMWindow.h"
+#include "core/frame/DOMWindow.h"
 
 #include "third_party/node/src/node.h"
 #include "third_party/node/src/req_wrap.h"

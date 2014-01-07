@@ -51,10 +51,12 @@ inline uint16_t htons(uint16_t x) { return x; }
 inline uint32_t ntohl(uint32_t x) { return WTF::wswap32(x); }
 inline uint32_t htonl(uint32_t x) { return WTF::wswap32(x); }
 #else
+#ifndef _WINSOCK2API_
 inline uint16_t ntohs(uint16_t x) { return WTF::bswap16(x); }
 inline uint16_t htons(uint16_t x) { return WTF::bswap16(x); }
 inline uint32_t ntohl(uint32_t x) { return WTF::bswap32(x); }
 inline uint32_t htonl(uint32_t x) { return WTF::bswap32(x); }
+#endif
 #endif
 
 #endif // OS(WIN)

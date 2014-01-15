@@ -548,12 +548,13 @@ public:
     // Send initial drawing parameters to a child frame that is being rendered out of process.
     virtual void initializeChildFrame(const WebRect& frameRect, float scaleFactor) { }
 
-
     // Screen Orientation --------------------------------------------------
 
     // Access the embedder API for (client-based) screen orientation client .
     virtual WebScreenOrientationClient* webScreenOrientationClient() { return 0; }
 
+    virtual void willHandleNavigationPolicy(
+         WebFrame*, const WebURLRequest&, WebNavigationPolicy*) { }
 protected:
     virtual ~WebFrameClient() { }
 };

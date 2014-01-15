@@ -835,10 +835,20 @@ void FrameLoaderClientImpl::didStopAllLoaders()
         m_webFrame->client()->didAbortLoading(m_webFrame);
 }
 
+
 void FrameLoaderClientImpl::dispatchDidChangeManifest()
 {
     if (m_webFrame->client())
         m_webFrame->client()->didChangeManifest(m_webFrame);
 }
 
+void FrameLoaderClientImpl::willHandleNavigationPolicy(const NavigationAction& action, NavigationPolicy* policy)
+{
+    if (m_webFrame->client()) {
+        WrappedResourceRequest webreq(action.resourceRequest());
+        m_webFrame->client()->willHandleNavigationPolicy(m_webFrame, webreq, (WebNavigationPolicy*)policy);
+    }
+}
+
 } // namespace blink
+

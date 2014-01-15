@@ -34,6 +34,7 @@
 
 #include "core/loader/FrameLoaderClient.h"
 #include "platform/weborigin/KURL.h"
+#include "core/loader/NavigationAction.h"
 #include "wtf/PassOwnPtr.h"
 #include "wtf/RefPtr.h"
 
@@ -166,6 +167,8 @@ public:
     virtual void didStopAllLoaders() OVERRIDE;
 
     virtual void dispatchDidChangeManifest() OVERRIDE;
+
+    virtual void willHandleNavigationPolicy(const blink::NavigationAction& action, blink::NavigationPolicy* policy) OVERRIDE;
 
 private:
     virtual bool isFrameLoaderClientImpl() const OVERRIDE { return true; }

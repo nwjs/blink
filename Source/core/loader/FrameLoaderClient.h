@@ -32,6 +32,7 @@
 
 #include "core/dom/IconURL.h"
 #include "core/loader/FrameLoaderTypes.h"
+#include "core/loader/NavigationAction.h"
 #include "core/loader/NavigationPolicy.h"
 #include "platform/network/ResourceLoadPriority.h"
 #include "wtf/Forward.h"
@@ -233,6 +234,8 @@ class FetchRequest;
         virtual void didStopAllLoaders() { }
 
         virtual bool isFrameLoaderClientImpl() const { return false; }
+
+        virtual void willHandleNavigationPolicy(const NavigationAction& action, NavigationPolicy* policy) {}
     };
 
 } // namespace WebCore

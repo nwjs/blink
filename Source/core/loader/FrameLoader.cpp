@@ -1678,15 +1678,20 @@ void FrameLoader::checkNewWindowPolicyAndContinue(PassRefPtr<FormState> formStat
     NavigationPolicy navigationPolicy = NavigationPolicyNewForegroundTab;
     action.specifiesNavigationPolicy(&navigationPolicy);
 
+    m_client->willHandleNavigationPolicy(action, &navigationPolicy);
+
     if (navigationPolicy == NavigationPolicyDownload) {
         m_client->loadURLExternally(action.resourceRequest(), navigationPolicy);
         return;
     }
 
+    if (navigationPolicy == NavigationPolicyIgnore)
+        return;
+
     RefPtr<Frame> frame = m_frame;
     RefPtr<Frame> mainFrame = m_frame;
 
-    if (!m_frame->settings() || m_frame->settings()->supportsMultipleWindows()) {
+    if (navigationPolicy != NavigationPolicyCurrentTab && (!m_frame->settings() || m_frame->settings()->supportsMultipleWindows())) {
         struct WindowFeatures features;
         Page* newPage = m_frame->page()->chrome().client()->createWindow(m_frame, FrameLoadRequest(m_frame->document()->securityOrigin()),
             features, action, navigationPolicy);
@@ -1701,7 +1706,8 @@ void FrameLoader::checkNewWindowPolicyAndContinue(PassRefPtr<FormState> formStat
         mainFrame->tree()->setName(frameName);
 
     mainFrame->page()->setOpenedByDOM();
-    mainFrame->page()->chrome().show(navigationPolicy);
+    if (navigationPolicy != NavigationPolicyCurrentTab)
+        mainFrame->page()->chrome().show(navigationPolicy);
     if (!m_suppressOpenerInNewFrame) {
         mainFrame->loader()->setOpener(frame.get());
         mainFrame->document()->setReferrerPolicy(frame->document()->referrerPolicy());

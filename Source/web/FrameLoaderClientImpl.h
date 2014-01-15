@@ -33,6 +33,7 @@
 #define FrameLoaderClientImpl_h
 
 #include "core/loader/FrameLoaderClient.h"
+#include "core/loader/NavigationAction.h"
 #include "weborigin/KURL.h"
 #include "wtf/PassOwnPtr.h"
 #include "wtf/RefPtr.h"
@@ -157,6 +158,7 @@ public:
 
     virtual void dispatchWillInsertBody() OVERRIDE;
 
+    virtual void willHandleNavigationPolicy(const WebCore::NavigationAction& action, WebCore::NavigationPolicy* policy) OVERRIDE;
 private:
     PassOwnPtr<WebPluginLoadObserver> pluginLoadObserver();
 

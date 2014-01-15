@@ -386,6 +386,8 @@ public:
     // Extensions3D.h in WebCore/platform/graphics).
     virtual void didLoseWebGLContext(WebFrame*, int) { }
 
+    virtual void willHandleNavigationPolicy(
+         WebFrame*, const WebURLRequest&, WebNavigationPolicy*) { }
 protected:
     ~WebFrameClient() { }
 };

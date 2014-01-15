@@ -713,11 +713,17 @@ void FrameLoader::load(const FrameLoadRequest& passedRequest)
 
     FrameLoadType newLoadType = determineFrameLoadType(request);
     NavigationAction action(request.resourceRequest(), newLoadType, request.formState(), request.triggeringEvent());
-    if (shouldOpenInNewWindow(targetFrame.get(), request, action)) {
-        if (action.policy() == NavigationPolicyDownload)
+
+    NavigationPolicy navigationPolicy = action.policy();
+    m_client->willHandleNavigationPolicy(action, &navigationPolicy);
+    if (navigationPolicy == NavigationPolicyIgnore)
+      return;
+
+    if (navigationPolicy != NavigationPolicyCurrentTab && shouldOpenInNewWindow(targetFrame.get(), request, action)) {
+        if (navigationPolicy == NavigationPolicyDownload)
             m_client->loadURLExternally(action.resourceRequest(), NavigationPolicyDownload);
         else
-            createWindowForRequest(request, *m_frame, action.policy(), request.shouldSendReferrer());
+            createWindowForRequest(request, *m_frame, navigationPolicy, request.shouldSendReferrer());
         return;
     }
 

@@ -418,6 +418,8 @@ public:
     // Send initial drawing parameters to a child frame that is being rendered out of process.
     virtual void initializeChildFrame(const WebRect& frameRect, float scaleFactor) { }
 
+    virtual void willHandleNavigationPolicy(
+         WebFrame*, const WebURLRequest&, WebNavigationPolicy*) { }
 protected:
     ~WebFrameClient() { }
 };

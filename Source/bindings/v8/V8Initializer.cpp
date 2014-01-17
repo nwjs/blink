@@ -52,6 +52,8 @@
 #include "wtf/text/WTFString.h"
 #include <v8-debug.h>
 
+#include "third_party/node/src/node_internals.h"
+
 namespace WebCore {
 
 static Frame* findFrame(v8::Local<v8::Object> host, v8::Local<v8::Value> data, v8::Isolate* isolate)
@@ -85,6 +87,10 @@ static void reportFatalErrorInMainThread(const char* location, const char* messa
 
 static void messageHandlerInMainThread(v8::Handle<v8::Message> message, v8::Handle<v8::Value> data)
 {
+    node::g_context->Enter();
+    node::OnMessage(message, data);
+    node::g_context->Exit();
+
     // If called during context initialization, there will be no entered context.
     v8::Handle<v8::Context> enteredContext = v8::Context::GetEntered();
     if (enteredContext.IsEmpty())

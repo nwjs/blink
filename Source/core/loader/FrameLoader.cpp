@@ -197,6 +197,10 @@ void FrameLoader::init()
     m_frame->document()->cancelParsing();
     m_stateMachine.advanceTo(FrameLoaderStateMachine::DisplayingInitialEmptyDocument);
     m_progressTracker = FrameProgressTracker::create(m_frame);
+
+    if (HTMLFrameOwnerElement* ownerElement = m_frame->ownerElement()) {
+        setUserAgentOverride(ownerElement->fastGetAttribute(nwuseragentAttr));
+    }
 }
 
 void FrameLoader::setDefersLoading(bool defers)
@@ -1300,8 +1304,15 @@ int FrameLoader::numPendingOrLoadingRequests(bool recurse) const
     return count;
 }
 
+void FrameLoader::setUserAgentOverride(const String& agent)
+{
+    m_userAgentOverride = agent;
+}
+
 String FrameLoader::userAgent(const KURL& url) const
 {
+    if (!m_userAgentOverride.isEmpty())
+        return m_userAgentOverride;
     String userAgent = m_client->userAgent(url);
     InspectorInstrumentation::applyUserAgentOverride(m_frame, &userAgent);
     return userAgent;

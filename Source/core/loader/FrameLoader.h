@@ -237,6 +237,8 @@ public:
 
     void updateForSameDocumentNavigation(const KURL&, SameDocumentNavigationSource, PassRefPtr<SerializedScriptValue>, const String& title);
 
+    void setUserAgentOverride(const String& agent);
+
 private:
     bool allChildrenAreComplete() const; // immediate children, not all descendants
 
@@ -341,6 +343,7 @@ private:
     bool m_hasAllowedNavigationViaBeforeUnloadConfirmationPanel;
 
     RefPtr<HistoryItem> m_requestedHistoryItem;
+    String m_userAgentOverride;
 };
 
 } // namespace WebCore

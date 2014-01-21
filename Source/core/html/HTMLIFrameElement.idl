@@ -19,6 +19,7 @@
  */
 
 interface HTMLIFrameElement : HTMLElement {
+<<<<<<< HEAD
     [Reflect] attribute DOMString align;
     [Reflect] attribute DOMString frameBorder;
     [Reflect] attribute DOMString height;
@@ -32,6 +33,7 @@ interface HTMLIFrameElement : HTMLElement {
     [Reflect, URL] attribute DOMString src;
     [Reflect] attribute DOMString srcdoc;
     [Reflect] attribute DOMString width;
+    [Reflect, CustomSetter] attribute DOMString nwUserAgent;
     [Reflect] attribute boolean nwdisable;
     [Reflect] attribute boolean nwfaketop;
 

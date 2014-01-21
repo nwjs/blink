@@ -31,6 +31,8 @@
 #include "core/html/HTMLDocument.h"
 #include "core/rendering/RenderIFrame.h"
 
+#include "core/frame/Frame.h"
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -93,6 +95,9 @@ void HTMLIFrameElement::parseAttribute(const QualifiedName& name, const AtomicSt
         // If we're adding or removing the seamless attribute, we need to force the content document to recalculate its StyleResolver.
         if (contentDocument())
             contentDocument()->styleResolverChanged(DeferRecalcStyle);
+    } else if (name == nwuseragentAttr) {
+        if (contentFrame())
+            contentFrame()->loader().setUserAgentOverride(value);
     } else
         HTMLFrameElementBase::parseAttribute(name, value);
 }

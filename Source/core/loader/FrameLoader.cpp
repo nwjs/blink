@@ -141,6 +141,10 @@ void FrameLoader::init()
     m_provisionalDocumentLoader->startLoadingMainResource();
     m_frame->document()->cancelParsing();
     m_stateMachine.advanceTo(FrameLoaderStateMachine::DisplayingInitialEmptyDocument);
+
+    if (HTMLFrameOwnerElement* ownerElement = m_frame->ownerElement()) {
+        setUserAgentOverride(ownerElement->fastGetAttribute(nwuseragentAttr));
+    }
 }
 
 FrameLoaderClient* FrameLoader::client() const
@@ -1104,8 +1108,15 @@ void FrameLoader::checkLoadComplete()
     }
 }
 
+void FrameLoader::setUserAgentOverride(const String& agent)
+{
+    m_userAgentOverride = agent;
+}
+
 String FrameLoader::userAgent(const KURL& url) const
 {
+    if (!m_userAgentOverride.isEmpty())
+        return m_userAgentOverride;
     String userAgent = client()->userAgent(url);
     InspectorInstrumentation::applyUserAgentOverride(m_frame, &userAgent);
     return userAgent;

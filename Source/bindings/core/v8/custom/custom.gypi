@@ -37,6 +37,7 @@
             'V8HTMLCollectionCustom.cpp',
             'V8HTMLDocumentCustom.cpp',
             'V8HTMLElementCustom.cpp',
+            'V8HTMLIFrameElementCustom.cpp',
             'V8HTMLOptionsCollectionCustom.cpp',
             'V8HTMLPlugInElementCustom.cpp',
             'V8HistoryCustom.cpp',

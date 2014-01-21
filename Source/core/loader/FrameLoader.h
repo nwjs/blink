@@ -189,6 +189,7 @@ public:
     void clearScrollPositionAndViewState();
 
     void restoreScrollPositionAndViewState();
+    void setUserAgentOverride(const String& agent);
 
 private:
     bool allChildrenAreComplete() const; // immediate children, not all descendants
@@ -279,6 +280,7 @@ private:
     SandboxFlags m_forcedSandboxFlags;
 
     bool m_willDetachClient;
+    String m_userAgentOverride;
 };
 
 } // namespace blink

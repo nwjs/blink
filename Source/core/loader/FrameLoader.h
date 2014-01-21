@@ -211,6 +211,8 @@ public:
     };
     void updateForSameDocumentNavigation(const KURL&, SameDocumentNavigationSource, PassRefPtr<SerializedScriptValue>, UpdateBackForwardListPolicy);
 
+    void setUserAgentOverride(const String& agent);
+
 private:
     bool allChildrenAreComplete() const; // immediate children, not all descendants
 
@@ -296,6 +298,8 @@ private:
     bool m_suppressOpenerInNewFrame;
 
     SandboxFlags m_forcedSandboxFlags;
+
+    String m_userAgentOverride;
 };
 
 } // namespace WebCore

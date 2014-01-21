@@ -187,6 +187,7 @@
             'v8/custom/V8HTMLElementCustom.cpp',
             'v8/custom/V8HTMLFormControlsCollectionCustom.cpp',
             'v8/custom/V8HTMLFrameElementCustom.cpp',
+            'v8/custom/V8HTMLIFrameElementCustom.cpp',
             'v8/custom/V8HTMLMediaElementCustom.cpp',
             'v8/custom/V8HTMLOptionsCollectionCustom.cpp',
             'v8/custom/V8HTMLPlugInElementCustom.cpp',

@@ -192,6 +192,7 @@
             'v8/custom/V8HTMLDocumentCustom.cpp',
             'v8/custom/V8HTMLElementCustom.cpp',
             'v8/custom/V8HTMLFrameElementCustom.cpp',
+            'v8/custom/V8HTMLIFrameElementCustom.cpp',
             'v8/custom/V8HTMLOptionsCollectionCustom.cpp',
             'v8/custom/V8HTMLPlugInElementCustom.cpp',
             'v8/custom/V8HistoryCustom.cpp',

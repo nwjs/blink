@@ -192,6 +192,7 @@ public:
     void clearScrollPositionAndViewState();
 
     void restoreScrollPositionAndViewState();
+    void setUserAgentOverride(const String& agent);
 
 private:
     bool allChildrenAreComplete() const; // immediate children, not all descendants
@@ -284,6 +285,8 @@ private:
     Timer<FrameLoader> m_didAccessInitialDocumentTimer;
 
     SandboxFlags m_forcedSandboxFlags;
+
+    String m_userAgentOverride;
 };
 
 } // namespace WebCore

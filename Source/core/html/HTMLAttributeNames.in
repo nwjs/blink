@@ -172,6 +172,7 @@ nwdirectory
 nwdisable
 nwfaketop
 nwsaveas
+nwuseragent
 nwworkingdir
 object
 onabort

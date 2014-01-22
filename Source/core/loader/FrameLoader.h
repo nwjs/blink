@@ -238,6 +238,7 @@ public:
     void updateForSameDocumentNavigation(const KURL&, SameDocumentNavigationSource, PassRefPtr<SerializedScriptValue>, const String& title);
 
     void setUserAgentOverride(const String& agent);
+    String userAgentOverride() const;
 
 private:
     bool allChildrenAreComplete() const; // immediate children, not all descendants

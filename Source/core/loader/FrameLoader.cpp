@@ -1113,6 +1113,11 @@ void FrameLoader::setUserAgentOverride(const String& agent)
     m_userAgentOverride = agent;
 }
 
+String FrameLoader::userAgentOverride() const
+{
+    return m_userAgentOverride;
+}
+
 String FrameLoader::userAgent(const KURL& url) const
 {
     if (!m_userAgentOverride.isEmpty())

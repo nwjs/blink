@@ -190,6 +190,7 @@ public:
 
     void restoreScrollPositionAndViewState();
     void setUserAgentOverride(const String& agent);
+    String userAgentOverride() const;
 
 private:
     bool allChildrenAreComplete() const; // immediate children, not all descendants

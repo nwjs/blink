@@ -30,6 +30,7 @@
 #include "core/dom/Document.h"
 #include "core/loader/FrameLoadRequest.h"
 #include "core/loader/NavigationAction.h"
+#include "core/loader/FrameLoaderClient.h"
 #include "core/page/Chrome.h"
 #include "core/page/ChromeClient.h"
 #include "core/page/Frame.h"
@@ -140,12 +141,26 @@ Frame* createWindow(const String& urlString, const AtomicString& frameName, cons
     FrameLoader::addHTTPOriginIfNeeded(request, firstFrame->loader()->outgoingOrigin());
     FrameLoadRequest frameRequest(activeWindow->document()->securityOrigin(), request, frameName);
 
+    NavigationPolicy navigationPolicy = NavigationPolicyNewForegroundTab;
+    openerFrame->loader().client()->willHandleNavigationPolicy(frameRequest, &navigationPolicy);
+
     // We pass the opener frame for the lookupFrame in case the active frame is different from
     // the opener frame, and the name references a frame relative to the opener frame.
-    bool created;
-    Frame* newFrame = createWindow(activeFrame, openerFrame, frameRequest, windowFeatures, created);
-    if (!newFrame)
+    bool created = false;
+    Frame* newFrame = NULL;
+
+    if (navigationPolicy != NavigationPolicyIgnore &&
+        navigationPolicy != NavigationPolicyCurrentTab) {
+        newFrame = createWindow(activeFrame, openerFrame, frameRequest, windowFeatures, created);
+
+        if (!newFrame)
+            return 0;
+
+        newFrame->loader().setOpener(openerFrame);
+    } else if (navigationPolicy == NavigationPolicyIgnore)
         return 0;
+    else
+        newFrame = openerFrame;
 
     newFrame->loader()->setOpener(openerFrame);
     newFrame->page()->setOpenedByDOM();

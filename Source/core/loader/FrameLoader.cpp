@@ -719,7 +719,7 @@ void FrameLoader::load(const FrameLoadRequest& passedRequest)
     NavigationAction action(request.resourceRequest(), newLoadType, request.formState(), request.triggeringEvent());
 
     NavigationPolicy navigationPolicy = action.policy();
-    m_client->willHandleNavigationPolicy(action, &navigationPolicy);
+    m_client->willHandleNavigationPolicy(request, &navigationPolicy);
     if (navigationPolicy == NavigationPolicyIgnore)
       return;
 

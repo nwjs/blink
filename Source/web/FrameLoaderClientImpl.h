@@ -158,7 +158,7 @@ public:
 
     virtual void dispatchWillInsertBody() OVERRIDE;
 
-    virtual void willHandleNavigationPolicy(const WebCore::NavigationAction& action, WebCore::NavigationPolicy* policy) OVERRIDE;
+    virtual void willHandleNavigationPolicy(const WebCore::FrameLoadRequest& request, WebCore::NavigationPolicy* policy) OVERRIDE;
 private:
     PassOwnPtr<WebPluginLoadObserver> pluginLoadObserver();
 

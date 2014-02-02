@@ -181,7 +181,11 @@ bool UserGestureIndicator::processingUserGesture()
 {
     if (!isMainThread())
         return false;
+#if 0
     return s_topmostIndicator && static_cast<GestureToken*>(s_topmostIndicator->currentToken())->hasGestures() && (s_state == DefinitelyProcessingNewUserGesture || s_state == DefinitelyProcessingUserGesture);
+#endif
+    //Enable scripts to emulate all kinds of user gesture
+    return true;
 }
 
 bool UserGestureIndicator::consumeUserGesture()

@@ -87,17 +87,20 @@ static void reportFatalErrorInMainThread(const char* location, const char* messa
 
 static void messageHandlerInMainThread(v8::Handle<v8::Message> message, v8::Handle<v8::Value> data)
 {
-#if 0
-    node::g_context->Enter();
-    node::OnMessage(message, data);
-    node::g_context->Exit();
-#endif
     // If called during context initialization, there will be no entered context.
     v8::Handle<v8::Context> enteredContext = v8::Context::GetEntered();
     if (enteredContext.IsEmpty())
         return;
 
     DOMWindow* firstWindow = toDOMWindow(enteredContext);
+    {
+        Frame* frame = firstWindow->document()->frame();
+        if (frame && frame->isNodeJS()) {
+            node::g_context->Enter();
+            node::OnMessage(message, data);
+            node::g_context->Exit();
+        }
+    }
     if (!firstWindow->isCurrentlyDisplayedInFrame())
         return;
 

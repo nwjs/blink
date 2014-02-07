@@ -88,11 +88,6 @@ static void reportFatalErrorInMainThread(const char* location, const char* messa
 static void messageHandlerInMainThread(v8::Handle<v8::Message> message, v8::Handle<v8::Value> data)
 {
     ASSERT(isMainThread());
-#if 0
-    node::g_context->Enter();
-    node::OnMessage(message, data);
-    node::g_context->Exit();
-#endif
     // It's possible that messageHandlerInMainThread() is invoked while we're initializing a window.
     // In that half-baked situation, we don't have a valid context nor a valid world,
     // so just return immediately.
@@ -102,6 +97,15 @@ static void messageHandlerInMainThread(v8::Handle<v8::Message> message, v8::Hand
     v8::Isolate* isolate = v8::Isolate::GetCurrent();
     // If called during context initialization, there will be no entered window.
     DOMWindow* enteredWindow = enteredDOMWindow(isolate);
+    if (enteredDOMWindow)  {
+        Frame* frame = firstWindow->document()->frame();
+        if (frame && frame->isNodeJS()) {
+            node::g_context->Enter();
+            node::OnMessage(message, data);
+            node::g_context->Exit();
+        }
+    }
+
     if (!enteredWindow || !enteredWindow->isCurrentlyDisplayedInFrame())
         return;
 

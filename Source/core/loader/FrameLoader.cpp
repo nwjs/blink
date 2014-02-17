@@ -697,7 +697,7 @@ static bool shouldOpenInNewWindow(LocalFrame* targetFrame, const FrameLoadReques
         return true;
     // FIXME: This case is a workaround for the fact that ctrl+clicking a form submission incorrectly
     // sends as a GET rather than a POST if it creates a new window in a different process.
-    return request.formState() && action.shouldOpenInNewWindow();
+    return action.shouldOpenInNewWindow();
 }
 
 static WebURLRequest::RequestContext determineRequestContextFromNavigationType(const NavigationType navigationType)

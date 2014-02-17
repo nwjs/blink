@@ -822,10 +822,10 @@ void FrameLoaderClientImpl::dispatchWillInsertBody()
         m_webFrame->client()->willInsertBody(m_webFrame);
 }
 
-void FrameLoaderClientImpl::willHandleNavigationPolicy(const FrameLoadRequest& request, NavigationPolicy* policy)
+void FrameLoaderClientImpl::willHandleNavigationPolicy(const ResourceRequest& request, NavigationPolicy* policy)
 {
     if (m_webFrame->client()) {
-        WrappedResourceRequest webreq(request.resourceRequest());
+        WrappedResourceRequest webreq(request);
         m_webFrame->client()->willHandleNavigationPolicy(m_webFrame, webreq, (WebNavigationPolicy*)policy);
     }
 }

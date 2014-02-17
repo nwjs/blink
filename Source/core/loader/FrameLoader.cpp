@@ -696,8 +696,11 @@ static bool shouldOpenInNewWindow(Frame* targetFrame, const FrameLoadRequest& re
 {
     if (!targetFrame && !request.frameName().isEmpty())
         return true;
+#if 0  // nw: should check middle click and ctrl-click here
+       // normally it's checked later in DocumentLoader::shouldContinueForNavigationPolicy()
     if (!request.formState())
         return false;
+#endif
     NavigationPolicy navigationPolicy = NavigationPolicyCurrentTab;
     if (!action.specifiesNavigationPolicy(&navigationPolicy))
         return false;

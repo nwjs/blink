@@ -33,10 +33,10 @@
 #include "core/dom/IconURL.h"
 #include "core/frame/FrameClient.h"
 #include "core/loader/FrameLoaderTypes.h"
-#include "core/loader/FrameLoadRequest.h"
 #include "core/loader/NavigationPolicy.h"
 #include "platform/network/ResourceLoadPriority.h"
 #include "platform/weborigin/Referrer.h"
+#include "platform/network/ResourceRequest.h"
 #include "wtf/Forward.h"
 #include "wtf/Vector.h"
 #include <v8.h>
@@ -233,7 +233,7 @@ namespace blink {
 
         virtual bool isFrameLoaderClientImpl() const { return false; }
 
-        virtual void willHandleNavigationPolicy(const FrameLoadRequest& request, NavigationPolicy* policy) {}
+        virtual void willHandleNavigationPolicy(const ResourceRequest& request, NavigationPolicy* policy) {}
     };
 
 } // namespace blink

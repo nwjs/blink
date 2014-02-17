@@ -749,7 +749,7 @@ void FrameLoader::load(const FrameLoadRequest& passedRequest)
         action.mutableResourceRequest().setRequestContext(determineRequestContextFromNavigationType(action.type()));
     if (shouldOpenInNewWindow(targetFrame.get(), request, action)) {
         NavigationPolicy navigationPolicy = action.policy();
-        m_client->willHandleNavigationPolicy(request, &navigationPolicy);
+        m_client->willHandleNavigationPolicy(request.resourceRequest(), &navigationPolicy);
         if (navigationPolicy == NavigationPolicyIgnore)
             return;
         if (navigationPolicy == NavigationPolicyDownload)

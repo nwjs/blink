@@ -160,7 +160,7 @@ public:
 
     virtual void didStopAllLoaders() OVERRIDE;
 
-    virtual void willHandleNavigationPolicy(const WebCore::FrameLoadRequest& request, WebCore::NavigationPolicy* policy) OVERRIDE;
+    virtual void willHandleNavigationPolicy(const WebCore::ResourceRequest& request, WebCore::NavigationPolicy* policy) OVERRIDE;
 private:
     virtual bool isFrameLoaderClientImpl() const OVERRIDE { return true; }
 

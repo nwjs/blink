@@ -1416,7 +1416,7 @@ void FrameLoader::checkNewWindowPolicyAndContinue(PassRefPtr<FormState> formStat
     NavigationPolicy navigationPolicy = NavigationPolicyNewForegroundTab;
     action.specifiesNavigationPolicy(&navigationPolicy);
 
-    m_client->willHandleNavigationPolicy(request, &navigationPolicy);
+    m_client->willHandleNavigationPolicy(request.resourceRequest(), &navigationPolicy);
 
     if (navigationPolicy == NavigationPolicyDownload) {
         m_client->loadURLExternally(action.resourceRequest(), navigationPolicy);

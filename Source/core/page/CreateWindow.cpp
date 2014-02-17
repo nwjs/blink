@@ -133,7 +133,7 @@ Frame* createWindow(const String& urlString, const AtomicString& frameName, cons
     FrameLoadRequest frameRequest(activeWindow->document()->securityOrigin(), request, frameName);
 
     NavigationPolicy navigationPolicy = NavigationPolicyNewForegroundTab;
-    openerFrame->loader().client()->willHandleNavigationPolicy(frameRequest, &navigationPolicy);
+    openerFrame->loader().client()->willHandleNavigationPolicy(frameRequest.resourceRequest(), &navigationPolicy);
 
     // We pass the opener frame for the lookupFrame in case the active frame is different from
     // the opener frame, and the name references a frame relative to the opener frame.

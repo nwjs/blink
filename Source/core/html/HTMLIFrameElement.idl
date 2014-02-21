@@ -19,7 +19,6 @@
  */
 
 interface HTMLIFrameElement : HTMLElement {
-<<<<<<< HEAD
     [Reflect] attribute DOMString align;
     [Reflect] attribute DOMString frameBorder;
     [Reflect] attribute DOMString height;

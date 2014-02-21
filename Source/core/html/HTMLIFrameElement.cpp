@@ -31,7 +31,7 @@
 #include "core/html/HTMLDocument.h"
 #include "core/rendering/RenderIFrame.h"
 
-#include "core/frame/Frame.h"
+#include "core/page/Frame.h"
 
 namespace WebCore {
 
@@ -97,7 +97,7 @@ void HTMLIFrameElement::parseAttribute(const QualifiedName& name, const AtomicSt
             contentDocument()->styleResolverChanged(DeferRecalcStyle);
     } else if (name == nwuseragentAttr) {
         if (contentFrame())
-            contentFrame()->loader().setUserAgentOverride(value);
+            contentFrame()->loader()->setUserAgentOverride(value);
     } else
         HTMLFrameElementBase::parseAttribute(name, value);
 }

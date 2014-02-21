@@ -35,8 +35,7 @@
 #include "core/loader/NavigationPolicy.h"
 #include "core/page/LayoutMilestones.h"
 #include "core/platform/network/ResourceLoadPriority.h"
-#include "platform/network/ResourceLoadPriority.h"
-#include "platform/network/ResourceRequest.h"
+#include "core/platform/network/ResourceRequest.h"
 #include "wtf/Forward.h"
 #include "wtf/Vector.h"
 

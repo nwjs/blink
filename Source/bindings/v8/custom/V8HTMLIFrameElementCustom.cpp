@@ -38,23 +38,23 @@
 #include "core/html/HTMLFrameElement.h"
 #include "core/html/parser/HTMLParserIdioms.h"
 #include "core/loader/FrameLoader.h"
-#include "core/frame/Frame.h"
+#include "core/page/Frame.h"
 
 namespace WebCore {
 
 using namespace HTMLNames;
 
-void V8HTMLIFrameElement::nwUserAgentAttributeSetterCustom(v8::Local<v8::Value> value, const v8::PropertyCallbackInfo<void>& info)
+void V8HTMLIFrameElement::nwUserAgentAttrSetterCustom(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::PropertyCallbackInfo<void>& info)
 {
     HTMLIFrameElement* frame = V8HTMLIFrameElement::toNative(info.Holder());
     String agentValue = toWebCoreStringWithNullCheck(value);
 
-    ExceptionState es(info.GetIsolate());
+    //    ExceptionState es(info.GetIsolate());
 
     frame->setAttribute(HTMLNames::nwuseragentAttr, agentValue);
 
     if (frame->contentFrame())
-      frame->contentFrame()->loader().setUserAgentOverride(agentValue);
+      frame->contentFrame()->loader()->setUserAgentOverride(agentValue);
 }
 
 } // namespace WebCore

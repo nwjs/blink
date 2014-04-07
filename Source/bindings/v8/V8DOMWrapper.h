@@ -32,10 +32,13 @@
 #define V8DOMWrapper_h
 
 #include "bindings/v8/DOMDataStore.h"
+#include "bindings/v8/V8Binding.h"
+
 #include <v8.h>
 #include "wtf/PassRefPtr.h"
 #include "wtf/RawPtr.h"
 #include "wtf/text/AtomicString.h"
+
 
 #include "third_party/node/src/node.h"
 #include "third_party/node/src/req_wrap.h"
@@ -142,8 +145,7 @@ struct WrapperTypeInfo;
             // If a creationContext is empty, we will end up creating a new object
             // in the context currently entered. This is wrong.
             if (m_context == node::g_context) {
-                DOMWindow* window = toDOMWindow(m_context);
-                m_context = ScriptController::mainWorldContext(window->frame());
+                m_context = nodeToDOMContext(m_context);
             }
             if (creationContext.IsEmpty())
                 return;

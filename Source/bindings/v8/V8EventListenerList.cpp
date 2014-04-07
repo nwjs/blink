@@ -55,7 +55,7 @@ PassRefPtr<EventListener> V8EventListenerList::getEventListener(v8::Local<v8::Va
     }
     if (context == node::g_context) {
         DOMWindow* window = toDOMWindow(context);
-        context = ScriptController::mainWorldContext(window->frame());
+        context = toV8Context(isolate, window->frame(), DOMWrapperWorld::mainWorld());
     }
     if (toDOMWindow(context))
         return V8EventListenerList::findOrCreateWrapper<V8EventListener>(value, isAttribute, isolate);

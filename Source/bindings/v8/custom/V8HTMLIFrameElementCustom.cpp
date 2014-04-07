@@ -47,14 +47,13 @@ using namespace HTMLNames;
 void V8HTMLIFrameElement::nwUserAgentAttributeSetterCustom(v8::Local<v8::Value> value, const v8::PropertyCallbackInfo<void>& info)
 {
     HTMLIFrameElement* frame = V8HTMLIFrameElement::toNative(info.Holder());
-    String agentValue = toWebCoreStringWithNullCheck(value);
-
-    ExceptionState es(info.GetIsolate());
+    // String agentValue = toCoreStringWithNullCheck(value);
+    V8TRYCATCH_FOR_V8STRINGRESOURCE_VOID(V8StringResource<WithNullCheck>, agentValue, value);
 
     frame->setAttribute(HTMLNames::nwuseragentAttr, agentValue);
 
     if (frame->contentFrame())
-      frame->contentFrame()->loader().setUserAgentOverride(agentValue);
+      toLocalFrame(frame->contentFrame())->loader().setUserAgentOverride(agentValue);
 }
 
 } // namespace WebCore

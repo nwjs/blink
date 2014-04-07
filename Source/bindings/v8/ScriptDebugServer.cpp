@@ -508,14 +508,14 @@ void ScriptDebugServer::dispatchDidParseSource(ScriptDebugListener* listener, v8
     ScriptDebugListener::Script script;
     v8::Handle<v8::String> v8String;
     //script.url = toWebCoreStringWithUndefinedOrNullCheck(object->Get(v8::String::NewSymbol("name")));
-    v8String = object->Get(v8::String::NewSymbol("name"))->ToString();
+    v8String = object->Get(v8AtomicString(m_isolate, "name"))->ToString();
     int length = v8String->Length();
     script.url = StringTraits<String>::fromV8String<false>(v8String, length);
 
-    v8String = object->Get(v8::String::NewSymbol("source"))->ToString();
+    v8String = object->Get(v8AtomicString(m_isolate, "source"))->ToString();
     length = v8String->Length();
     script.source = StringTraits<String>::fromV8String<false>(v8String, length);
-    v8String = object->Get(v8::String::NewSymbol("sourceMappingURL"))->ToString();
+    v8String = object->Get(v8AtomicString(m_isolate, "sourceMappingURL"))->ToString();
     length = v8String->Length();
     script.sourceMappingURL = StringTraits<String>::fromV8String<false>(v8String, length);
     //script.sourceMappingURL = toWebCoreStringWithUndefinedOrNullCheck(object->Get(v8::String::NewSymbol("sourceMappingURL")));
@@ -526,7 +526,7 @@ void ScriptDebugServer::dispatchDidParseSource(ScriptDebugListener* listener, v8
     script.endColumn = object->Get(v8AtomicString(m_isolate, "endColumn"))->ToInteger()->Value();
     script.isContentScript = object->Get(v8AtomicString(m_isolate, "isContentScript"))->ToBoolean()->Value();
 
-    v8String = object->Get(v8::String::NewSymbol("context_data"))->ToString();
+    v8String = object->Get(v8AtomicString(m_isolate, "context_data"))->ToString();
     length = v8String->Length();
     script.context_data = StringTraits<String>::fromV8String<false>(v8String, length);
 

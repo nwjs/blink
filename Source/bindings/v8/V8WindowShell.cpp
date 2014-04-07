@@ -380,8 +380,8 @@ void V8WindowShell::clearDocumentProperty()
 
 void V8WindowShell::setSecurityToken(SecurityOrigin* origin)
 {
-    if (m_frame->loader()->client()->willSetSecurityToken(m_context.get()))
-        return;
+  if (m_frame->loader().client()->willSetSecurityToken(context()))
+    return;
 
     ASSERT(m_world->isMainWorld());
     // If two tokens are equal, then the SecurityOrigins canAccess each other.

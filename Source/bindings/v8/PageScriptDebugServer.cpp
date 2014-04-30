@@ -152,7 +152,7 @@ void PageScriptDebugServer::addListener(ScriptDebugListener* listener, Page* pag
 
     if (!m_listenersMap.size()) {
         ensureDebuggerScriptCompiled();
-        ASSERT(!m_debuggerScript.get()->IsUndefined());
+        //ASSERT(!m_debuggerScript.get()->IsUndefined());
         v8::Debug::SetDebugEventListener2(&PageScriptDebugServer::v8DebugEventCallback, v8::External::New(this));
     }
     m_listenersMap.set(page, listener);

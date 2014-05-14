@@ -60,4 +60,35 @@ void V8File::constructorCustom(const v8::FunctionCallbackInfo<v8::Value>& args)
     v8SetReturnValue(args, impl.release());
 }
 
+void V8File::lastModifiedDateAttributeGetterCustom(const v8::PropertyCallbackInfo<v8::Value>& info)
+{
+  // The auto-generated getters return null when the method in
+  // the underlying
+  // implementation returns NaN. The File API says we should
+  // return the
+  // current time when the last modification time is unknown.
+  // Section 7.2 of the File API
+  // spec. http://dev.w3.org/2006/webapi/FileAPI/
+
+  File* file = V8File::toNative(info.Holder());
+  double lastModified = file->lastModifiedDate();
+  if (!isValidFileTime(lastModified))
+    lastModified = currentTimeMS();
+
+  // lastModifiedDate returns a Date instance.
+  // http://www.w3.org/TR/FileAPI/#file-attrs
+  v8SetReturnValue(info, v8::Date::New(info.GetIsolate(), lastModified));
+}
+
+void V8File::lastModifiedAttributeGetterCustom(const v8::PropertyCallbackInfo<v8::Value>& info)
+{
+  File* file = V8File::toNative(info.Holder());
+  double lastModified = file->lastModifiedDate();
+  if (!isValidFileTime(lastModified))
+    lastModified = currentTimeMS();
+  // lastModified returns a number, not a Date instance.
+  // http://dev.w3.org/2006/webapi/FileAPI/#file-attrs
+  v8SetReturnValue(info, floor(lastModified));
+}
+
 } // namespace WebCore

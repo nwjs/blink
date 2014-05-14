@@ -60,7 +60,7 @@ void V8XMLHttpRequest::constructorCustom(const v8::FunctionCallbackInfo<v8::Valu
 
     RefPtr<SecurityOrigin> securityOrigin;
     if (context->isDocument()) {
-        v8::Local<v8::Context> v8context = v8::Context::GetEntered();
+      v8::Local<v8::Context> v8context = info.GetIsolate()->GetEnteredContext();
         if (v8context == node::g_context)
             securityOrigin = context->securityOrigin();
         else {

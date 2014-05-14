@@ -308,7 +308,7 @@ public:
     void setDevtoolsJail(WebFrame* iframe) {
       frame()->setDevtoolsJail(iframe ? static_cast<const WebFrameImpl*>(iframe)->frame() : NULL);
     }
-    WebFrame* getDevtoolsJail() { return fromFrame(frame()->getDevtoolsJail()); }
+    WebFrame* getDevtoolsJail() { return fromFrame((WebCore::LocalFrame*)frame()->getDevtoolsJail()); }
 
     static void selectWordAroundPosition(WebCore::LocalFrame*, WebCore::VisiblePosition);
 

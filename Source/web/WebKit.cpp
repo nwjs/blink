@@ -60,6 +60,11 @@
 #include "wtf/text/TextEncoding.h"
 #include <v8.h>
 
+#include "third_party/node/src/node.h"
+#undef CHECK
+#include "third_party/node/src/node_internals.h"
+#include "third_party/node/src/req_wrap.h"
+
 namespace blink {
 
 namespace {
@@ -100,9 +105,20 @@ static void assertV8RecursionScope()
 }
 #endif
 
+static inline v8::Local<v8::String> v8_str(const char* x) {
+  return v8::String::NewFromUtf8(v8::Isolate::GetCurrent(), x);
+}
+
 void initialize(Platform* platform)
 {
     initializeWithoutV8(platform);
+
+    if (platform->supportNodeJS()) {
+      int argc = 1;
+      char* argv[] = { const_cast<char*>("node"), NULL, NULL };
+      // Initialize uv.
+      node::SetupUv(argc, argv);
+    }
 
     v8::Isolate* isolate = v8::Isolate::GetCurrent();
     WebCore::V8Initializer::initializeMainThreadIfNeeded(isolate);
@@ -124,6 +140,20 @@ void initialize(Platform* platform)
         s_endOfTaskRunner = new EndOfTaskRunner;
         currentThread->addTaskObserver(s_endOfTaskRunner);
     }
+
+    if (platform->supportNodeJS()) {
+      int argc = 1;
+      char* argv[] = { const_cast<char*>("node"), NULL, NULL };
+
+      v8::Handle<v8::Context> context = v8::Context::New(v8::Isolate::GetCurrent(), NULL);
+      node::g_context.Reset(v8::Isolate::GetCurrent(), context);
+      context->SetSecurityToken(v8_str("nw-token"));
+      context->Enter();
+      context->SetEmbedderData(0, v8_str("node"));
+
+      node::SetupContext(argc, argv, context);
+    }
+
 }
 
 v8::Isolate* mainThreadIsolate()

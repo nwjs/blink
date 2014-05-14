@@ -632,7 +632,11 @@ public:
     virtual WebDatabaseObserver* databaseObserver() { return 0; }
 
 
-protected:
+    // node-webkit --------------------------------------------------------
+
+    virtual bool supportNodeJS() { return false; }
+
+ protected:
     virtual ~Platform() { }
 };
 

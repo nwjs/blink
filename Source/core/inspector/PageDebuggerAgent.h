@@ -62,12 +62,11 @@ protected:
     virtual void enable() OVERRIDE;
     virtual void disable() OVERRIDE;
 
-    virtual PageScriptDebugServer& scriptDebugServer();
+    virtual PageScriptDebugServer& scriptDebugServer() OVERRIDE;
 
 private:
     virtual void startListeningScriptDebugServer() OVERRIDE;
     virtual void stopListeningScriptDebugServer() OVERRIDE;
-    virtual PageScriptDebugServer& scriptDebugServer() OVERRIDE;
     virtual void muteConsole() OVERRIDE;
     virtual void unmuteConsole() OVERRIDE;
 

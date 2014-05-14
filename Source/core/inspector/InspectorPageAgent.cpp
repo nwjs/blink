@@ -886,8 +886,8 @@ void InspectorPageAgent::frameDetachedFromParent(LocalFrame* frame)
 
 LocalFrame* InspectorPageAgent::mainFrame()
 {
-    Frame* main_frame = m_page->mainFrame();
-    Frame* jail_frame = main_frame->getDevtoolsJail();
+    LocalFrame* main_frame = m_page->mainFrame();
+    LocalFrame* jail_frame = (LocalFrame*)main_frame->getDevtoolsJail();
     return jail_frame ? jail_frame : main_frame;
 }
 
@@ -1221,9 +1221,9 @@ bool InspectorPageAgent::forceCompositingMode(ErrorString* errorString)
     if (settings.forceCompositingMode())
         return true;
     settings.setForceCompositingMode(true);
-    LocalFrame* mainFrame = mainFrame();
-    if (mainFrame)
-        mainFrame->view()->updateCompositingLayersAfterStyleChange();
+    LocalFrame* main_frame = mainFrame();
+    if (main_frame)
+        main_frame->view()->updateCompositingLayersAfterStyleChange();
     return true;
 }
 

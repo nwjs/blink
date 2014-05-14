@@ -61,18 +61,21 @@ namespace WebCore {
 
 static LocalFrame* retrieveFrameWithNodeContext(v8::Handle<v8::Context> context)
 {
-  v8::HandleScope handle_scope;
+  v8::Isolate* isolate = context->GetIsolate();
+  v8::HandleScope handle_scope(isolate);
+  v8::Local<v8::Context> node_context =
+    v8::Local<v8::Context>::New(isolate, node::g_context);
 
-  v8::Context::Scope context_scope(node::g_context);
-  v8::Handle<v8::Object> global = node::g_context->Global();
-  v8::Local<v8::Value> val_window = global->Get(v8::String::New("window"));
+  v8::Context::Scope context_scope(node_context);
+  v8::Handle<v8::Object> global = node_context->Global();
+  v8::Local<v8::Value> val_window = global->Get(v8AtomicString(isolate, "window"));
   if (val_window->IsUndefined())
     return 0;
   v8::Local<v8::Object> window = v8::Local<v8::Object>::Cast(val_window);
-  global = window->FindInstanceInPrototypeChain(V8DOMWindow::GetTemplate(context->GetIsolate(), worldTypeInMainThread(context->GetIsolate())));
+  global = V8Window::findInstanceInPrototypeChain(window, isolate);
   if (global.IsEmpty())
     return 0;
-  DOMWindow* win = V8DOMWindow::toNative(global);
+  DOMWindow* win = V8Window::toNative(global);
   if (!win)
     return 0;
   return win->frame();
@@ -90,7 +93,7 @@ static LocalFrame* retrieveFrameWithGlobalObjectCheck(v8::Handle<v8::Context> co
     // because there is no way in the embedder side to check if the context is half-baked or not.
     if (isMainThread() && DOMWrapperWorld::windowIsBeingInitialized())
         return 0;
-    v8::HandleScope handle_scope;
+    v8::HandleScope handle_scope(context->GetIsolate());
 
     {
       v8::Handle<v8::Object> global = context->Global();
@@ -127,12 +130,12 @@ PageScriptDebugServer::PageScriptDebugServer()
 {
 }
 
-void PageScriptDebugServer::rescanScripts(Frame* frame)
+void PageScriptDebugServer::rescanScripts(LocalFrame* frame)
 {
     ScriptDebugListener* listener = m_listenersMap.get(frame->page());
     if (!listener)
         return;
-    ScriptController* scriptController = frame->script();
+    ScriptController* scriptController = &frame->script();
     if (!scriptController->canExecuteScripts(NotAboutToExecuteScript))
         return;
 
@@ -146,19 +149,19 @@ void PageScriptDebugServer::rescanScripts(Frame* frame)
         ASSERT(!debuggerScript->IsUndefined());
         v8::Debug::SetDebugEventListener2(&PageScriptDebugServer::v8DebugEventCallback, v8::External::New(m_isolate, this));
     }
-    m_listenersMap.set(page, listener);
+    m_listenersMap.set(frame->page(), listener);
 
-    V8WindowShell* shell = scriptController.existingWindowShell(DOMWrapperWorld::mainWorld());
+    V8WindowShell* shell = scriptController->existingWindowShell(DOMWrapperWorld::mainWorld());
     if (!shell || !shell->isContextInitialized())
         return;
     v8::Local<v8::Context> context = shell->context();
     v8::Handle<v8::Function> getScriptsFunction = v8::Local<v8::Function>::Cast(debuggerScript->Get(v8AtomicString(m_isolate, "getScripts")));
 
-    v8::Handle<v8::Value> prefix = v8::String::New("");
-    Frame* jail;
-    if ((jail = frame->getDevtoolsJail()) && jail->ownerElement()) {
+    v8::Handle<v8::Value> prefix = v8AtomicString(m_isolate, "");
+    LocalFrame* jail;
+    if ((jail = (LocalFrame*)frame->getDevtoolsJail()) && jail->ownerElement()) {
       String id = jail->ownerElement()->getIdAttribute();
-      prefix = v8::String::New(id.ascii().data());
+      prefix = v8AtomicString(m_isolate, id.ascii().data());
     }
 
     v8::Handle<v8::Value> argv[] = { context->GetEmbedderData(0), prefix };
@@ -173,18 +176,18 @@ void PageScriptDebugServer::rescanScripts(Frame* frame)
 
 void PageScriptDebugServer::addListener(ScriptDebugListener* listener, Page* page)
 {
-    ScriptController* scriptController = page->mainFrame()->script();
+    ScriptController* scriptController = &page->mainFrame()->script();
     if (!scriptController->canExecuteScripts(NotAboutToExecuteScript))
         return;
 
-    v8::HandleScope scope;
+    v8::HandleScope scope(m_isolate);
     v8::Local<v8::Context> debuggerContext = v8::Debug::GetDebugContext();
     v8::Context::Scope contextScope(debuggerContext);
 
     if (!m_listenersMap.size()) {
         ensureDebuggerScriptCompiled();
-        ASSERT(!m_debuggerScript.get()->IsUndefined());
-        v8::Debug::SetDebugEventListener2(&PageScriptDebugServer::v8DebugEventCallback, v8::External::New(this));
+        //ASSERT(!m_debuggerScript.get()->IsUndefined());
+        v8::Debug::SetDebugEventListener2(&PageScriptDebugServer::v8DebugEventCallback, v8::External::New(m_isolate, this));
     }
     m_listenersMap.set(page, listener);
     rescanScripts(page->mainFrame());

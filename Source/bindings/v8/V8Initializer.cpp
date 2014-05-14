@@ -100,10 +100,15 @@ static void messageHandlerInMainThread(v8::Handle<v8::Message> message, v8::Hand
     if (enteredWindow)  {
         Frame* frame = enteredWindow->document()->frame();
         if (frame && frame->isNodeJS()) {
-            node::g_context->Enter();
+            v8::Local<v8::Context> node_context =
+                v8::Local<v8::Context>::New(isolate, node::g_context);
+            node_context->Enter();
             node::OnMessage(message, data);
-            node::g_context->Exit();
+            node_context->Exit();
         }
+    }else{
+        node::OnMessage(message, data);
+        return;
     }
 
     if (!enteredWindow || !enteredWindow->isCurrentlyDisplayedInFrame())

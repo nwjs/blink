@@ -134,7 +134,7 @@ LocalFrame* createWindow(const String& urlString, const AtomicString& frameName,
     FrameLoadRequest frameRequest(callingWindow.document(), request, frameName);
 
     NavigationPolicy navigationPolicy = NavigationPolicyNewForegroundTab;
-    openerFrame->loader().client()->willHandleNavigationPolicy(frameRequest.resourceRequest(), &navigationPolicy);
+    openerFrame.loader().client()->willHandleNavigationPolicy(frameRequest.resourceRequest(), &navigationPolicy);
 
     // We pass the opener frame for the lookupFrame in case the active frame is different from
     // the opener frame, and the name references a frame relative to the opener frame.
@@ -152,7 +152,7 @@ LocalFrame* createWindow(const String& urlString, const AtomicString& frameName,
     } else if (navigationPolicy == NavigationPolicyIgnore)
         return 0;
     else
-        newFrame = openerFrame;
+        newFrame = &openerFrame;
 
     newFrame->page()->setOpenedByDOM();
 
@@ -162,7 +162,7 @@ LocalFrame* createWindow(const String& urlString, const AtomicString& frameName,
     if (function)
         function(newFrame->domWindow(), functionContext);
 
-    String agent = openerFrame->loader().userAgentOverride();
+    String agent = openerFrame.loader().userAgentOverride();
     if (!agent.isEmpty())
         newFrame->loader().setUserAgentOverride(agent);
 

@@ -45,6 +45,7 @@
 #include "core/dom/ExceptionCode.h"
 #include "core/fetch/ImageResource.h"
 #include "core/frame/ImageBitmap.h"
+#include "core/frame/LocalFrame.h"
 #include "core/html/HTMLCanvasElement.h"
 #include "core/html/HTMLImageElement.h"
 #include "core/html/HTMLMediaElement.h"
@@ -1724,7 +1725,7 @@ PassRefPtr<ImageData> CanvasRenderingContext2D::webkitGetImageDataHD(float sx, f
 
 PassRefPtr<ImageData> CanvasRenderingContext2D::getImageData(float sx, float sy, float sw, float sh, ExceptionState& exceptionState) const
 {
-    if (!canvas()->document()->frame()->isNodeJS() && !canvas()->originClean())
+    if (!canvas()->document().frame()->isNodeJS() && !canvas()->originClean())
         exceptionState.throwSecurityError("The canvas has been tainted by cross-origin data.");
     else if (!sw || !sh)
         exceptionState.throwDOMException(IndexSizeError, String::format("The source %s is 0.", sw ? "height" : "width"));

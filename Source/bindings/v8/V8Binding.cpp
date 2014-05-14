@@ -489,7 +489,8 @@ static DOMWindow* DOMWindowFromNode(v8::Handle<v8::Context> context)
     v8::Context::Scope context_scope(node_context);
     v8::Handle<v8::Object> global = node_context->Global();
     v8::Local<v8::Value> val_window = global->Get(v8AtomicString(context->GetIsolate(), "window"));
-    ASSERT (!val_window->IsUndefined());
+    if (val_window->IsUndefined())
+        return NULL;
     v8::Local<v8::Object> window = v8::Local<v8::Object>::Cast(val_window);
     global = V8Window::findInstanceInPrototypeChain(window, context->GetIsolate());
     ASSERT (!global.IsEmpty());
@@ -508,7 +509,7 @@ DOMWindow* toDOMWindow(v8::Handle<v8::Context> context)
 
 v8::Handle<v8::Context> nodeToDOMContext(v8::Handle<v8::Context> context) {
     DOMWindow* window = toDOMWindow(context);
-    return ScriptController::mainWorldContext(window->frame());
+    return toV8Context(context->GetIsolate(), window->frame(), DOMWrapperWorld::mainWorld());
 }
 
 DOMWindow* enteredDOMWindow(v8::Isolate* isolate)

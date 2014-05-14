@@ -294,7 +294,7 @@ void WebDevToolsAgentImpl::didCreateScriptContext(WebFrameImpl* webframe, int wo
           prefix = "(null)." + prefix;
       }else
         prefix = "(null)." + prefix;
-      f = f->tree()->parent();
+      f = f->tree().parent();
     }
     if (WebCore::LocalFrame* frame = webframe->frame())
         frame->script().setContextDebugId(m_hostId, prefix.ascii().data());

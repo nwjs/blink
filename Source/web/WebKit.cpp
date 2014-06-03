@@ -144,16 +144,16 @@ void initialize(Platform* platform)
     if (platform->supportNodeJS()) {
       int argc = 1;
       char* argv[] = { const_cast<char*>("node"), NULL, NULL };
-
-      v8::Handle<v8::Context> context = v8::Context::New(v8::Isolate::GetCurrent(), NULL);
-      node::g_context.Reset(v8::Isolate::GetCurrent(), context);
+      v8::Isolate* isolate = v8::Isolate::GetCurrent();
+      v8::HandleScope scope(isolate);
+      v8::Local<v8::Context> context = v8::Context::New(isolate);
+      node::g_context.Reset(isolate, context);
       context->SetSecurityToken(v8_str("nw-token"));
       context->Enter();
       context->SetEmbedderData(0, v8_str("node"));
 
       node::SetupContext(argc, argv, context);
     }
-
 }
 
 v8::Isolate* mainThreadIsolate()

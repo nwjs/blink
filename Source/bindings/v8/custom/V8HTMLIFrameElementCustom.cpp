@@ -38,7 +38,7 @@
 #include "core/html/HTMLFrameElement.h"
 #include "core/html/parser/HTMLParserIdioms.h"
 #include "core/loader/FrameLoader.h"
-#include "core/frame/Frame.h"
+#include "core/frame/LocalFrame.h"
 
 namespace WebCore {
 
@@ -52,8 +52,8 @@ void V8HTMLIFrameElement::nwUserAgentAttributeSetterCustom(v8::Local<v8::Value> 
 
     frame->setAttribute(HTMLNames::nwuseragentAttr, agentValue);
 
-    if (frame->contentFrame())
-      toLocalFrame(frame->contentFrame())->loader().setUserAgentOverride(agentValue);
+    if (LocalFrame* lframe = frame->contentFrame())
+      lframe->loader().setUserAgentOverride(agentValue);
 }
 
 } // namespace WebCore

@@ -65,6 +65,8 @@
 #include "third_party/node/src/node_internals.h"
 #include "third_party/node/src/req_wrap.h"
 
+#include "content/nw/src/api/window_bindings.h"
+
 namespace blink {
 
 namespace {
@@ -146,7 +148,13 @@ void initialize(Platform* platform)
       char* argv[] = { const_cast<char*>("node"), NULL, NULL };
       v8::Isolate* isolate = v8::Isolate::GetCurrent();
       v8::HandleScope scope(isolate);
-      v8::Local<v8::Context> context = v8::Context::New(isolate);
+
+      v8::RegisterExtension(new nwapi::WindowBindings());
+      const char* names[] = { "window_bindings.js" };
+      v8::ExtensionConfiguration extension_configuration(1, names);
+
+
+      v8::Local<v8::Context> context = v8::Context::New(isolate, &extension_configuration);
       node::g_context.Reset(isolate, context);
       context->SetSecurityToken(v8_str("nw-token"));
       context->Enter();

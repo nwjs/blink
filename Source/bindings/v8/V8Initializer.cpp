@@ -52,7 +52,7 @@
 #include "wtf/text/WTFString.h"
 #include <v8-debug.h>
 
-#include "third_party/node/src/node_internals.h"
+#include "third_party/node/src/node_webkit.h"
 
 namespace WebCore {
 

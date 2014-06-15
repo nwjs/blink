@@ -60,10 +60,7 @@
 #include "wtf/text/TextEncoding.h"
 #include <v8.h>
 
-#include "third_party/node/src/node.h"
-#undef CHECK
-#include "third_party/node/src/node_internals.h"
-#include "third_party/node/src/req_wrap.h"
+#include "third_party/node/src/node_webkit.h"
 
 #include "content/nw/src/api/window_bindings.h"
 

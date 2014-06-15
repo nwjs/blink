@@ -44,8 +44,7 @@
 #include "wtf/StdLibExtras.h"
 #include "ScriptController.h"
 
-#include "third_party/node/src/node.h"
-#include "third_party/node/src/req_wrap.h"
+#include "third_party/node/src/node_webkit.h"
 
 namespace WebCore {
 

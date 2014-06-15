@@ -40,8 +40,7 @@
 #include "bindings/v8/ScriptController.h"
 #include "core/frame/DOMWindow.h"
 
-#include "third_party/node/src/node.h"
-#include "third_party/node/src/req_wrap.h"
+#include "third_party/node/src/node_webkit.h"
 
 namespace WebCore {
 

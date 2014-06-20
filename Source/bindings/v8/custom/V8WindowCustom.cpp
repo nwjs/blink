@@ -241,8 +241,10 @@ void V8Window::frameElementAttributeGetterCustom(const v8::PropertyCallbackInfo<
 {
     DOMWindow* impl = V8Window::toNative(info.Holder());
     LocalFrame* frame = impl->frame();
-    if (frame->isNwFakeTop())
+    if (frame->isNwFakeTop()) {
+      v8SetReturnValue(info, v8::Null(info.GetIsolate()));
       return;
+    }
     ExceptionState exceptionState(ExceptionState::GetterContext, "frame", "Window", info.Holder(), info.GetIsolate());
     if (!BindingSecurity::shouldAllowAccessToNode(info.GetIsolate(), impl->frameElement(), exceptionState)) {
         v8SetReturnValueNull(info);

@@ -985,6 +985,8 @@ void FrameView::layout(bool allowSubtree)
     if (document->hasListenerType(Document::OVERFLOWCHANGED_LISTENER))
         updateOverflowStatus(layoutSize().width() < contentsWidth(), layoutSize().height() < contentsHeight());
 
+    lifecycle().advanceTo(DocumentLifecycle::LayoutClean);
+
     scheduleOrPerformPostLayoutTasks();
 
     InspectorInstrumentation::didLayout(cookie, rootForThisLayout);

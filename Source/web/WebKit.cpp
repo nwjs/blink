@@ -111,14 +111,15 @@ static inline v8::Local<v8::String> v8_str(const char* x) {
 
 void initialize(Platform* platform)
 {
+    int argc;
+    char** argv;
     initializeWithoutV8(platform);
 
     v8::V8::InitializePlatform(gin::V8Platform::Get());
     v8::Isolate* isolate = v8::Isolate::New();
     isolate->Enter();
     if (platform->supportNodeJS()) {
-        int argc = 1;
-        char* argv[] = { const_cast<char*>("node"), NULL, NULL };
+        platform->getCmdArg(&argc, &argv);
         // Initialize uv.
         node::SetupUv(argc, argv);
     }
@@ -138,8 +139,6 @@ void initialize(Platform* platform)
         currentThread->addTaskObserver(s_endOfTaskRunner);
     }
     if (platform->supportNodeJS()) {
-        int argc = 1;
-        char* argv[] = { const_cast<char*>("node"), NULL, NULL };
         v8::Isolate* isolate = v8::Isolate::GetCurrent();
         v8::HandleScope scope(isolate);
 

@@ -111,8 +111,9 @@ static inline v8::Local<v8::String> v8_str(const char* x) {
 
 void initialize(Platform* platform)
 {
-    int argc;
-    char** argv;
+    int argc = 0;
+    char** argv = NULL;
+
     initializeWithoutV8(platform);
 
     v8::V8::InitializePlatform(gin::V8Platform::Get());

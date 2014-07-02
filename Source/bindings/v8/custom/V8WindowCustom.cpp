@@ -158,8 +158,7 @@ void V8Window::parentAttributeGetterCustom(const v8::PropertyCallbackInfo<v8::Va
 {
     DOMWindow* imp = V8Window::toNative(info.Holder());
     LocalFrame* frame = imp->frame();
-    ASSERT(frame);
-    if (frame->isNwFakeTop()) {
+    if (frame && frame->isNwFakeTop()) {
       v8SetReturnValue(info, toV8(imp, info.Holder(), info.GetIsolate()));
       return;
     }
@@ -170,7 +169,7 @@ void V8Window::topAttributeGetterCustom(const v8::PropertyCallbackInfo<v8::Value
 {
     DOMWindow* imp = V8Window::toNative(info.Holder());
     LocalFrame* frame = imp->frame();
-    ASSERT(frame);
+
     for (LocalFrame* f = frame; f; f = f->tree().parent()) {
       if (f->isNwFakeTop()) {
         v8SetReturnValue(info, toV8(f->document()->domWindow(), info.Holder(), info.GetIsolate()));
@@ -240,18 +239,17 @@ void V8Window::eventAttributeSetterCustom(v8::Local<v8::Value> value, const v8::
 void V8Window::frameElementAttributeGetterCustom(const v8::PropertyCallbackInfo<v8::Value>& info)
 {
     DOMWindow* impl = V8Window::toNative(info.Holder());
-    LocalFrame* frame = impl->frame();
-    if (frame->isNwFakeTop()) {
-      v8SetReturnValue(info, v8::Null(info.GetIsolate()));
-      return;
-    }
     ExceptionState exceptionState(ExceptionState::GetterContext, "frame", "Window", info.Holder(), info.GetIsolate());
     if (!BindingSecurity::shouldAllowAccessToNode(info.GetIsolate(), impl->frameElement(), exceptionState)) {
         v8SetReturnValueNull(info);
         exceptionState.throwIfNeeded();
         return;
     }
-
+    LocalFrame* frame = impl->frame();
+    if (frame->isNwFakeTop()) {
+      v8SetReturnValue(info, v8::Null(info.GetIsolate()));
+      return;
+    }
     // The wrapper for an <iframe> should get its prototype from the context of the frame it's in, rather than its own frame.
     // So, use its containing document as the creation context when wrapping.
     v8::Handle<v8::Value> creationContext = toV8(&impl->frameElement()->document(), v8::Handle<v8::Object>(), info.GetIsolate());

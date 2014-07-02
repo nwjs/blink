@@ -110,8 +110,9 @@ static inline v8::Local<v8::String> v8_str(const char* x) {
 
 void initialize(Platform* platform)
 {
-    int argc;
-    char** argv;
+    int argc = 0;
+    char** argv = NULL;
+
     initializeWithoutV8(platform);
 
     if (platform->supportNodeJS()) {

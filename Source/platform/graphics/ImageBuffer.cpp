@@ -33,6 +33,7 @@
 #include "config.h"
 #include "platform/graphics/ImageBuffer.h"
 
+#include "GrContext.h"
 #include "platform/MIMETypeRegistry.h"
 #include "platform/geometry/IntRect.h"
 #include "platform/graphics/BitmapImage.h"
@@ -185,6 +186,9 @@ bool ImageBuffer::copyToPlatformTexture(blink::WebGraphicsContext3D* context, Pl
     context->flush();
     sharedContext->waitSyncPoint(context->insertSyncPoint());
 
+ 	// Undo grContext texture binding changes introduced in this function
+ 	provider->grContext()->resetContext(kTextureBinding_GrGLBackendState);
+ 	
     return true;
 }
 

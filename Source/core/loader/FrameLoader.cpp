@@ -752,11 +752,13 @@ void FrameLoader::load(const FrameLoadRequest& passedRequest)
         m_client->willHandleNavigationPolicy(request.resourceRequest(), &navigationPolicy);
         if (navigationPolicy == NavigationPolicyIgnore)
             return;
-        if (navigationPolicy == NavigationPolicyDownload)
-            client()->loadURLExternally(action.resourceRequest(), NavigationPolicyDownload);
-        else
-            createWindowForRequest(request, *m_frame, navigationPolicy, request.shouldSendReferrer());
-        return;
+        if (navigationPolicy != NavigationPolicyCurrentTab && shouldOpenInNewWindow(targetFrame.get(), request, action)) {
+            if (navigationPolicy == NavigationPolicyDownload)
+                client()->loadURLExternally(action.resourceRequest(), NavigationPolicyDownload);
+            else
+                createWindowForRequest(request, *m_frame, navigationPolicy, request.shouldSendReferrer());
+            return;
+        }
     }
 
     const KURL& url = request.resourceRequest().url();

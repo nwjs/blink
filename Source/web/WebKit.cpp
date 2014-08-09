@@ -112,13 +112,19 @@ void initialize(Platform* platform)
 {
     int argc = 0;
     char** argv = NULL;
+    std::string snapshot_path, snapshot_flag;
 
     initializeWithoutV8(platform);
 
     if (platform->supportNodeJS()) {
-        platform->getCmdArg(&argc, &argv);
+        platform->getCmdArg(&argc, &argv, snapshot_path);
         // Initialize uv.
         node::SetupUv(argc, argv);
+    }
+
+    if (!snapshot_path.empty()) {
+        snapshot_flag = "--nwsnapshot-path=" + snapshot_path;
+        v8::V8::SetFlagsFromString(snapshot_flag.c_str(), static_cast<int>(snapshot_flag.size()));
     }
 
     v8::Isolate* isolate = v8::Isolate::GetCurrent();

@@ -54,7 +54,7 @@ FontPlatformData::FontPlatformData(NSFont *nsFont, float size, bool isPrinterFon
     CGFontRef cgFont = 0;
     loadFont(nsFont, size, m_font, cgFont);
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1050
     // FIXME: Chromium: The following code isn't correct for the Chromium port since the sandbox might
     // have blocked font loading, in which case we'll only have the real loaded font file after the call to loadFont().
     {
@@ -84,6 +84,8 @@ void FontPlatformData::platformDataInit(const FontPlatformData& f)
 
     m_cgFont = f.m_cgFont;
     m_CTFont = f.m_CTFont;
+    m_CTColorBitmapFont = f.m_CTColorBitmapFont;
+    m_CTColorBitmapFontMat = f.m_CTColorBitmapFontMat;
 
 #if OS(MACOSX)
     m_inMemoryFont = f.m_inMemoryFont;
@@ -103,6 +105,8 @@ const FontPlatformData& FontPlatformData::platformDataAssign(const FontPlatformD
         CFRelease(m_font);
     m_font = f.m_font;
     m_CTFont = f.m_CTFont;
+    m_CTColorBitmapFont = f.m_CTColorBitmapFont;
+    m_CTColorBitmapFontMat = f.m_CTColorBitmapFontMat;
 #if OS(MACOSX)
     m_inMemoryFont = f.m_inMemoryFont;
     m_harfBuzzFace = f.m_harfBuzzFace;
@@ -147,7 +151,7 @@ void FontPlatformData::setFont(NSFont *font)
 #endif
 
     m_cgFont.adoptCF(cgFont);
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1050
     {
         CTFontSymbolicTraits traits = CTFontGetSymbolicTraits(toCTFontRef(m_font));
         m_isColorBitmapFont = traits & kCTFontColorGlyphsTrait;
@@ -157,6 +161,8 @@ void FontPlatformData::setFont(NSFont *font)
     }
 #endif
     m_CTFont = 0;
+    m_CTColorBitmapFont = 0;
+    m_CTColorBitmapFontMat = CGAffineTransformIdentity;
 }
 
 bool FontPlatformData::roundsGlyphAdvances() const
@@ -279,6 +285,21 @@ CTFontRef FontPlatformData::ctFont() const
     }
 
     return m_CTFont.get();
+}
+  
+CTFontRef FontPlatformData::ctBitmapColorFont() const
+{
+    if (m_CTColorBitmapFont)
+        return m_CTColorBitmapFont.get();
+  
+    CTFontRef origFont = ctFont();
+    m_CTColorBitmapFont = CTFontCreateCopyWithAttributes(origFont, 1, &CGAffineTransformIdentity, NULL);
+
+    CGAffineTransform fontMat = CTFontGetMatrix(origFont);
+    CGFloat fontSize = CTFontGetSize(origFont);
+    m_CTColorBitmapFontMat = CGAffineTransformScale(fontMat, fontSize, fontSize);
+
+    return m_CTColorBitmapFont.get();
 }
 
 SkTypeface* FontPlatformData::typeface() const{

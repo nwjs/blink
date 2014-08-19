@@ -562,6 +562,13 @@ void ComplexTextController::adjustGlyphsAndAdvances()
                 advance.width = 0;
                 glyph = fontData->spaceGlyph();
             }
+          
+            if (fontData->platformData().isColorBitmapFont()) {
+              CTFontRef colorFont = fontData->platformData().ctBitmapColorFont();
+              CGAffineTransform fontMat = fontData->platformData().ctBitmapColorFontMat();
+              CTFontGetAdvancesForGlyphs(colorFont, kCTFontOrientationHorizontal, &glyph, &advance, 1);
+              advance = CGSizeApplyAffineTransform(advance, fontMat);
+            }
 
             float roundedAdvanceWidth = roundf(advance.width);
             if (roundsAdvances)

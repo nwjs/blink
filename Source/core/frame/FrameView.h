@@ -102,6 +102,8 @@ public:
     bool needsLayout() const;
     void setNeedsLayout();
 
+    void setNeedsUpdateWidgetPositions() { m_needsUpdateWidgetPositions = true; }
+
     // Methods for getting/setting the size Blink should use to layout the contents.
     IntSize layoutSize(IncludeScrollbarsInRect = ExcludeScrollbars) const;
     void setLayoutSize(const IntSize&);
@@ -369,6 +371,8 @@ private:
     virtual IntPoint convertToContainingView(const IntPoint&) const OVERRIDE;
     virtual IntPoint convertFromContainingView(const IntPoint&) const OVERRIDE;
 
+    void updateWidgetPositionsIfNeeded();
+
     void sendResizeEventIfNeeded();
 
     void updateScrollableAreaSet();
@@ -498,6 +502,8 @@ private:
     Timer<FrameView> m_didScrollTimer;
 
     Vector<IntRect> m_tickmarks;
+
+    bool m_needsUpdateWidgetPositions;
 };
 
 inline void FrameView::incrementVisuallyNonEmptyCharacterCount(unsigned count)

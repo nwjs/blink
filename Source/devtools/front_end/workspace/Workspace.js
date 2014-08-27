@@ -272,8 +272,10 @@ WebInspector.Project.prototype = {
     {
         var path = fileDescriptor.parentPath ? fileDescriptor.parentPath + "/" + fileDescriptor.name : fileDescriptor.name;
         var uiSourceCode = this.uiSourceCode(path);
-        if (uiSourceCode)
+        if (uiSourceCode) {
+            console.log("devtools: script is skipped: " + JSON.stringify(fileDescriptor));
             return;
+        }
 
         uiSourceCode = new WebInspector.UISourceCode(this, fileDescriptor.parentPath, fileDescriptor.name, fileDescriptor.originURL, fileDescriptor.url, fileDescriptor.contentType);
 

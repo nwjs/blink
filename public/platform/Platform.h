@@ -635,6 +635,9 @@ public:
 
     virtual WebNotificationPresenter* notificationPresenter() { return 0; }
 
+    // node-webkit --------------------------------------------------------
+
+    virtual bool supportNodeJS() { return false; }
 
 protected:
     virtual ~Platform() { }

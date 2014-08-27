@@ -307,7 +307,7 @@ void WebDevToolsAgentImpl::didCreateScriptContext(WebLocalFrameImpl* webframe, i
           prefix = "(null)." + prefix;
       }else
         prefix = "(null)." + prefix;
-      f = f->tree()->parent();
+      f = f->tree().parent();
     }
     if (blink::LocalFrame* frame = webframe->frame())
         frame->script().setWorldDebugId(worldId, m_debuggerId, prefix.ascii().data());

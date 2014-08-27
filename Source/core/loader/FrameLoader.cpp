@@ -1120,7 +1120,7 @@ String FrameLoader::userAgentOverride() const
 
 String FrameLoader::userAgent(const KURL& url) const
 {
-    Frame* frame = m_frame;
+    LocalFrame* frame = m_frame;
     for (; frame; frame = frame->tree().parent()) {
         if (!frame->loader().m_userAgentOverride.isEmpty())
             return frame->loader().m_userAgentOverride;

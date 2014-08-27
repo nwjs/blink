@@ -161,10 +161,10 @@ void FileInputType::handleDOMActivateEvent(Event* event)
         settings.acceptFileExtensions = input.acceptFileExtensions();
         settings.selectedFiles = m_fileList->pathsForUserVisibleFiles();
         settings.useMediaCapture = RuntimeEnabledFeatures::mediaCaptureEnabled() && input.isFileUpload() && input.fastHasAttribute(captureAttr);
-        settings.directoryChooser = input->fastHasAttribute(nwdirectoryAttr);
-        settings.saveAs = input->fastHasAttribute(nwsaveasAttr);
+        settings.directoryChooser = input.fastHasAttribute(nwdirectoryAttr);
+        settings.saveAs = input.fastHasAttribute(nwsaveasAttr);
 
-        settings.initialPath = input->nwworkingdir();
+        settings.initialPath = input.nwworkingdir();
         settings.initialValue = input.nwsaveas();
         chrome->runOpenPanel(input.document().frame(), newFileChooser(settings));
     }

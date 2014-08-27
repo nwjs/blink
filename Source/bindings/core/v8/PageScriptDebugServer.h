@@ -76,7 +76,7 @@ public:
 
     virtual void muteWarningsAndDeprecations() OVERRIDE;
     virtual void unmuteWarningsAndDeprecations() OVERRIDE;
-    void rescanScripts(Frame *frame);
+    void rescanScripts(LocalFrame *frame);
 
 private:
     PageScriptDebugServer();

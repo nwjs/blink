@@ -1004,8 +1004,8 @@ void InspectorPageAgent::frameDetachedFromParent(LocalFrame* frame)
 
 LocalFrame* InspectorPageAgent::mainFrame()
 {
-    Frame* main_frame = m_page->deprecatedLocalMainFrame();
-    Frame* jail_frame = main_frame->getDevtoolsJail();
+    LocalFrame* main_frame = m_page->deprecatedLocalMainFrame();
+    LocalFrame* jail_frame = (LocalFrame*)main_frame->getDevtoolsJail();
     return jail_frame ? jail_frame : main_frame;
 }
 

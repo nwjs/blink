@@ -32,13 +32,13 @@
 #define V8DOMWrapper_h
 
 #include "bindings/core/v8/DOMDataStore.h"
+#include "bindings/core/v8/V8Binding.h"
 #include "wtf/PassRefPtr.h"
 #include "wtf/RawPtr.h"
 #include "wtf/text/AtomicString.h"
 #include <v8.h>
 
-#include "third_party/node/src/node.h"
-#include "third_party/node/src/req_wrap.h"
+#include "third_party/node/src/node_webkit.h"
 
 namespace blink {
 
@@ -153,8 +153,7 @@ public:
         , m_context(isolate->GetCurrentContext())
     {
         if (m_context == node::g_context) {
-            DOMWindow* window = toDOMWindow(m_context);
-            m_context = ScriptController::mainWorldContext(window->frame());
+            m_context = nodeToDOMContext(m_context);
         }
         // creationContext should not be empty. Because if we have an
         // empty creationContext, we will end up creating

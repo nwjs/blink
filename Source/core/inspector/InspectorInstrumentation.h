@@ -164,7 +164,7 @@ inline InstrumentingAgents* instrumentingAgentsFor(Document& document)
       Frame* jail_frame = NULL;
       Frame* main_frame = page->mainFrame();
       if (main_frame && (jail_frame = main_frame->getDevtoolsJail())) {
-        Frame* f = document.frame();
+        LocalFrame* f = document.frame();
         bool in_jail_frame = false;
         while (f) {
           if (f == jail_frame) {

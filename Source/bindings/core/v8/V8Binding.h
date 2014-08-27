@@ -851,6 +851,7 @@ ExecutionContext* toExecutionContext(v8::Handle<v8::Context>);
 ExecutionContext* currentExecutionContext(v8::Isolate*);
 ExecutionContext* callingExecutionContext(v8::Isolate*);
 
+v8::Handle<v8::Context> nodeToDOMContext(v8::Handle<v8::Context>);
 // Returns a V8 context associated with a ExecutionContext and a DOMWrapperWorld.
 // This method returns an empty context if there is no frame or the frame is already detached.
 v8::Local<v8::Context> toV8Context(ExecutionContext*, DOMWrapperWorld&);

@@ -32,7 +32,7 @@
 #include "core/inspector/ConsoleMessage.h"
 #include "core/rendering/RenderIFrame.h"
 
-#include "core/frame/Frame.h"
+#include "core/frame/LocalFrame.h"
 
 namespace blink {
 
@@ -105,7 +105,7 @@ void HTMLIFrameElement::parseAttribute(const QualifiedName& name, const AtomicSt
             document().addConsoleMessage(ConsoleMessage::create(OtherMessageSource, ErrorMessageLevel, "Error while parsing the 'sandbox' attribute: " + invalidTokens));
     } else if (name == nwuseragentAttr) {
         if (contentFrame())
-            contentFrame()->loader().setUserAgentOverride(value);
+            ((LocalFrame*)contentFrame())->loader().setUserAgentOverride(value);
     } else {
         HTMLFrameElementBase::parseAttribute(name, value);
     }

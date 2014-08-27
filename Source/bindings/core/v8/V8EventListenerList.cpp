@@ -37,8 +37,7 @@
 
 #include "ScriptController.h"
 
-#include "third_party/node/src/node.h"
-#include "third_party/node/src/req_wrap.h"
+#include "third_party/node/src/node_webkit.h"
 
 namespace blink {
 
@@ -55,7 +54,7 @@ PassRefPtr<EventListener> V8EventListenerList::getEventListener(ScriptState* scr
     v8::Local<v8::Context> context = scriptState->context();
     if (context == node::g_context) {
         LocalDOMWindow* window = toDOMWindow(context);
-        context = ScriptController::mainWorldContext(window->frame());
+        context = toV8Context(isolate, window->frame(), DOMWrapperWorld::mainWorld());
     }
     if (toDOMWindow(context())
         return V8EventListenerList::findOrCreateWrapper<V8EventListener>(value, isAttribute, scriptState);

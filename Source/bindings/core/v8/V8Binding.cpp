@@ -71,8 +71,7 @@
 #include "wtf/unicode/CharacterNames.h"
 #include "wtf/unicode/Unicode.h"
 
-#include "third_party/node/src/node.h"
-#include "third_party/node/src/req_wrap.h"
+#include "third_party/node/src/node_webkit.h"
 
 namespace blink {
 
@@ -640,12 +639,17 @@ LocalDOMWindow* toDOMWindow(v8::Handle<v8::Value> value, v8::Isolate* isolate)
 
 static LocalDOMWindow* DOMWindowFromNode(v8::Handle<v8::Context> context)
 {
-    v8::Context::Scope context_scope(node::g_context);
-    v8::Handle<v8::Object> global = node::g_context->Global();
-    v8::Local<v8::Value> val_window = global->Get(v8::String::New("window"));
-    ASSERT (!val_window->IsUndefined());
+    v8::Local<v8::Context> node_context =
+        v8::Local<v8::Context>::New(context->GetIsolate(), node::g_context);
+    v8::Context::Scope context_scope(node_context);
+    v8::Handle<v8::Object> global = node_context->Global();
+    v8::Local<v8::Value> val_window = global->Get(v8AtomicString(context->GetIsolate(), "window"));
+    if (val_window->IsUndefined())
+        return NULL;
+
     v8::Local<v8::Object> window = v8::Local<v8::Object>::Cast(val_window);
-    global = window->FindInstanceInPrototypeChain(V8DOMWindow::GetTemplate(context->GetIsolate(), IsolatedWorld));
+    global = V8Window::findInstanceInPrototypeChain(window, context->GetIsolate());
+
     ASSERT (!global.IsEmpty());
     return V8Window::toNative(global);
 }
@@ -659,6 +663,11 @@ LocalDOMWindow* toDOMWindow(v8::Handle<v8::Context> context)
     if (context.IsEmpty())
         return 0;
     return toDOMWindow(context->Global(), context->GetIsolate());
+}
+
+v8::Handle<v8::Context> nodeToDOMContext(v8::Handle<v8::Context> context) {
+    LocalDOMWindow* window = toDOMWindow(context);
+    return toV8Context(context->GetIsolate(), window->frame(), DOMWrapperWorld::mainWorld());
 }
 
 LocalDOMWindow* enteredDOMWindow(v8::Isolate* isolate)

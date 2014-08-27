@@ -46,8 +46,9 @@ namespace blink {
 
 static bool isDocumentAccessibleFromDOMWindow(Document* targetDocument, LocalDOMWindow* callingWindow)
 {
-    if (v8::Context::GetCalling() == node::g_context ||
-        v8::Context::GetEntered() == node::g_context)
+    v8::Isolate* isolate = v8::Isolate::GetCurrent();
+        if (isolate->GetCallingContext() == node::g_context ||
+            isolate->GetEnteredContext() == node::g_context)
         return true;
 
     if (!targetDocument)

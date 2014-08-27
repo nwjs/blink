@@ -76,23 +76,7 @@ public:
         return ScriptState::from(context)->world();
     }
 
-    static DOMWrapperWorld& current(v8::Isolate* isolate)
-    {
-        if (isMainThread() && worldOfInitializingWindow) {
-            // It's possible that current() is being called while window is being initialized.
-            // In order to make current() workable during the initialization phase,
-            // we cache the world of the initializing window on worldOfInitializingWindow.
-            // If there is no initiazing window, worldOfInitializingWindow is 0.
-            return *worldOfInitializingWindow;
-        }
-        v8::Handle<v8::Context> context = isolate->GetCurrentContext();
-        if (context == node::g_context) {
-            DOMWindow* window = toDOMWindow(context);
-            context = ScriptController::mainWorldContext(window->frame());
-        }
-        return world(context);
-    }
-
+    static DOMWrapperWorld& current(v8::Isolate* isolate);
     static DOMWrapperWorld& mainWorld();
     static DOMWrapperWorld& privateScriptIsolatedWorld();
 

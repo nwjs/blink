@@ -53,7 +53,7 @@
 #include "wtf/text/WTFString.h"
 #include <v8-debug.h>
 
-#include "third_party/node/src/node_internals.h"
+#include "third_party/node/src/node_webkit.h"
 
 namespace blink {
 
@@ -90,10 +90,6 @@ static void messageHandlerInMainThread(v8::Handle<v8::Message> message, v8::Hand
 {
     ASSERT(isMainThread());
 
-    node::g_context->Enter();
-    node::OnMessage(message, data);
-    node::g_context->Exit();
-
     // It's possible that messageHandlerInMainThread() is invoked while we're initializing a window.
     // In that half-baked situation, we don't have a valid context nor a valid world,
     // so just return immediately.
@@ -103,13 +99,18 @@ static void messageHandlerInMainThread(v8::Handle<v8::Message> message, v8::Hand
     v8::Isolate* isolate = v8::Isolate::GetCurrent();
     // If called during context initialization, there will be no entered window.
     LocalDOMWindow* enteredWindow = enteredDOMWindow(isolate);
-    if (enteredDOMWindow)  {
-        Frame* frame = firstWindow->document()->frame();
+    if (enteredWindow)  {
+        Frame* frame = enteredWindow->document()->frame();
         if (frame && frame->isNodeJS()) {
-            node::g_context->Enter();
+            v8::Local<v8::Context> node_context =
+                v8::Local<v8::Context>::New(isolate, node::g_context);
+            node_context->Enter();
             node::OnMessage(message, data);
-            node::g_context->Exit();
+            node_context->Exit();
         }
+    } else {
+        node::OnMessage(message, data);
+        return;
     }
 
     if (!enteredWindow || !enteredWindow->isCurrentlyDisplayedInFrame())
@@ -196,10 +197,11 @@ static void timerTraceProfilerInMainThread(const char* name, int status)
 
 static void initializeV8Common(v8::Isolate* isolate)
 {
+#if 0
     v8::ResourceConstraints constraints;
     constraints.ConfigureDefaults(static_cast<uint64_t>(blink::Platform::current()->physicalMemoryMB()) << 20, static_cast<uint32_t>(blink::Platform::current()->virtualMemoryLimitMB()) << 20, static_cast<uint32_t>(blink::Platform::current()->numberOfProcessors()));
     v8::SetResourceConstraints(isolate, &constraints);
-
+#endif
     v8::V8::AddGCPrologueCallback(V8GCController::gcPrologue);
     v8::V8::AddGCEpilogueCallback(V8GCController::gcEpilogue);
 

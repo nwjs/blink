@@ -5,13 +5,13 @@
 #include "V8File.h"
 #include "bindings/v8/V8Binding.h"
 #include "core/dom/Document.h"
-#include "core/dom/ScriptExecutionContext.h"
-#include "core/page/Frame.h"
+#include "core/dom/ExecutionContext.h"
+#include "core/frame/LocalFrame.h"
 
 namespace blink {
 void V8FileList::constructorCustom(const v8::FunctionCallbackInfo<v8::Value>& args)
 {
-    ScriptExecutionContext* context = getScriptExecutionContext();
+    ExecutionContext* context = currentExecutionContext(args.GetIsolate());
     if (context && context->isDocument()) {
         Document* document = toDocument(context);
         if (document->frame()->isNwDisabledChildFrame()) {
@@ -21,10 +21,7 @@ void V8FileList::constructorCustom(const v8::FunctionCallbackInfo<v8::Value>& ar
     }
 
     RefPtr<FileList> impl = FileList::create();
-    v8::Handle<v8::Object> wrapper = args.Holder();
-
-    V8DOMWrapper::associateObjectWithWrapper(impl.release(), &V8FileList::info, wrapper, args.GetIsolate(), WrapperConfiguration::Dependent);
-    args.GetReturnValue().Set(wrapper);
+    v8SetReturnValue(args, impl.release());
 }
 
 } // namespace blink

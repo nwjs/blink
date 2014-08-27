@@ -44,8 +44,7 @@
 #include "core/inspector/InjectedScriptHost.h"
 #include "wtf/RefPtr.h"
 
-#include "third_party/node/src/node.h"
-#include "third_party/node/src/req_wrap.h"
+#include "third_party/node/src/node_webkit.h"
 
 namespace blink {
 

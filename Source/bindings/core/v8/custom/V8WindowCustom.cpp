@@ -149,60 +149,51 @@ static void windowSetTimeoutImpl(const v8::FunctionCallbackInfo<v8::Value>& info
     v8SetReturnValue(info, timerId);
 }
 
-void V8Window::parentAttrGetterCustom(const v8::PropertyCallbackInfo<v8::Value>& info)
+void V8Window::parentAttributeGetterCustom(const v8::PropertyCallbackInfo<v8::Value>& info)
 {
-    v8::Handle<v8::Object> holder = info.This()->FindInstanceInPrototypeChain(V8Window::GetTemplate(info.GetIsolate(), worldTypeInMainThread(info.GetIsolate())));
-    if (holder.IsEmpty())
-        return;
-
     DOMWindow* imp = V8Window::toNative(info.Holder());
-    Frame* frame = imp->frame();
+    LocalFrame* frame = imp->frame();
     ASSERT(frame);
     if (frame->isNwFakeTop()) {
-      v8SetReturnValue(info, toV8Fast(imp, info, imp));
+      v8SetReturnValue(info, toV8(imp, info.Holder(), info.GetIsolate()));
       return;
     }
-    v8SetReturnValue(info, toV8Fast(imp->parent(), info, imp));
+    v8SetReturnValue(info, toV8(imp->parent(), info.Holder(), info.GetIsolate()));
 }
 
-void V8Window::topAttrGetterCustom(const v8::PropertyCallbackInfo<v8::Value>& info)
+void V8Window::topAttributeGetterCustom(const v8::PropertyCallbackInfo<v8::Value>& info)
 {
-    v8::Handle<v8::Object> holder = info.This()->FindInstanceInPrototypeChain(V8Window::GetTemplate(info.GetIsolate(), worldTypeInMainThread(info.GetIsolate())));
-    if (holder.IsEmpty())
-        return;
-
     DOMWindow* imp = V8Window::toNative(info.Holder());
-    Frame* frame = imp->frame();
+    LocalFrame* frame = imp->frame();
     ASSERT(frame);
-    for (Frame* f = frame; f; f = f->tree()->parent()) {
+    for (LocalFrame* f = frame; f; f = f->tree().parent()) {
       if (f->isNwFakeTop()) {
-        v8SetReturnValue(info, toV8Fast(f->document()->domWindow(), info, imp));
+        v8SetReturnValue(info, toV8(f->document()->domWindow(), info.Holder(), info.GetIsolate()));
         return;
       }
     }
-    v8SetReturnValue(info, toV8Fast(imp->top(), info, imp));
+    v8SetReturnValue(info, toV8(imp->top(), info.Holder(), info.GetIsolate()));
 }
 
-void V8Window::frameElementAttrGetterCustom(v8::Local<v8::String> name, const v8::PropertyCallbackInfo<v8::Value>& info)
+#if 0
+void V8Window::frameElementAttributeGetterCustom(const v8::PropertyCallbackInfo<v8::Value>& info)
 {
-    v8::Handle<v8::Object> holder = info.This()->FindInstanceInPrototypeChain(V8Window::GetTemplate(info.GetIsolate(), worldTypeInMainThread(info.GetIsolate())));
-    if (holder.IsEmpty())
-        return;
-
-    DOMWindow* imp = V8Window::toNative(holder);
-    Frame* frame = imp->frame();
-    if (!BindingSecurity::shouldAllowAccessToFrame(frame))
+    DOMWindow* imp = V8Window::toNative(info.Holder());
+    LocalFrame* frame = imp->frame();
+    if (!BindingSecurity::shouldAllowAccessToFrame(info.GetIsolate(), frame))
         return;
 
     ASSERT(frame);
 
     if (frame->isNwFakeTop())
       return;
-    if (!BindingSecurity::shouldAllowAccessToNode(BindingState::instance(), imp->frameElement()))
+    ExceptionState exceptionState(ExceptionState::ExecutionContext, "frame", "Window", v8::Handle<v8::Object>(), info.GetIsolate());
+    if (!BindingSecurity::shouldAllowAccessToNode(info.GetIsolate(), imp->frameElement(), exceptionState))
       return;
 
-    v8SetReturnValue(info, toV8Fast(imp->frameElement(), info, imp));
+    v8SetReturnValue(info, toV8(imp->frameElement(), info.Holder(), info.GetIsolate()));
 }
+#endif
 
 void V8Window::eventAttributeGetterCustom(const v8::PropertyCallbackInfo<v8::Value>& info)
 {
@@ -246,6 +237,9 @@ void V8Window::eventAttributeSetterCustom(v8::Local<v8::Value> value, const v8::
 void V8Window::frameElementAttributeGetterCustom(const v8::PropertyCallbackInfo<v8::Value>& info)
 {
     LocalDOMWindow* impl = V8Window::toNative(info.Holder());
+    LocalFrame* frame = impl->frame();
+    if (frame->isNwFakeTop())
+        return;
     ExceptionState exceptionState(ExceptionState::GetterContext, "frame", "Window", info.Holder(), info.GetIsolate());
     if (!BindingSecurity::shouldAllowAccessToNode(info.GetIsolate(), impl->frameElement(), exceptionState)) {
         v8SetReturnValueNull(info);

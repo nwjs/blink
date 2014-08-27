@@ -612,7 +612,7 @@
       'type': 'static_library',
       'dependencies': [
         'webcore_prerequisites',
-        '<(chromium_src_dir)/third_party/node/node.gyp:node',
+        '<(DEPTH)/third_party/node/node.gyp:node',
       ],
       'sources': [
         '<@(webcore_files)',

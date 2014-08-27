@@ -175,25 +175,25 @@ void V8Window::topAttributeGetterCustom(const v8::PropertyCallbackInfo<v8::Value
     v8SetReturnValue(info, toV8(imp->top(), info.Holder(), info.GetIsolate()));
 }
 
-#if 0
 void V8Window::frameElementAttributeGetterCustom(const v8::PropertyCallbackInfo<v8::Value>& info)
 {
-    DOMWindow* imp = V8Window::toNative(info.Holder());
+    LocalDOMWindow* imp = V8Window::toNative(info.Holder());
     LocalFrame* frame = imp->frame();
     if (!BindingSecurity::shouldAllowAccessToFrame(info.GetIsolate(), frame))
         return;
 
     ASSERT(frame);
 
-    if (frame->isNwFakeTop())
+    if (frame->isNwFakeTop()) {
+      v8SetReturnValue(info, v8::Null(info.GetIsolate()));
       return;
+    }
     ExceptionState exceptionState(ExceptionState::ExecutionContext, "frame", "Window", v8::Handle<v8::Object>(), info.GetIsolate());
     if (!BindingSecurity::shouldAllowAccessToNode(info.GetIsolate(), imp->frameElement(), exceptionState))
       return;
 
     v8SetReturnValue(info, toV8(imp->frameElement(), info.Holder(), info.GetIsolate()));
 }
-#endif
 
 void V8Window::eventAttributeGetterCustom(const v8::PropertyCallbackInfo<v8::Value>& info)
 {

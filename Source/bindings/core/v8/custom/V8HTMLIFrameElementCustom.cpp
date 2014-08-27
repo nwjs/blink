@@ -51,7 +51,10 @@ void V8HTMLIFrameElement::nwUserAgentAttributeSetterCustom(v8::Local<v8::Value> 
 
     ExceptionState es(info.GetIsolate());
 
-    frame->contentFrame()->loader().setUserAgentOverride(agentValue);
+    frame->setAttribute(HTMLNames::nwuseragentAttr, agentValue);
+
+    if (frame->contentFrame())
+        frame->contentFrame()->loader().setUserAgentOverride(agentValue);
 }
 
 } // namespace WebCore

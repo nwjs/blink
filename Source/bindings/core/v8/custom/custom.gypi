@@ -28,6 +28,7 @@
             'V8EventCustom.cpp',
             'V8EventTargetCustom.cpp',
             'V8FileCustom.cpp',
+            'V8FileListCustom.cpp',
             'V8FileReaderCustom.cpp',
             'V8Float32ArrayCustom.h',
             'V8Float64ArrayCustom.h',

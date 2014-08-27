@@ -498,7 +498,10 @@ WebInspector.DebuggerModel.prototype = {
             scripts = [];
             this._scriptsBySourceURL.put(script.sourceURL, scripts);
         }
-        scripts.push(script);
+        if (scripts.length && scripts[0].scriptId < script.scriptId)
+            scripts.unshift(script);
+        else
+            scripts.push(script);
     },
 
     /**

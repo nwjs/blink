@@ -33,11 +33,24 @@
 
 #include "bindings/core/v8/ExceptionState.h"
 #include "bindings/core/v8/custom/V8BlobCustomHelpers.h"
+#include "bindings/core/v8/V8Binding.h"
+#include "core/dom/Document.h"
+#include "core/dom/ScriptExecutionContext.h"
+#include "core/page/Frame.h"
 
 namespace blink {
 
 void V8File::constructorCustom(const v8::FunctionCallbackInfo<v8::Value>& info)
 {
+
+    ScriptExecutionContext* context = getScriptExecutionContext();
+    if (context && context->isDocument()) {
+        Document* document = toDocument(context);
+        if (document->frame()->isNwDisabledChildFrame()) {
+            throwTypeError("File constructor cannot be called in nwdisabled frame.", args.GetIsolate());
+            return;
+        }
+    }
     ExceptionState exceptionState(ExceptionState::ConstructionContext, "File", info.Holder(), info.GetIsolate());
 
     if (info.Length() < 2) {
@@ -48,8 +61,10 @@ void V8File::constructorCustom(const v8::FunctionCallbackInfo<v8::Value>& info)
 
     // FIXME: handle sequences based on ES6 @@iterator, see http://crbug.com/393866
     if (!info[0]->IsArray()) {
-        exceptionState.throwTypeError(ExceptionMessages::argumentNullOrIncorrectType(1, "Array"));
-        exceptionState.throwIfNeeded();
+        TOSTRING_VOID(V8StringResource<>, path, info[0]);
+        TOSTRING_VOID(V8StringResource<>, name, info[1]);
+        RefPtrWillBeRawPtr<File> file = File::create(path, name);
+        v8SetReturnValue(info, file.release());
         return;
     }
 

@@ -35,6 +35,12 @@
 #include "wtf/ArrayBuffer.h"
 #include "wtf/StdLibExtras.h"
 
+#include "bindings/core/v8/ScriptController.h"
+#include "core/page/DOMWindow.h"
+
+#include "third_party/node/src/node.h"
+#include "third_party/node/src/req_wrap.h"
+
 namespace blink {
 
 using namespace WTF;
@@ -65,6 +71,12 @@ v8::Handle<v8::Object> V8ArrayBuffer::createWrapper(PassRefPtr<ArrayBuffer> impl
 {
     ASSERT(impl.get());
     ASSERT(!DOMDataStore::containsWrapper<V8ArrayBuffer>(impl.get(), isolate));
+    v8::Handle<v8::Context> context = v8::Context::GetCurrent();
+    if (context == node::g_context) {
+      DOMWindow* window = toDOMWindow(context);
+      context = ScriptController::mainWorldContext(window->frame());
+    }
+    v8::Context::Scope context_scope(context);
 
     v8::Handle<v8::Object> wrapper = v8::ArrayBuffer::New(isolate, impl->data(), impl->byteLength());
     impl->setDeallocationObserver(V8ArrayBufferDeallocationObserver::instanceTemplate());

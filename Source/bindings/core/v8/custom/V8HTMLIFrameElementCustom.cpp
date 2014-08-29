@@ -29,18 +29,18 @@
  */
 
 #include "config.h"
-#include "V8HTMLIFrameElement.h"
+#include "bindings/core/v8/V8HTMLIFrameElement.h"
 
 #include "HTMLNames.h"
-#include "bindings/v8/BindingSecurity.h"
-#include "bindings/v8/ExceptionState.h"
-#include "bindings/v8/V8Binding.h"
+#include "bindings/core/v8/BindingSecurity.h"
+#include "bindings/core/v8/ExceptionState.h"
+#include "bindings/core/v8/V8Binding.h"
 #include "core/html/HTMLFrameElement.h"
 #include "core/html/parser/HTMLParserIdioms.h"
 #include "core/loader/FrameLoader.h"
 #include "core/frame/LocalFrame.h"
 
-namespace WebCore {
+namespace blink {
 
 using namespace HTMLNames;
 
@@ -48,12 +48,14 @@ void V8HTMLIFrameElement::nwUserAgentAttributeSetterCustom(v8::Local<v8::Value> 
 {
     HTMLIFrameElement* frame = V8HTMLIFrameElement::toNative(info.Holder());
     // String agentValue = toCoreStringWithNullCheck(value);
-    V8TRYCATCH_FOR_V8STRINGRESOURCE_VOID(V8StringResource<WithNullCheck>, agentValue, value);
+    TOSTRING_VOID(V8StringResource<>, agentValue, value);
 
     frame->setAttribute(HTMLNames::nwuseragentAttr, agentValue);
 
-    if (LocalFrame* lframe = frame->contentFrame())
-      lframe->loader().setUserAgentOverride(agentValue);
+    if (frame->contentFrame()->isLocalFrame()) {
+        LocalFrame* lframe = toLocalFrame(frame->contentFrame());
+        lframe->loader().setUserAgentOverride(agentValue);
+    }
 }
 
 } // namespace WebCore

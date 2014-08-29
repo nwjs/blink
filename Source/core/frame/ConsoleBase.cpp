@@ -185,7 +185,7 @@ void ConsoleBase::internalAddMessage(MessageType type, MessageLevel level, Scrip
         for (unsigned i = 1; i < arguments->argumentCount(); ++i) {
 
             String argAsString;
-            RefPtr<JSONValue> value = arguments->argumentAt(i).toJSONValue(arguments->globalState());
+            RefPtr<JSONValue> value = arguments->argumentAt(i).toJSONValue(scriptState);
             if (!value)
                 continue;
             if (i)

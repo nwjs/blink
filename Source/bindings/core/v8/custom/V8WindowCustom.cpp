@@ -151,7 +151,7 @@ static void windowSetTimeoutImpl(const v8::FunctionCallbackInfo<v8::Value>& info
 
 void V8Window::parentAttributeGetterCustom(const v8::PropertyCallbackInfo<v8::Value>& info)
 {
-    DOMWindow* imp = V8Window::toNative(info.Holder());
+    LocalDOMWindow* imp = V8Window::toNative(info.Holder());
     LocalFrame* frame = imp->frame();
     ASSERT(frame);
     if (frame->isNwFakeTop()) {
@@ -163,10 +163,10 @@ void V8Window::parentAttributeGetterCustom(const v8::PropertyCallbackInfo<v8::Va
 
 void V8Window::topAttributeGetterCustom(const v8::PropertyCallbackInfo<v8::Value>& info)
 {
-    DOMWindow* imp = V8Window::toNative(info.Holder());
+    LocalDOMWindow* imp = V8Window::toNative(info.Holder());
     LocalFrame* frame = imp->frame();
     ASSERT(frame);
-    for (LocalFrame* f = frame; f; f = f->tree().parent()) {
+    for (LocalFrame* f = frame; f; f = toLocalFrame(f->tree().parent())) {
       if (f->isNwFakeTop()) {
         v8SetReturnValue(info, toV8(f->document()->domWindow(), info.Holder(), info.GetIsolate()));
         return;
@@ -175,6 +175,8 @@ void V8Window::topAttributeGetterCustom(const v8::PropertyCallbackInfo<v8::Value
     v8SetReturnValue(info, toV8(imp->top(), info.Holder(), info.GetIsolate()));
 }
 
+
+#if 0
 void V8Window::frameElementAttributeGetterCustom(const v8::PropertyCallbackInfo<v8::Value>& info)
 {
     LocalDOMWindow* imp = V8Window::toNative(info.Holder());
@@ -194,6 +196,7 @@ void V8Window::frameElementAttributeGetterCustom(const v8::PropertyCallbackInfo<
 
     v8SetReturnValue(info, toV8(imp->frameElement(), info.Holder(), info.GetIsolate()));
 }
+#endif
 
 void V8Window::eventAttributeGetterCustom(const v8::PropertyCallbackInfo<v8::Value>& info)
 {

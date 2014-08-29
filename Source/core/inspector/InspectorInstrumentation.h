@@ -41,6 +41,7 @@
 #include "core/events/NodeEventContext.h"
 #include "core/frame/LocalFrame.h"
 #include "core/inspector/ConsoleAPITypes.h"
+#include "core/page/Page.h"
 #include "core/rendering/HitTestResult.h"
 #include "core/rendering/RenderImage.h"
 #include "core/storage/StorageArea.h"
@@ -164,7 +165,7 @@ inline InstrumentingAgents* instrumentingAgentsFor(Document& document)
       Frame* jail_frame = NULL;
       Frame* main_frame = page->mainFrame();
       if (main_frame && (jail_frame = main_frame->getDevtoolsJail())) {
-        LocalFrame* f = document.frame();
+        Frame* f = document.frame();
         bool in_jail_frame = false;
         while (f) {
           if (f == jail_frame) {

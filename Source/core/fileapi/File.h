@@ -73,7 +73,7 @@ public:
 
     static PassRefPtrWillBeRawPtr<File> create(const String& path, const String& name)
     {
-      return createWithName(path, name, AllContentTypes);
+      return createForUserProvidedFile(path, name);
     }
 
     static PassRefPtrWillBeRawPtr<File> createWithRelativePath(const String& path, const String& relativePath);

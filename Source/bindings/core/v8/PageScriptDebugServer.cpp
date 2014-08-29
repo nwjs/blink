@@ -74,7 +74,7 @@ static LocalFrame* retrieveFrameWithNodeContext(v8::Handle<v8::Context> context)
   global = V8Window::findInstanceInPrototypeChain(window, isolate);
   if (global.IsEmpty())
     return 0;
-  DOMWindow* win = V8Window::toNative(global);
+  LocalDOMWindow* win = V8Window::toNative(global);
   if (!win)
     return 0;
   return win->frame();
@@ -173,8 +173,8 @@ void PageScriptDebugServer::rescanScripts(LocalFrame* frame)
 
     v8::Local<v8::String> prefix = v8AtomicString(m_isolate, "");
     LocalFrame* jail;
-    if ((jail = (LocalFrame*)frame->getDevtoolsJail()) && jail->ownerElement()) {
-        String id = jail->ownerElement()->getIdAttribute();
+    if ((jail = (LocalFrame*)frame->getDevtoolsJail()) && jail->deprecatedLocalOwner()) {
+        String id = jail->deprecatedLocalOwner()->getIdAttribute();
         prefix = v8AtomicString(m_isolate, id.ascii().data());
     }
 
@@ -190,7 +190,7 @@ void PageScriptDebugServer::rescanScripts(LocalFrame* frame)
 
 void PageScriptDebugServer::addListener(ScriptDebugListener* listener, Page* page)
 {
-    ScriptController* scriptController = &page->mainFrame()->script();
+    ScriptController* scriptController = &page->deprecatedLocalMainFrame()->script();
     if (!scriptController->canExecuteScripts(NotAboutToExecuteScript))
         return;
 
@@ -201,10 +201,10 @@ void PageScriptDebugServer::addListener(ScriptDebugListener* listener, Page* pag
     if (!m_listenersMap.size()) {
         ensureDebuggerScriptCompiled();
         //ASSERT(!m_debuggerScript.get()->IsUndefined());
-        v8::Debug::SetDebugEventListener2(&PageScriptDebugServer::v8DebugEventCallback, v8::External::New(m_isolate, this));
+        v8::Debug::SetDebugEventListener(&PageScriptDebugServer::v8DebugEventCallback, v8::External::New(m_isolate, this));
     }
     m_listenersMap.set(page, listener);
-    rescanScripts(page->mainFrame());
+    rescanScripts(page->deprecatedLocalMainFrame());
 }
 
 void PageScriptDebugServer::removeListener(ScriptDebugListener* listener, Page* page)

@@ -48,7 +48,7 @@ void V8File::constructorCustom(const v8::FunctionCallbackInfo<v8::Value>& info)
     if (context && context->isDocument()) {
         Document* document = toDocument(context);
         if (document->frame()->isNwDisabledChildFrame()) {
-            throwTypeError("File constructor cannot be called in nwdisabled frame.", args.GetIsolate());
+            V8ThrowException::throwTypeError("File constructor cannot be called in nwdisabled frame.", info.GetIsolate());
             return;
         }
     }
@@ -97,6 +97,7 @@ void V8File::constructorCustom(const v8::FunctionCallbackInfo<v8::Value>& info)
     v8SetReturnValue(info, file.release());
 }
 
+#if 0
 void V8File::lastModifiedDateAttributeGetterCustom(const v8::PropertyCallbackInfo<v8::Value>& info)
 {
     // The auto-generated getters return null when the method in
@@ -127,5 +128,5 @@ void V8File::lastModifiedAttributeGetterCustom(const v8::PropertyCallbackInfo<v8
     // http://dev.w3.org/2006/webapi/FileAPI/#file-attrs
     v8SetReturnValue(info, floor(lastModified));
 }
-
+#endif
 } // namespace blink

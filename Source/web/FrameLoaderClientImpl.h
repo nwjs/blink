@@ -168,7 +168,7 @@ public:
 
     virtual void dispatchDidChangeManifest() OVERRIDE;
 
-    virtual void willHandleNavigationPolicy(const WebCore::ResourceRequest& request, WebCore::NavigationPolicy* policy) OVERRIDE;
+    virtual void willHandleNavigationPolicy(const blink::ResourceRequest& request, blink::NavigationPolicy* policy) OVERRIDE;
 
 private:
     virtual bool isFrameLoaderClientImpl() const OVERRIDE { return true; }

@@ -296,18 +296,18 @@ void WebDevToolsAgentImpl::didComposite()
 
 void WebDevToolsAgentImpl::didCreateScriptContext(WebLocalFrameImpl* webframe, int worldId)
 {
-    WebCore::LocalFrame* f = webframe->frame();
+    blink::LocalFrame* f = webframe->frame();
     String prefix;
     while (f) {
-      if (f->ownerElement()) {
-        String id = f->ownerElement()->getIdAttribute();
+      if (f->deprecatedLocalOwner()) {
+        String id = f->deprecatedLocalOwner()->getIdAttribute();
         if (!id.isEmpty())
           prefix = id + "." + prefix;
         else
           prefix = "(null)." + prefix;
       }else
         prefix = "(null)." + prefix;
-      f = f->tree().parent();
+      f = toLocalFrame(f->tree().parent());
     }
     if (blink::LocalFrame* frame = webframe->frame())
         frame->script().setWorldDebugId(worldId, m_debuggerId, prefix.ascii().data());

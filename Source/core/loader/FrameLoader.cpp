@@ -142,7 +142,7 @@ void FrameLoader::init()
     m_frame->document()->cancelParsing();
     m_stateMachine.advanceTo(FrameLoaderStateMachine::DisplayingInitialEmptyDocument);
 
-    if (HTMLFrameOwnerElement* ownerElement = m_frame->ownerElement()) {
+    if (HTMLFrameOwnerElement* ownerElement = m_frame->deprecatedLocalOwner()) {
         setUserAgentOverride(ownerElement->fastGetAttribute(nwuseragentAttr));
     }
 }
@@ -749,7 +749,7 @@ void FrameLoader::load(const FrameLoadRequest& passedRequest)
         action.mutableResourceRequest().setRequestContext(determineRequestContextFromNavigationType(action.type()));
     if (shouldOpenInNewWindow(targetFrame.get(), request, action)) {
         NavigationPolicy navigationPolicy = action.policy();
-        m_client->willHandleNavigationPolicy(request.resourceRequest(), &navigationPolicy);
+        client()->willHandleNavigationPolicy(request.resourceRequest(), &navigationPolicy);
         if (navigationPolicy == NavigationPolicyIgnore)
             return;
         if (navigationPolicy != NavigationPolicyCurrentTab && shouldOpenInNewWindow(targetFrame.get(), request, action)) {
@@ -1123,7 +1123,7 @@ String FrameLoader::userAgentOverride() const
 String FrameLoader::userAgent(const KURL& url) const
 {
     LocalFrame* frame = m_frame;
-    for (; frame; frame = frame->tree().parent()) {
+    for (; frame; frame = toLocalFrame(frame->tree().parent())) {
         if (!frame->loader().m_userAgentOverride.isEmpty())
             return frame->loader().m_userAgentOverride;
     }

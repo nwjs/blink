@@ -212,14 +212,16 @@ HTMLFrameOwnerElement* Frame::deprecatedLocalOwner() const
 
 bool Frame::isNwDisabledChildFrame() const
 {
-    if (m_ownerElement && m_ownerElement->fastHasAttribute(nwdisableAttr))
+    HTMLFrameOwnerElement* owner = deprecatedLocalOwner();
+    if (owner && owner->fastHasAttribute(nwdisableAttr))
         return true;
     return false;
 }
 
 bool Frame::isNwFakeTop() const
 {
-    if (m_ownerElement && m_ownerElement->fastHasAttribute(nwfaketopAttr))
+    HTMLFrameOwnerElement* owner = deprecatedLocalOwner();
+    if (owner && owner->fastHasAttribute(nwfaketopAttr))
         return true;
     return false;
 }

@@ -29,6 +29,7 @@
  */
 
 #include "config.h"
+
 #include "bindings/core/v8/DOMWrapperWorld.h"
 
 #include "bindings/core/v8/DOMDataStore.h"
@@ -74,8 +75,8 @@ DOMWrapperWorld& DOMWrapperWorld::current(v8::Isolate* isolate)
     }
     v8::Handle<v8::Context> context = isolate->GetCurrentContext();
     if (context == node::g_context) {
-        DOMWindow* window = toDOMWindow(context);
-        context = ScriptController::mainWorldContext(window->frame());
+        LocalDOMWindow* window = toDOMWindow(context);
+        context = toV8Context(window->frame(), DOMWrapperWorld::mainWorld());
     }
     return world(context);
 }

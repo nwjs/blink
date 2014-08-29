@@ -667,7 +667,7 @@ LocalDOMWindow* toDOMWindow(v8::Handle<v8::Context> context)
 
 v8::Handle<v8::Context> nodeToDOMContext(v8::Handle<v8::Context> context) {
     LocalDOMWindow* window = toDOMWindow(context);
-    return toV8Context(context->GetIsolate(), window->frame(), DOMWrapperWorld::mainWorld());
+    return toV8Context(window->frame(), DOMWrapperWorld::mainWorld());
 }
 
 LocalDOMWindow* enteredDOMWindow(v8::Isolate* isolate)

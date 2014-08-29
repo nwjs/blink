@@ -55,7 +55,7 @@ static ScriptCallFrame toScriptCallFrame(v8::Handle<v8::StackFrame> frame)
     v8::Local<v8::String> sourceNameValue(frame->GetScriptNameOrSourceURL());
     if (!sourceNameValue.IsEmpty()) {
         int length = sourceNameValue->Length();
-        sourceName = StringTraits<String>::fromV8String<false>(sourceNameValue, length);
+        sourceName = StringTraits<String>::fromV8String<V8StringOneByteTrait>(sourceNameValue, length);
     }
 
     String functionName;

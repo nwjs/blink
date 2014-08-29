@@ -32,48 +32,6 @@
 
 namespace blink {
 
-struct V8StringTwoBytesTrait {
-    typedef UChar CharType;
-    ALWAYS_INLINE static void write(v8::Handle<v8::String> v8String, CharType* buffer, int length)
-    {
-        v8String->Write(reinterpret_cast<uint16_t*>(buffer), 0, length);
-    }
-};
-
-struct V8StringOneByteTrait {
-    typedef LChar CharType;
-    ALWAYS_INLINE static void write(v8::Handle<v8::String> v8String, CharType* buffer, int length)
-    {
-        v8String->WriteOneByte(buffer, 0, length);
-    }
-};
-
-template <typename V8StringTrait>
-String StringTraits<String>::fromV8String(v8::Handle<v8::String> v8String, int length)
-{
-    ASSERT(v8String->Length() == length);
-    typename V8StringTrait::CharType* buffer;
-    String result = String::createUninitialized(length, buffer);
-    V8StringTrait::write(v8String, buffer, length);
-    return result;
-}
-
-template <typename V8StringTrait>
-AtomicString StringTraits<AtomicString>::fromV8String(v8::Handle<v8::String> v8String, int length)
-{
-    ASSERT(v8String->Length() == length);
-    static const int inlineBufferSize = 32 / sizeof(typename V8StringTrait::CharType);
-    if (length <= inlineBufferSize) {
-        typename V8StringTrait::CharType inlineBuffer[inlineBufferSize];
-        V8StringTrait::write(v8String, inlineBuffer, length);
-        return AtomicString(inlineBuffer, length);
-    }
-    typename V8StringTrait::CharType* buffer;
-    String string = String::createUninitialized(length, buffer);
-    V8StringTrait::write(v8String, buffer, length);
-    return AtomicString(string);
-}
-
 template<typename StringType>
 StringType v8StringToWebCoreString(v8::Handle<v8::String> v8String, ExternalMode external)
 {

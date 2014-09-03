@@ -110,12 +110,14 @@ static inline v8::Local<v8::String> v8_str(const char* x) {
 
 void initialize(Platform* platform)
 {
-    int argc = 0;
+#if 0
+  int argc = 0;
     char** argv = NULL;
     std::string snapshot_path, snapshot_flag;
-
+#endif
     initializeWithoutV8(platform);
 
+#if 0
     if (platform->supportNodeJS()) {
         platform->getCmdArg(&argc, &argv, snapshot_path);
         // Initialize uv.
@@ -126,7 +128,7 @@ void initialize(Platform* platform)
         snapshot_flag = "--nwsnapshot-path=" + snapshot_path;
         v8::V8::SetFlagsFromString(snapshot_flag.c_str(), static_cast<int>(snapshot_flag.size()));
     }
-
+#endif
     v8::Isolate* isolate = v8::Isolate::GetCurrent();
     WebCore::V8Initializer::initializeMainThreadIfNeeded(isolate);
     v8::V8::SetEntropySource(&generateEntropy);
@@ -148,6 +150,7 @@ void initialize(Platform* platform)
         currentThread->addTaskObserver(s_endOfTaskRunner);
     }
 
+#if 0
     if (platform->supportNodeJS()) {
       v8::Isolate* isolate = v8::Isolate::GetCurrent();
       v8::HandleScope scope(isolate);
@@ -165,6 +168,7 @@ void initialize(Platform* platform)
 
       node::SetupContext(argc, argv, context);
     }
+#endif
 }
 
 v8::Isolate* mainThreadIsolate()

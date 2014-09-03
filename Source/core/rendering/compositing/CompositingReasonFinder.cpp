@@ -62,7 +62,7 @@ bool CompositingReasonFinder::isMainFrame() const
 CompositingReasons CompositingReasonFinder::directReasons(const RenderLayer* layer, bool* needToRecomputeCompositingRequirements) const
 {
     CompositingReasons styleReasons = layer->styleDeterminedCompositingReasons();
-    ASSERT(styleDeterminedReasons(layer->renderer()) == styleReasons);
+    // ASSERT(styleDeterminedReasons(layer->renderer()) == styleReasons);
     return styleReasons | nonStyleDeterminedDirectReasons(layer, needToRecomputeCompositingRequirements);
 }
 

@@ -41,7 +41,7 @@ class WebViewClient;
 
 class ExternalDateTimeChooser FINAL : public blink::DateTimeChooser {
 public:
-    static PassRefPtrWillBeRawPtr<ExternalDateTimeChooser> create(ChromeClientImpl*, WebViewClient*, blink::DateTimeChooserClient*, const blink::DateTimeChooserParameters&);
+    static PassRefPtr<ExternalDateTimeChooser> create(ChromeClientImpl*, WebViewClient*, blink::DateTimeChooserClient*, const blink::DateTimeChooserParameters&);
     virtual ~ExternalDateTimeChooser();
 
     // The following functions are for DateTimeChooserCompletion.

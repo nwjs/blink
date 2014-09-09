@@ -166,8 +166,8 @@ CompositingReasons CompositingLayerAssigner::getReasonsPreventingSquashing(const
     if (compositingInputs.transformAncestor != squashingLayerCompositingInputs.transformAncestor)
         return CompositingReasonSquashingTransformAncestorMismatch;
 
-    if (compositingInputs.filterAncestor != squashingLayerCompositingInputs.filterAncestor)
-        return CompositingReasonSquashingFilterAncestorMismatch;
+    if (layer->hasFilter() || compositingInputs.filterAncestor != squashingLayerCompositingInputs.filterAncestor)
+        return CompositingReasonSquashingFilterMismatch;
 
     return CompositingReasonNone;
 }

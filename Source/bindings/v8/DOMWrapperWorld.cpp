@@ -75,6 +75,8 @@ DOMWrapperWorld& DOMWrapperWorld::current(v8::Isolate* isolate)
     v8::Handle<v8::Context> context = isolate->GetCurrentContext();
     if (context == node::g_context) {
       context = nodeToDOMContext(context);
+      if (context.IsEmpty())
+        return mainWorld();
     }
     return world(context);
 }

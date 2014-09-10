@@ -1110,6 +1110,7 @@ void CompositedLayerMapping::updateDrawsContent()
             Color bgColor(Color::transparent);
             if (contentLayerSupportsDirectBackgroundComposition(renderer())) {
                 bgColor = rendererBackgroundColor();
+                hasPaintedContent = false;
             }
             contentLayer->setBackgroundColor(bgColor.rgb());
         }

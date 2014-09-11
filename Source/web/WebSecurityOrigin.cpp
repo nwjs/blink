@@ -167,5 +167,10 @@ void WebSecurityOrigin::grantUniversalAccess() const
     get()->grantUniversalAccess();
 }
 
+bool WebSecurityOrigin::hasUniversalAccess() const
+{
+    return get()->hasUniversalAccess();
+}
+
 } // namespace blink
 

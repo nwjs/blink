@@ -398,6 +398,11 @@ void SecurityOrigin::grantUniversalAccess()
     m_universalAccess = true;
 }
 
+bool SecurityOrigin::hasUniversalAccess() const
+{
+    return m_universalAccess;
+}
+
 void SecurityOrigin::enforceFilePathSeparation()
 {
     ASSERT(isLocal());

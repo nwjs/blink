@@ -543,6 +543,9 @@ ExecutionContext* toExecutionContext(v8::Handle<v8::Context> context)
     if (!workerWrapper.IsEmpty())
         return V8WorkerGlobalScope::toNative(workerWrapper)->executionContext();
     // FIXME: Is this line of code reachable?
+    if (context == node::g_context) {
+      return toExecutionContext(nodeToDOMContext(context));
+    }
     return 0;
 }
 

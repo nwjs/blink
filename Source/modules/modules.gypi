@@ -1013,6 +1013,7 @@
       'vibration/testing/InternalsVibration.h',
     ],
     'modules_unittest_files': [
+      'filesystem/DOMFileSystemBaseTest.cpp',
       'indexeddb/IDBKeyPathTest.cpp',
       'indexeddb/IDBRequestTest.cpp',
       'indexeddb/IDBTransactionTest.cpp',

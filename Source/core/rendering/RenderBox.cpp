@@ -882,7 +882,8 @@ void RenderBox::applyCachedClipAndScrollOffsetForRepaint(LayoutRect& paintRect) 
     flipForWritingMode(paintRect);
     paintRect.move(-scrolledContentOffset()); // For overflow:auto/scroll/hidden.
 
-    // Do not clip scroll layer contents to reduce the number of repaints while scrolling.
+    // Do not clip scroll layer contents because the compositor expects the whole layer
+    // to be always invalidated in-time.
     if (usesCompositedScrolling()) {
         flipForWritingMode(paintRect);
         return;

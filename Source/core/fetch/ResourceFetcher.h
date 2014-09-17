@@ -166,7 +166,7 @@ private:
     ResourcePtr<Resource> revalidateResource(const FetchRequest&, Resource*);
     ResourcePtr<Resource> loadResource(Resource::Type, FetchRequest&, const String& charset);
     void preCacheDataURIImage(const FetchRequest&);
-    void preCacheSubstituteDataForMainResource(const FetchRequest&, const SubstituteData&);
+    void preCacheSubstituteDataForMainResource(const FetchRequest&, const SubstituteData&, ResourcePtr<Resource>* protector = NULL);
     void storeResourceTimingInitiatorInformation(const ResourcePtr<Resource>&, const FetchRequest&);
     void requestPreload(Resource::Type, FetchRequest&, const String& charset);
 

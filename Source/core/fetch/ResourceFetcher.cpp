@@ -369,12 +369,13 @@ ResourcePtr<RawResource> ResourceFetcher::fetchRawResource(FetchRequest& request
 
 ResourcePtr<RawResource> ResourceFetcher::fetchMainResource(FetchRequest& request, const SubstituteData& substituteData)
 {
+    ResourcePtr<Resource> protector;
     if (substituteData.isValid())
-        preCacheSubstituteDataForMainResource(request, substituteData);
+        preCacheSubstituteDataForMainResource(request, substituteData, &protector);
     return toRawResource(requestResource(Resource::MainResource, request));
 }
 
-void ResourceFetcher::preCacheSubstituteDataForMainResource(const FetchRequest& request, const SubstituteData& substituteData)
+void ResourceFetcher::preCacheSubstituteDataForMainResource(const FetchRequest& request, const SubstituteData& substituteData, ResourcePtr<Resource>* protector)
 {
     const KURL& url = request.url();
     if (Resource* oldResource = memoryCache()->resourceForURL(url))
@@ -390,6 +391,13 @@ void ResourceFetcher::preCacheSubstituteDataForMainResource(const FetchRequest& 
         resource->setResourceBuffer(substituteData.content());
     resource->finish();
     memoryCache()->add(resource.get());
+
+    // the destructor of 'resource' will trigger the removal of
+    // it from MemoryCache, which leads to fail loading of SVG Image
+    // the protector will prevent this and the resource will be
+    // removed from MemoryCache in requestResource()
+    if (protector)
+      *protector = resource;
 }
 
 bool ResourceFetcher::checkInsecureContent(Resource::Type type, const KURL& url, MixedContentBlockingTreatment treatment) const

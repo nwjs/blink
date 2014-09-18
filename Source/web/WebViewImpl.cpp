@@ -492,6 +492,7 @@ void WebViewImpl::handleMouseDown(LocalFrame& mainFrame, const WebMouseEvent& ev
     if (event.button == WebMouseEvent::ButtonLeft && m_page->mainFrame()->isLocalFrame() && !m_page->deprecatedLocalMainFrame()->view()->scrollbarAtPoint(point)) {
         point = m_page->deprecatedLocalMainFrame()->view()->windowToContents(point);
         HitTestResult result(m_page->deprecatedLocalMainFrame()->eventHandler().hitTestResultAtPoint(point));
+        result.setToShadowHostIfInUserAgentShadowRoot();
         Node* hitNode = result.innerNonSharedNode();
 
         if (!result.scrollbar() && hitNode && hitNode->renderer() && hitNode->renderer()->isEmbeddedObject()) {
@@ -1042,12 +1043,14 @@ WebRect WebViewImpl::computeBlockBounds(const WebRect& rect, bool ignoreClipping
     IntPoint point = mainFrameImpl()->frameView()->windowToContents(IntPoint(rect.x, rect.y));
     HitTestRequest::HitTestRequestType hitType = HitTestRequest::ReadOnly | HitTestRequest::Active | (ignoreClipping ? HitTestRequest::IgnoreClipping : 0);
     HitTestResult result = mainFrameImpl()->frame()->eventHandler().hitTestResultAtPoint(point, hitType, IntSize(rect.width, rect.height));
+    result.setToShadowHostIfInUserAgentShadowRoot();
 
     Node* node = result.innerNonSharedNode();
     if (!node)
         return WebRect();
 
     // Find the block type node based on the hit node.
+    // FIXME: This wants to walk composed tree with NodeRenderingTraversal::parent().
     while (node && (!node->renderer() || node->renderer()->isInline()))
         node = node->parentNode();
 
@@ -1203,6 +1206,7 @@ Node* WebViewImpl::bestTapNode(const PlatformGestureEvent& tapEvent)
 
     // We might hit something like an image map that has no renderer on it
     // Walk up the tree until we have a node with an attached renderer
+    // FIXME: This wants to walk composed tree with NodeRenderingTraversal::parent().
     while (bestTouchNode && !bestTouchNode->renderer())
         bestTouchNode = bestTouchNode->parentNode();
 
@@ -3869,7 +3873,9 @@ HitTestResult WebViewImpl::hitTestResultForWindowPos(const IntPoint& pos)
     if (!m_page->mainFrame()->isLocalFrame())
         return HitTestResult();
     IntPoint docPoint(m_page->deprecatedLocalMainFrame()->view()->windowToContents(pos));
-    return m_page->deprecatedLocalMainFrame()->eventHandler().hitTestResultAtPoint(docPoint, HitTestRequest::ReadOnly | HitTestRequest::Active);
+    HitTestResult result = m_page->deprecatedLocalMainFrame()->eventHandler().hitTestResultAtPoint(docPoint, HitTestRequest::ReadOnly | HitTestRequest::Active);
+    result.setToShadowHostIfInUserAgentShadowRoot();
+    return result;
 }
 
 void WebViewImpl::setTabsToLinks(bool enable)

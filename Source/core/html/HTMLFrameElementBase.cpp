@@ -46,6 +46,8 @@ HTMLFrameElementBase::HTMLFrameElementBase(const QualifiedName& tagName, Documen
     , m_scrolling(ScrollbarAuto)
     , m_marginWidth(-1)
     , m_marginHeight(-1)
+    , m_checkInDocumentTimer(this, &HTMLFrameElementBase::checkInDocumentTimerFired)
+    , m_remainsAliveOnRemovalFromTree(false)
 {
 }
 
@@ -137,14 +139,60 @@ void HTMLFrameElementBase::setNameAndOpenURL()
     openURL();
 }
 
+void HTMLFrameElementBase::disconnectContentFrame()
+{
+    if (m_remainsAliveOnRemovalFromTree)
+        return;
+
+    HTMLFrameOwnerElement::disconnectContentFrame();
+}
+
+void HTMLFrameElementBase::setRemainsAliveOnRemovalFromTree(bool value)
+{
+    m_remainsAliveOnRemovalFromTree = value;
+    // There is a possibility that JS will do document.adoptNode()
+    // on this element but will not insert it into the tree.
+    // Start the async timer that is normally stopped by attach(). If
+    // it's not stopped and fires, it'll unload the frame.
+    if (value)
+        m_checkInDocumentTimer.startOneShot(0, FROM_HERE);
+    else {
+        m_checkInDocumentTimer.stop();
+        disconnectContentFrame();
+    }
+}
+
+void HTMLFrameElementBase::checkInDocumentTimerFired(Timer<HTMLFrameElementBase>*)
+{
+    //ASSERT(!attached());
+    //ASSERT(m_remainsAliveOnRemovalFromTree);
+
+    m_remainsAliveOnRemovalFromTree = false;
+    disconnectContentFrame();
+}
+
 Node::InsertionNotificationRequest HTMLFrameElementBase::insertedInto(ContainerNode* insertionPoint)
 {
     HTMLFrameOwnerElement::insertedInto(insertionPoint);
     return InsertionShouldCallDidNotifySubtreeInsertions;
 }
 
+void HTMLFrameElementBase::updateOnReparenting()
+{
+    // ASSERT(m_remainsAliveOnRemovalFromTree);
+
+    if (LocalFrame* frame = contentFrame())
+        frame->transferChildFrameToNewDocument();
+}
+
 void HTMLFrameElementBase::didNotifySubtreeInsertionsToDocument()
 {
+    if (m_remainsAliveOnRemovalFromTree) {
+        updateOnReparenting();
+        m_remainsAliveOnRemovalFromTree = false;
+        m_checkInDocumentTimer.stop();
+        return;
+    }
     if (!document().frame())
         return;
 

@@ -93,6 +93,7 @@ namespace WebCore {
 
         RenderPart* ownerRenderer() const; // Renderer for the element that contains this frame.
 
+        void transferChildFrameToNewDocument();
         void didChangeVisibilityState();
 
     // ======== All public functions below this point are candidates to move out of LocalFrame into another class. ========

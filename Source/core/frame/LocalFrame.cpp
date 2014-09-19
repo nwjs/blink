@@ -293,6 +293,17 @@ void LocalFrame::disconnectOwnerElement()
     m_ownerElement = 0;
 }
 
+void LocalFrame::transferChildFrameToNewDocument()
+{
+    ASSERT(m_ownerElement);
+    LocalFrame* newParent = m_ownerElement->document().frame();
+    FrameHost* newHost = newParent->host();
+    FrameHost* oldHost = m_host;
+    if (newHost != oldHost) {
+        m_host = newHost;
+    }
+}
+
 String LocalFrame::documentTypeString() const
 {
     if (DocumentType* doctype = document()->doctype())

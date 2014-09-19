@@ -47,7 +47,7 @@ public:
     void setContentFrame(Frame&);
     void clearContentFrame();
 
-    void disconnectContentFrame();
+    virtual void disconnectContentFrame();
 
     // Most subclasses use RenderPart (either RenderEmbeddedObject or RenderIFrame)
     // except for HTMLObjectElement and HTMLEmbedElement which may return any
@@ -64,6 +64,7 @@ public:
     virtual void renderFallbackContent() { }
 
     virtual bool isObjectElement() const { return false; }
+
     void setWidget(PassRefPtr<Widget>);
     Widget* ownedWidget() const;
 
@@ -75,6 +76,8 @@ public:
     private:
         void performDeferredWidgetTreeOperations();
     };
+
+    virtual void setRemainsAliveOnRemovalFromTree(bool) { }
 
 protected:
     HTMLFrameOwnerElement(const QualifiedName& tagName, Document&);

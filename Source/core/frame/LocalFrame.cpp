@@ -295,6 +295,17 @@ void LocalFrame::detachFromFrameHost()
     m_host = 0;
 }
 
+void LocalFrame::transferChildFrameToNewDocument()
+{
+    ASSERT(m_owner);
+    LocalFrame* newParent = deprecatedLocalOwner()->document().frame();
+    FrameHost* newHost = newParent->host();
+    FrameHost* oldHost = m_host;
+    if (newHost != oldHost) {
+        m_host = newHost;
+    }
+}
+
 String LocalFrame::documentTypeString() const
 {
     if (DocumentType* doctype = document()->doctype())

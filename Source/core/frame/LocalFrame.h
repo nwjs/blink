@@ -104,6 +104,7 @@ namespace blink {
         SpellChecker& spellChecker() const;
         FrameConsole& console() const;
 
+        void transferChildFrameToNewDocument();
         void didChangeVisibilityState();
 
         // FIXME: This method is only used by EventHandler to get the highest level

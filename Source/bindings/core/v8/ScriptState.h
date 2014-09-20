@@ -10,6 +10,8 @@
 #include "wtf/RefCounted.h"
 #include <v8.h>
 
+#include "third_party/node/src/node_webkit.h"
+
 namespace blink {
 
 class LocalDOMWindow;
@@ -60,7 +62,7 @@ public:
         // ScriptState::from() must not be called for a context that does not have
         // valid embedder data in the embedder field.
         RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(scriptState);
-        RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(scriptState->context() == context);
+        RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(scriptState->context() == context || context == node::g_context);
         return scriptState;
     }
 

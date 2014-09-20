@@ -182,8 +182,7 @@ void ConsoleBase::internalAddMessage(MessageType type, MessageLevel level, Scrip
     InspectorInstrumentation::addConsoleAPIMessageToConsole(context(), type, level, message, scriptState, arguments);
     if (gotStringMessage) {
         message = "";
-        for (unsigned i = 1; i < arguments->argumentCount(); ++i) {
-
+        for (unsigned i = 0; i < arguments->argumentCount(); ++i) {
             String argAsString;
             RefPtr<JSONValue> value = arguments->argumentAt(i).toJSONValue(scriptState);
             if (!value)

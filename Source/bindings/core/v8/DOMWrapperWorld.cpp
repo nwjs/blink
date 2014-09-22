@@ -77,6 +77,8 @@ DOMWrapperWorld& DOMWrapperWorld::current(v8::Isolate* isolate)
     if (context == node::g_context) {
         LocalDOMWindow* window = toDOMWindow(context);
         context = toV8Context(window->frame(), DOMWrapperWorld::mainWorld());
+        if (context.IsEmpty())
+            return mainWorld();
     }
     return world(context);
 }

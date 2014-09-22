@@ -120,6 +120,9 @@ CompositingReasons CompositingLayerAssigner::getReasonsPreventingSquashing(const
     if (!squashingState.haveAssignedBackingsToEntireSquashingLayerSubtree)
         return CompositingReasonSquashingWouldBreakPaintOrder;
 
+    ASSERT(squashingState.hasMostRecentMapping);
+    const RenderLayer& squashingLayer = squashingState.mostRecentMapping->owningLayer();
+
     // FIXME: this special case for video exists only to deal with corner cases
     // where a RenderVideo does not report that it needs to be directly composited.
     // Video does not currently support sharing a backing, but this could be
@@ -127,13 +130,12 @@ CompositingReasons CompositingLayerAssigner::getReasonsPreventingSquashing(const
     // video to share a backing with other layers.
     //
     // compositing/video/video-controls-layer-creation.html
-    // virtual/softwarecompositing/video/video-controls-layer-creation.html
-    if (layer->renderer()->isVideo())
+    if (layer->renderer()->isVideo() || squashingLayer.renderer()->isVideo())
         return CompositingReasonSquashingVideoIsDisallowed;
 
     // Don't squash iframes, frames or plugins.
     // FIXME: this is only necessary because there is frame code that assumes that composited frames are not squashed.
-    if (layer->renderer()->isRenderPart())
+    if (layer->renderer()->isRenderPart() || squashingLayer.renderer()->isRenderPart())
         return CompositingReasonSquashingRenderPartIsDisallowed;
 
     if (layer->reflectionInfo())
@@ -142,10 +144,7 @@ CompositingReasons CompositingLayerAssigner::getReasonsPreventingSquashing(const
     if (squashingWouldExceedSparsityTolerance(layer, squashingState))
         return CompositingReasonSquashingSparsityExceeded;
 
-    // FIXME: this is not efficient, since it walks up the tree . We should store these values on the CompositingInputsCache.
-    ASSERT(squashingState.hasMostRecentMapping);
-    const RenderLayer& squashingLayer = squashingState.mostRecentMapping->owningLayer();
-
+    // FIXME: this is not efficient, since it walks up the tree. We should store these values on the CompositingInputsCache.
     if (layer->clippingContainer() != squashingLayer.clippingContainer() && !squashingLayer.compositedLayerMapping()->containingSquashedLayer(layer->clippingContainer()))
         return CompositingReasonSquashingClippingContainerMismatch;
 

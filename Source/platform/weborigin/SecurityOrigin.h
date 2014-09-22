@@ -142,6 +142,7 @@ public:
     //
     // WARNING: This is an extremely powerful ability. Use with caution!
     void grantUniversalAccess();
+    bool hasUniversalAccess() const;
 
     bool canAccessDatabase() const { return !isUnique(); };
     bool canAccessLocalStorage() const { return !isUnique(); };

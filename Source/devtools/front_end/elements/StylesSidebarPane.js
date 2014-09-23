@@ -1503,8 +1503,10 @@ WebInspector.StylePropertiesSection.prototype = {
     {
         if (this._checkWillCancelEditing() || !this.editable)
             return;
-        if (event.target === this._selectorContainer)
+        if (event.target === this._selectorContainer) {
             this.addNewBlankProperty(0).startEditing();
+            event.consume(true);
+        }
     },
 
     /**
@@ -1600,6 +1602,7 @@ WebInspector.StylePropertiesSection.prototype = {
         }
         this.expand();
         this.addNewBlankProperty().startEditing();
+        event.consume(true)
     },
 
     _handleSelectorClick: function(event)

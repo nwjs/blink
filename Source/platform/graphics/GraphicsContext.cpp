@@ -101,16 +101,18 @@ struct GraphicsContext::CanvasSaveState {
 };
 
 struct GraphicsContext::RecordingState {
-    RecordingState(SkCanvas* currentCanvas, const SkMatrix& currentMatrix, PassRefPtr<DisplayList> displayList)
+    RecordingState(SkCanvas* currentCanvas, const SkMatrix& currentMatrix, PassRefPtr<DisplayList> displayList, RegionTrackingMode trackingMode)
         : m_savedCanvas(currentCanvas)
         , m_displayList(displayList)
         , m_savedMatrix(currentMatrix)
+        , m_regionTrackingMode(trackingMode)
     {
     }
 
     SkCanvas* m_savedCanvas;
     RefPtr<DisplayList> m_displayList;
     const SkMatrix m_savedMatrix;
+    RegionTrackingMode m_regionTrackingMode;
 };
 
 GraphicsContext::GraphicsContext(SkCanvas* canvas, DisabledMode disableContextOrPainting)
@@ -513,7 +515,11 @@ void GraphicsContext::beginRecording(const FloatRect& bounds)
         }
     }
 
-    m_recordingStateStack.append(RecordingState(savedCanvas, savedMatrix, displayList));
+    m_recordingStateStack.append(RecordingState(savedCanvas, savedMatrix, displayList,
+        static_cast<RegionTrackingMode>(m_regionTrackingMode)));
+
+    // Disable region tracking during recording.
+    setRegionTrackingMode(RegionTrackingDisabled);
 }
 
 PassRefPtr<DisplayList> GraphicsContext::endRecording()
@@ -528,6 +534,7 @@ PassRefPtr<DisplayList> GraphicsContext::endRecording()
 
     m_recordingStateStack.removeLast();
     m_canvas = recording.m_savedCanvas;
+    setRegionTrackingMode(recording.m_regionTrackingMode);
 
     return recording.m_displayList.release();
 }
@@ -552,6 +559,14 @@ void GraphicsContext::drawDisplayList(DisplayList* displayList)
         m_canvas->translate(bounds.x(), bounds.y());
 
     m_canvas->drawPicture(displayList->picture());
+
+    if (regionTrackingEnabled()) {
+        // Since we don't track regions within display lists, conservatively
+        // mark the bounds as non-opaque.
+        SkPaint paint;
+        paint.setXfermodeMode(SkXfermode::kClear_Mode);
+        m_trackedRegion.didDrawBounded(this, displayList->bounds(), paint);
+    }
 
     if (bounds.x() || bounds.y())
         m_canvas->translate(-bounds.x(), -bounds.y());

@@ -31,7 +31,7 @@
 #include "config.h"
 #include "bindings/core/v8/V8HTMLIFrameElement.h"
 
-#include "HTMLNames.h"
+#include "core/HTMLNames.h"
 #include "bindings/core/v8/BindingSecurity.h"
 #include "bindings/core/v8/ExceptionState.h"
 #include "bindings/core/v8/V8Binding.h"

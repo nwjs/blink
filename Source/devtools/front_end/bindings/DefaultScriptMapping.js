@@ -171,7 +171,7 @@ WebInspector.DebuggerProjectDelegate.prototype = {
     addScript: function(script)
     {
         var contentProvider = script.isInlineScript() ? new WebInspector.ConcatenatedScriptsContentProvider([script]) : script;
-        var splitURL = WebInspector.ParsedURL.splitURL(script.sourceURL);
+        var splitURL = WebInspector.ParsedURL.splitURLIntoPathComponents(script.sourceURL);
         var name = splitURL[splitURL.length - 1];
         name = "VM" + script.scriptId + (name ? " " + name : "");
         return this.addContentProvider("", name, script.sourceURL, contentProvider);

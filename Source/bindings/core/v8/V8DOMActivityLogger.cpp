@@ -92,6 +92,7 @@ V8DOMActivityLogger* V8DOMActivityLogger::currentActivityLoggerIfIsolatedWorld()
     if (!isolate->InContext())
         return 0;
 
+    v8::HandleScope handle_scope(isolate);
     v8::Handle<v8::Context> context = isolate->GetCurrentContext();
     if (context.IsEmpty() || !toDOMWindow(context))
         return 0;

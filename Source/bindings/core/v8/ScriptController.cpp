@@ -242,6 +242,8 @@ WindowProxy* ScriptController::windowProxy(DOMWrapperWorld& world)
 
 bool ScriptController::shouldBypassMainWorldCSP()
 {
+    v8::HandleScope handleScope(m_isolate);
+
     v8::Handle<v8::Context> context = m_isolate->GetCurrentContext();
     if (context == node::g_context) {
         if (m_frame->document()->securityOrigin()->hasUniversalAccess())

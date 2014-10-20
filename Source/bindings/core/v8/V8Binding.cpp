@@ -690,6 +690,8 @@ LocalDOMWindow* currentDOMWindow(v8::Isolate* isolate)
 
 LocalDOMWindow* callingDOMWindow(v8::Isolate* isolate)
 {
+    v8::HandleScope handle_scope(isolate);
+
     v8::Handle<v8::Context> context = isolate->GetCallingContext();
     if (context.IsEmpty()) {
         // Unfortunately, when processing script from a plug-in, we might not

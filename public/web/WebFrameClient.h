@@ -555,6 +555,10 @@ public:
 
     virtual void willHandleNavigationPolicy(
          WebFrame*, const WebURLRequest&, WebNavigationPolicy*) { }
+
+    virtual void windowOpenBegin(const WebURL& url) {}
+    virtual void windowOpenEnd() {}
+
 protected:
     virtual ~WebFrameClient() { }
 };

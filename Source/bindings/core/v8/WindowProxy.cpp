@@ -369,6 +369,8 @@ void WindowProxy::updateActivityLogger()
 
 void WindowProxy::setSecurityToken(SecurityOrigin* origin)
 {
+    v8::HandleScope handleScope(m_isolate);
+
     if (m_frame->loader().client()->willSetSecurityToken(context()))
         return;
     // If two tokens are equal, then the SecurityOrigins canAccess each other.
@@ -390,7 +392,7 @@ void WindowProxy::setSecurityToken(SecurityOrigin* origin)
     // origins that should only allow access to themselves. In this
     // case, we use the global object as the security token to avoid
     // calling canAccess when a script accesses its own objects.
-    v8::HandleScope handleScope(m_isolate);
+
     v8::Handle<v8::Context> context = m_scriptState->context();
     if (token.isEmpty() || token == "null") {
         context->UseDefaultSecurityToken();

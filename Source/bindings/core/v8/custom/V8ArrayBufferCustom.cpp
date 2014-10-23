@@ -71,6 +71,7 @@ v8::Handle<v8::Object> V8ArrayBuffer::createWrapper(PassRefPtr<ArrayBuffer> impl
     ASSERT(impl.get());
     ASSERT(!DOMDataStore::containsWrapper<V8ArrayBuffer>(impl.get(), isolate));
 
+    v8::HandleScope handleScope(isolate);
     v8::Handle<v8::Context> context = isolate->GetCurrentContext();
     if (context == node::g_context) {
       context = nodeToDOMContext(context);

@@ -71,17 +71,17 @@ v8::Handle<v8::Object> V8ArrayBuffer::createWrapper(PassRefPtr<ArrayBuffer> impl
     ASSERT(impl.get());
     ASSERT(!DOMDataStore::containsWrapper<V8ArrayBuffer>(impl.get(), isolate));
 
-    v8::HandleScope handleScope(isolate);
+    v8::EscapableHandleScope handleScope(isolate);
     v8::Handle<v8::Context> context = isolate->GetCurrentContext();
     if (context == node::g_context) {
       context = nodeToDOMContext(context);
     }
     v8::Context::Scope context_scope(context);
-    v8::Handle<v8::Object> wrapper = v8::ArrayBuffer::New(isolate, impl->data(), impl->byteLength());
+    v8::Local<v8::Object> wrapper = v8::ArrayBuffer::New(isolate, impl->data(), impl->byteLength());
     impl->setDeallocationObserver(V8ArrayBufferDeallocationObserver::instanceTemplate());
 
     V8DOMWrapper::associateObjectWithWrapper<V8ArrayBuffer>(impl, &wrapperTypeInfo, wrapper, isolate, WrapperConfiguration::Independent);
-    return wrapper;
+    return handleScope.Escape(wrapper);
 }
 
 ArrayBuffer* V8ArrayBuffer::toNative(v8::Handle<v8::Object> object)

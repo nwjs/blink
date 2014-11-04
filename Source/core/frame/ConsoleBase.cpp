@@ -178,8 +178,10 @@ void ConsoleBase::internalAddMessage(MessageType type, MessageLevel level, Scrip
     RefPtrWillBeRawPtr<ScriptCallStack> callStack(createScriptCallStackForConsole(stackSize));
 
     String message;
+
     bool gotStringMessage = arguments->getFirstArgumentAsString(message);
     InspectorInstrumentation::addConsoleAPIMessageToConsole(context(), type, level, message, scriptState, arguments);
+
     if (gotStringMessage) {
         message = "";
         for (unsigned i = 0; i < arguments->argumentCount(); ++i) {

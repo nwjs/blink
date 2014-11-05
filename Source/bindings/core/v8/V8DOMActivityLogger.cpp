@@ -75,7 +75,10 @@ V8DOMActivityLogger* V8DOMActivityLogger::currentActivityLogger()
     if (!isolate->InContext())
         return 0;
 
+    v8::HandleScope handle_scope(isolate);
     v8::Handle<v8::Context> context = isolate->GetCurrentContext();
+    if (context == node::g_context)
+        return 0;
     if (context.IsEmpty() || !toDOMWindow(context))
         return 0;
 

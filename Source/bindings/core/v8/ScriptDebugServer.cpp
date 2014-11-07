@@ -558,9 +558,14 @@ void ScriptDebugServer::dispatchDidParseSource(ScriptDebugListener* listener, v8
         script.sourceMappingURL = StringTraits<String>::fromV8String<V8StringOneByteTrait>(v8String, length);
     }
 
-    v8String = object->Get(v8AtomicString(m_isolate, "sourceURL"))->ToString();
-    length = v8String->Length();
-    script.sourceURL = StringTraits<String>::fromV8String<V8StringOneByteTrait>(v8String, length);
+    value = object->Get(v8AtomicString(m_isolate, "sourceURL"));
+    if (value.IsEmpty() || value->IsNull() || value->IsUndefined())
+        script.sourceURL = String();
+    else {
+        v8String = value->ToString();
+        length = v8String->Length();
+        script.sourceURL = StringTraits<String>::fromV8String<V8StringOneByteTrait>(v8String, length);
+    }
 
     script.startLine = object->Get(v8AtomicString(m_isolate, "startLine"))->ToInteger()->Value();
     script.startColumn = object->Get(v8AtomicString(m_isolate, "startColumn"))->ToInteger()->Value();

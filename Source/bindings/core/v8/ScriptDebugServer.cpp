@@ -539,6 +539,7 @@ void ScriptDebugServer::dispatchDidParseSource(ScriptDebugListener* listener, v8
 
     ScriptDebugListener::Script script;
     v8::Handle<v8::String> v8String;
+    v8::Handle<v8::Value> value;
 
     v8String = object->Get(v8AtomicString(m_isolate, "name"))->ToString();
     int length = v8String->Length();
@@ -548,9 +549,14 @@ void ScriptDebugServer::dispatchDidParseSource(ScriptDebugListener* listener, v8
     length = v8String->Length();
     script.source = StringTraits<String>::fromV8String<V8StringOneByteTrait>(v8String, length);
 
-    v8String = object->Get(v8AtomicString(m_isolate, "sourceMappingURL"))->ToString();
-    length = v8String->Length();
-    script.sourceMappingURL = StringTraits<String>::fromV8String<V8StringOneByteTrait>(v8String, length);
+    value = object->Get(v8AtomicString(m_isolate, "sourceMappingURL"));
+    if (value.IsEmpty() || value->IsNull() || value->IsUndefined())
+        script.sourceMappingURL = String();
+    else {
+        v8String = value->ToString();
+        length = v8String->Length();
+        script.sourceMappingURL = StringTraits<String>::fromV8String<V8StringOneByteTrait>(v8String, length);
+    }
 
     v8String = object->Get(v8AtomicString(m_isolate, "sourceURL"))->ToString();
     length = v8String->Length();

@@ -33,9 +33,12 @@
 
 #include "bindings/core/v8/ScriptDebugServer.h"
 #include "bindings/core/v8/ScriptState.h"
+#include "core/frame/LocalDOMWindow.h"
+#include "core/frame/LocalFrame.h"
 #include "core/inspector/InjectedScript.h"
 #include "core/inspector/InjectedScriptManager.h"
 #include "core/inspector/InspectorState.h"
+#include "core/page/Page.h"
 #include "platform/JSONValues.h"
 
 using blink::TypeBuilder::Runtime::ExecutionContextDescription;
@@ -202,6 +205,26 @@ void InspectorRuntimeAgent::disable(ErrorString* errorString)
 
 void InspectorRuntimeAgent::addExecutionContextToFrontend(ScriptState* scriptState, bool isPageContext, const String& name, const String& frameId)
 {
+    LocalDOMWindow* domWindow = scriptState->domWindow();
+    LocalFrame* frame = domWindow ? domWindow->frame() : 0;
+    if (frame && frame->page() && frame->page()->mainFrame()) {
+        Frame* main_frame = frame->page()->mainFrame();
+        Frame* jail_frame = main_frame->getDevtoolsJail();
+        if (jail_frame) {
+            bool in_jail_frame = false;
+            Frame* f = frame;
+            while (f) {
+                if (f == jail_frame) {
+                    in_jail_frame = true;
+                    break;
+                }
+                f = f->tree().parent();
+            }
+            if (!in_jail_frame)
+                return;
+        }
+    }
+
     int executionContextId = injectedScriptManager()->injectedScriptIdFor(scriptState);
     m_scriptStateToId.set(scriptState, executionContextId);
     m_frontend->executionContextCreated(ExecutionContextDescription::create()

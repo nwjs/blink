@@ -749,6 +749,9 @@ void FrameLoader::load(const FrameLoadRequest& passedRequest)
         action.mutableResourceRequest().setRequestContext(determineRequestContextFromNavigationType(action.type()));
     if (shouldOpenInNewWindow(targetFrame.get(), request, action)) {
         NavigationPolicy navigationPolicy = action.policy();
+        // honour _blank in nw's new logic for new-win-policy
+        if (request.frameName() == "_blank")
+            navigationPolicy = NavigationPolicyNewWindow;
         client()->willHandleNavigationPolicy(request.resourceRequest(), &navigationPolicy);
         if (navigationPolicy == NavigationPolicyIgnore)
             return;

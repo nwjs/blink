@@ -335,8 +335,12 @@ bool BitmapImage::ensureFrameIsCached(size_t index)
     if (index >= frameCount())
         return false;
 
-    if (index >= m_frames.size() || !m_frames[index].m_frame)
-        cacheFrame(index);
+	if (index >= m_frames.size() || !m_frames[index].m_frame) {
+		cacheFrame(index);
+		if (index >= m_frames.size() || !m_frames[index].m_frame) {
+			return false;
+		}
+	}
     return true;
 }
 
@@ -368,8 +372,10 @@ PassRefPtr<NativeImageSkia> BitmapImage::nativeImageForCurrentFrame()
 
 PassRefPtr<Image> BitmapImage::imageForDefaultFrame()
 {
-    if (isBitmapImage() && maybeAnimated())
-        return BitmapImage::create(frameAtIndex(0));
+	if (isBitmapImage() && maybeAnimated()) {
+		RefPtr<NativeImageSkia> fr = frameAtIndex(0);
+		if (fr) return BitmapImage::create();
+	}
 
     return Image::imageForDefaultFrame();
 }

@@ -374,7 +374,7 @@ PassRefPtr<Image> BitmapImage::imageForDefaultFrame()
 {
 	if (isBitmapImage() && maybeAnimated()) {
 		RefPtr<NativeImageSkia> fr = frameAtIndex(0);
-		if (fr) return BitmapImage::create();
+		if (fr) return BitmapImage::create(fr);
 	}
 
     return Image::imageForDefaultFrame();

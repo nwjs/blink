@@ -70,6 +70,7 @@
 #include "core/rendering/svg/RenderSVGRoot.h"
 #include "core/svg/SVGDocumentExtensions.h"
 #include "core/svg/SVGSVGElement.h"
+#include "public/platform/Platform.h"
 #include "platform/RuntimeEnabledFeatures.h"
 #include "platform/ScriptForbiddenScope.h"
 #include "platform/TraceEvent.h"
@@ -1805,8 +1806,11 @@ void FrameView::setTransparent(bool isTransparent)
 {
     m_isTransparent = isTransparent;
     DisableCompositingQueryAsserts disabler;
-    if (renderView() && renderView()->layer()->hasCompositedLayerMapping())
+    if (renderView() && renderView()->layer()->hasCompositedLayerMapping()) {
         renderView()->layer()->compositedLayerMapping()->updateContentsOpaque();
+        if (Platform::current()->supportTransparency())
+            renderView()->layer()->compositedLayerMapping()->setContentsNeedDisplay();
+    }
 }
 
 bool FrameView::hasOpaqueBackground() const

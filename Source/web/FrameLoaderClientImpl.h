@@ -168,7 +168,7 @@ public:
 
     virtual void dispatchDidChangeManifest() OVERRIDE;
 
-    virtual void willHandleNavigationPolicy(const blink::ResourceRequest& request, blink::NavigationPolicy* policy) OVERRIDE;
+    virtual void willHandleNavigationPolicy(const blink::ResourceRequest& request, blink::NavigationPolicy* policy, WebString* manifest = NULL) OVERRIDE;
     virtual void windowOpenBegin(const KURL& url) OVERRIDE;
     virtual void windowOpenEnd() OVERRIDE;
 

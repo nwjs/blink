@@ -110,6 +110,7 @@ public:
     //
     // WARNING: This is an extremely powerful ability. Use with caution!
     BLINK_EXPORT void grantUniversalAccess() const;
+    BLINK_EXPORT bool hasUniversalAccess() const;
 
 #if BLINK_IMPLEMENTATION
     WebSecurityOrigin(const WTF::PassRefPtr<SecurityOrigin>&);

@@ -9,6 +9,11 @@
 #include "bindings/core/v8/V8DOMWrapper.h"
 #include "core/dom/DOMArrayBufferDeallocationObserver.h"
 
+#include "bindings/core/v8/ScriptController.h"
+#include "core/frame/LocalDOMWindow.h"
+
+#include "third_party/node/src/node_webkit.h"
+
 namespace blink {
 
 v8::Handle<v8::Object> DOMArrayBuffer::wrap(v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
@@ -19,6 +24,11 @@ v8::Handle<v8::Object> DOMArrayBuffer::wrap(v8::Handle<v8::Object> creationConte
     RefPtr<DOMArrayBuffer> protect(this);
 
     ASSERT(!DOMDataStore::containsWrapper(this, isolate));
+    v8::Handle<v8::Context> context = isolate->GetCurrentContext();
+    if (context == node::g_context) {
+      context = nodeToDOMContext(context);
+    }
+    v8::Context::Scope context_scope(context);
 
     const WrapperTypeInfo* wrapperTypeInfo = this->wrapperTypeInfo();
     v8::Handle<v8::Object> wrapper = v8::ArrayBuffer::New(isolate, data(), byteLength());

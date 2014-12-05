@@ -945,5 +945,19 @@ void FrameLoaderClientImpl::willHandleNavigationPolicy(const ResourceRequest& re
     }
 }
 
+void FrameLoaderClientImpl::windowOpenBegin(const KURL& url)
+{
+    if (m_webFrame->client()) {
+        m_webFrame->client()->windowOpenBegin(WebURL(url));
+    }
+}
+
+void FrameLoaderClientImpl::windowOpenEnd()
+{
+    if (m_webFrame->client()) {
+        m_webFrame->client()->windowOpenEnd();
+    }
+}
+
 } // namespace blink
 

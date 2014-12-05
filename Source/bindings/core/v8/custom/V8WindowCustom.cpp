@@ -59,6 +59,7 @@
 #include "core/inspector/ScriptCallStack.h"
 #include "core/loader/FrameLoadRequest.h"
 #include "core/loader/FrameLoader.h"
+#include "core/loader/FrameLoaderClient.h"
 #include "core/storage/Storage.h"
 #include "platform/PlatformScreen.h"
 #include "platform/graphics/media/MediaPlayer.h"
@@ -362,11 +363,16 @@ void V8Window::openMethodCustom(const v8::FunctionCallbackInfo<v8::Value>& info)
     }
     TOSTRING_VOID(V8StringResource<TreatNullAndUndefinedAsNullString>, windowFeaturesString, info[2]);
 
+    LocalFrame* frame = impl->frame();
+    KURL completedURL = frame->document()->completeURL(urlString);
+    frame->loader().client()->windowOpenBegin(completedURL);
     RefPtrWillBeRawPtr<LocalDOMWindow> openedWindow = impl->open(urlString, frameName, windowFeaturesString, callingDOMWindow(info.GetIsolate()), enteredDOMWindow(info.GetIsolate()));
-    if (!openedWindow)
-        return;
-
+    if (!openedWindow) {
+      frame->loader().client()->windowOpenEnd();
+      return;
+    }
     v8SetReturnValueFast(info, openedWindow.release(), impl);
+    frame->loader().client()->windowOpenEnd();
 }
 
 void V8Window::namedPropertyGetterCustom(v8::Local<v8::Name> name, const v8::PropertyCallbackInfo<v8::Value>& info)

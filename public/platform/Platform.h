@@ -630,6 +630,7 @@ public:
     // node-webkit --------------------------------------------------------
 
     virtual bool supportNodeJS() { return false; }
+    virtual void getCmdArg(int* argc, char*** argv) {}
 
     // Geofencing ---------------------------------------------------------
 

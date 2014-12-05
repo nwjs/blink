@@ -720,8 +720,11 @@ DOMWindow* toDOMWindow(v8::Isolate* isolate, v8::Handle<v8::Value> value)
 
 static LocalDOMWindow* DOMWindowFromNode(v8::Handle<v8::Context> context)
 {
+    v8::Isolate* isolate = context->GetIsolate();
+    v8::HandleScope handleScope(isolate);
+
     v8::Local<v8::Context> node_context =
-        v8::Local<v8::Context>::New(context->GetIsolate(), node::g_context);
+        v8::Local<v8::Context>::New(isolate, node::g_context);
     v8::Context::Scope context_scope(node_context);
     v8::Handle<v8::Object> global = node_context->Global();
     v8::Local<v8::Value> val_window = global->Get(v8AtomicString(context->GetIsolate(), "window"));
@@ -770,6 +773,8 @@ LocalDOMWindow* currentDOMWindow(v8::Isolate* isolate)
 
 LocalDOMWindow* callingDOMWindow(v8::Isolate* isolate)
 {
+    v8::HandleScope handle_scope(isolate);
+
     v8::Handle<v8::Context> context = isolate->GetCallingContext();
     if (context.IsEmpty()) {
         // Unfortunately, when processing script from a plug-in, we might not

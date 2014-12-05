@@ -66,6 +66,8 @@ DOMWrapperWorld::DOMWrapperWorld(v8::Isolate* isolate, int worldId, int extensio
 
 DOMWrapperWorld& DOMWrapperWorld::current(v8::Isolate* isolate)
 {
+    v8::HandleScope handleScope(isolate);
+
     if (isMainThread() && worldOfInitializingWindow) {
         // It's possible that current() is being called while window is being initialized.
         // In order to make current() workable during the initialization phase,

@@ -318,7 +318,7 @@ void HTMLCanvasElement::didProcessTask()
 
 void HTMLCanvasElement::willProcessTask()
 {
-    ASSERT_NOT_REACHED();
+  //    ASSERT_NOT_REACHED();
 }
 
 void HTMLCanvasElement::notifyObserversCanvasChanged(const FloatRect& rect)

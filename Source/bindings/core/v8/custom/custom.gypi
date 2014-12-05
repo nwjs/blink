@@ -19,6 +19,7 @@
             'V8ErrorEventCustom.cpp',
             'V8EventTargetCustom.cpp',
             'V8FileCustom.cpp',
+            'V8FileListCustom.cpp',
             'V8FileReaderCustom.cpp',
             'V8HTMLAllCollectionCustom.cpp',
             'V8HTMLCanvasElementCustom.cpp',

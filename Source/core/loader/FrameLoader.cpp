@@ -706,7 +706,7 @@ static bool shouldOpenInNewWindow(LocalFrame* targetFrame, const FrameLoadReques
         return true;
     // FIXME: This case is a workaround for the fact that ctrl+clicking a form submission incorrectly
     // sends as a GET rather than a POST if it creates a new window in a different process.
-    return request.formState() && action.shouldOpenInNewWindow();
+    return action.shouldOpenInNewWindow();
 }
 
 static WebURLRequest::RequestContext determineRequestContextFromNavigationType(const NavigationType navigationType)
@@ -760,14 +760,19 @@ void FrameLoader::load(const FrameLoadRequest& passedRequest)
         action.mutableResourceRequest().setRequestContext(determineRequestContextFromNavigationType(action.type()));
     if (shouldOpenInNewWindow(targetFrame.get(), request, action)) {
         NavigationPolicy navigationPolicy = action.policy();
-        m_client->willHandleNavigationPolicy(request.resourceRequest(), &navigationPolicy);
+        // honour _blank in nw's new logic for new-win-policy
+        if (request.frameName() == "_blank")
+            navigationPolicy = NavigationPolicyNewWindow;
+        client()->willHandleNavigationPolicy(request.resourceRequest(), &navigationPolicy);
         if (navigationPolicy == NavigationPolicyIgnore)
             return;
-        if (navigationPolicy == NavigationPolicyDownload)
-            client()->loadURLExternally(action.resourceRequest(), NavigationPolicyDownload);
-        else
-            createWindowForRequest(request, *m_frame, navigationPolicy, request.shouldSendReferrer());
-        return;
+        if (navigationPolicy != NavigationPolicyCurrentTab && shouldOpenInNewWindow(targetFrame.get(), request, action)) {
+            if (navigationPolicy == NavigationPolicyDownload)
+                client()->loadURLExternally(action.resourceRequest(), NavigationPolicyDownload);
+            else
+                createWindowForRequest(request, *m_frame, navigationPolicy, request.shouldSendReferrer());
+            return;
+        }
     }
 
     const KURL& url = request.resourceRequest().url();

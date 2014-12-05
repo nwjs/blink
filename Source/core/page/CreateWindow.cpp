@@ -33,6 +33,7 @@
 #include "core/frame/Settings.h"
 #include "core/inspector/ConsoleMessage.h"
 #include "core/loader/FrameLoadRequest.h"
+#include "core/loader/FrameLoaderClient.h"
 #include "core/page/Chrome.h"
 #include "core/page/ChromeClient.h"
 #include "core/page/FocusController.h"
@@ -137,17 +138,28 @@ LocalFrame* createWindow(const String& urlString, const AtomicString& frameName,
     // so we need to ensure the proper referrer is set now.
     frameRequest.resourceRequest().setHTTPReferrer(SecurityPolicy::generateReferrer(activeFrame->document()->referrerPolicy(), completedURL, activeFrame->document()->outgoingReferrer()));
 
+    NavigationPolicy navigationPolicy = NavigationPolicyNewForegroundTab;
+    openerFrame.loader().client()->willHandleNavigationPolicy(frameRequest.resourceRequest(), &navigationPolicy);
+
     // We pass the opener frame for the lookupFrame in case the active frame is different from
     // the opener frame, and the name references a frame relative to the opener frame.
-    bool created;
-    LocalFrame* newFrame = createWindow(*activeFrame, openerFrame, frameRequest, windowFeatures, NavigationPolicyIgnore, MaybeSendReferrer, created);
-    if (!newFrame)
-        return nullptr;
+    bool created = false;
+    LocalFrame* newFrame = nullptr;
+    if (navigationPolicy != NavigationPolicyIgnore &&
+        navigationPolicy != NavigationPolicyCurrentTab) {
+        newFrame = createWindow(*activeFrame, openerFrame, frameRequest, windowFeatures, NavigationPolicyIgnore, MaybeSendReferrer, created);
 
-    if (newFrame != &openerFrame && newFrame != openerFrame.tree().top())
-        newFrame->loader().forceSandboxFlags(openerFrame.document()->sandboxFlags());
+        if (!newFrame)
+           return nullptr;
 
-    newFrame->loader().setOpener(&openerFrame);
+        if (newFrame != &openerFrame && newFrame != openerFrame.tree().top())
+           newFrame->loader().forceSandboxFlags(openerFrame.document()->sandboxFlags());
+
+        newFrame->loader().setOpener(&openerFrame);
+    } else if (navigationPolicy == NavigationPolicyIgnore)
+        return 0;
+    else
+        newFrame = &openerFrame;
 
     if (newFrame->localDOMWindow()->isInsecureScriptAccess(callingWindow, completedURL))
         return newFrame;

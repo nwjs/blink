@@ -788,14 +788,18 @@ void FrameLoader::load(const FrameLoadRequest& passedRequest)
     FrameLoadType newLoadType = determineFrameLoadType(request);
     NavigationPolicy policy = navigationPolicyForRequest(request);
     if (shouldOpenInNewWindow(targetFrame.get(), request, policy)) {
-        m_client->willHandleNavigationPolicy(request.resourceRequest(), &policy);
+        if (request.frameName() == "_blank")
+            policy = NavigationPolicyNewWindow;
+        client()->willHandleNavigationPolicy(request.resourceRequest(), &policy);
         if (policy == NavigationPolicyIgnore)
             return;
-        if (policy == NavigationPolicyDownload)
-            client()->loadURLExternally(request.resourceRequest(), NavigationPolicyDownload);
-        else
-            createWindowForRequest(request, *m_frame, policy, request.shouldSendReferrer());
-        return;
+        if (navigationPolicy != NavigationPolicyCurrentTab && shouldOpenInNewWindow(targetFrame.get(), request, action)) {
+            if (policy == NavigationPolicyDownload)
+                client()->loadURLExternally(request.resourceRequest(), NavigationPolicyDownload);
+            else
+                createWindowForRequest(request, *m_frame, policy, request.shouldSendReferrer());
+            return;
+        }
     }
 
     const KURL& url = request.resourceRequest().url();

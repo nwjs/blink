@@ -82,6 +82,23 @@ HTMLDocument::~HTMLDocument()
 {
 }
 
+String HTMLDocument::devtoolsMode() const
+{
+    return inDevtoolsMode() ? "on" : "off";
+}
+
+void HTMLDocument::setDevtoolsMode(const String& value)
+{
+    InheritedBool mode;
+    if (equalIgnoringCase(value, "on"))
+        mode = on;
+    else if (equalIgnoringCase(value, "off"))
+        mode = off;
+    else
+        mode = inherit;
+    Document::setDevtoolsMode(mode);
+}
+
 HTMLBodyElement* HTMLDocument::htmlBodyElement() const
 {
     HTMLElement* body = this->body();

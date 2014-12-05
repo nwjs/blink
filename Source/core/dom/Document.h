@@ -809,6 +809,10 @@ public:
     String designMode() const;
     void setDesignMode(const String&);
 
+    void setDevtoolsMode(InheritedBool value);
+    InheritedBool getDevtoolsMode() const;
+    bool inDevtoolsMode() const;
+
     Document* parentDocument() const;
     Document& topDocument() const;
     WeakPtrWillBeRawPtr<Document> contextDocument();
@@ -1286,6 +1290,7 @@ private:
     DocumentEncodingData m_encodingData;
 
     InheritedBool m_designMode;
+    InheritedBool m_devtoolsMode;
 
     WillBeHeapHashSet<RawPtrWillBeWeakMember<const LiveNodeListBase>> m_listsInvalidatedAtDocument;
 #if ENABLE(OILPAN)

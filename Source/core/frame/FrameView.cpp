@@ -145,8 +145,10 @@ FrameView::FrameView(LocalFrame* frame)
     if (!m_frame->isMainFrame())
         return;
 
+#if 0
     ScrollableArea::setVerticalScrollElasticity(ScrollElasticityAllowed);
     ScrollableArea::setHorizontalScrollElasticity(ScrollElasticityAllowed);
+#endif
 }
 
 PassRefPtrWillBeRawPtr<FrameView> FrameView::create(LocalFrame* frame)

@@ -302,6 +302,9 @@ public:
 
     void setInputEventsTransformForEmulation(const IntSize&, float);
 
+    void setNodeJS(bool node) { frame()->setNodeJS(node); }
+    bool isNodeJS() const { return frame()->isNodeJS(); }
+
     static void selectWordAroundPosition(LocalFrame*, VisiblePosition);
 
     // Returns the text finder object if it already exists.

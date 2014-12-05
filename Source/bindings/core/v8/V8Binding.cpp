@@ -72,6 +72,8 @@
 #include "wtf/unicode/CharacterNames.h"
 #include "wtf/unicode/Unicode.h"
 
+#include "third_party/node/src/node_webkit.h"
+
 namespace blink {
 
 void setArityTypeError(ExceptionState& exceptionState, const char* valid, unsigned provided)
@@ -716,11 +718,36 @@ DOMWindow* toDOMWindow(v8::Isolate* isolate, v8::Handle<v8::Value> value)
     return 0;
 }
 
+static LocalDOMWindow* DOMWindowFromNode(v8::Handle<v8::Context> context)
+{
+    v8::Local<v8::Context> node_context =
+        v8::Local<v8::Context>::New(context->GetIsolate(), node::g_context);
+    v8::Context::Scope context_scope(node_context);
+    v8::Handle<v8::Object> global = node_context->Global();
+    v8::Local<v8::Value> val_window = global->Get(v8AtomicString(context->GetIsolate(), "window"));
+    if (val_window->IsUndefined())
+        return NULL;
+
+    v8::Local<v8::Object> window = v8::Local<v8::Object>::Cast(val_window);
+    global = V8Window::findInstanceInPrototypeChain(window, context->GetIsolate());
+
+    ASSERT (!global.IsEmpty());
+    return V8Window::toNative(global);
+}
+
 DOMWindow* toDOMWindow(v8::Handle<v8::Context> context)
 {
+    if (context == node::g_context) {
+        return DOMWindowFromNode(context);
+    }
     if (context.IsEmpty())
         return 0;
     return toDOMWindow(context->GetIsolate(), context->Global());
+}
+
+v8::Handle<v8::Context> nodeToDOMContext(v8::Handle<v8::Context> context) {
+    LocalDOMWindow* window = toDOMWindow(context);
+    return toV8Context(window->frame(), DOMWrapperWorld::mainWorld());
 }
 
 LocalDOMWindow* enteredDOMWindow(v8::Isolate* isolate)
@@ -765,6 +792,9 @@ ExecutionContext* toExecutionContext(v8::Handle<v8::Context> context)
     if (!workerWrapper.IsEmpty())
         return V8WorkerGlobalScope::toImpl(workerWrapper)->executionContext();
     // FIXME: Is this line of code reachable?
+    if (context == node::g_context) {
+      return toExecutionContext(nodeToDOMContext(context));
+    }
     return 0;
 }
 
@@ -788,12 +818,12 @@ ExecutionContext* callingExecutionContext(v8::Isolate* isolate)
 LocalFrame* toFrameIfNotDetached(v8::Handle<v8::Context> context)
 {
     LocalDOMWindow* window = toLocalDOMWindow(toDOMWindow(context));
-    if (window && window->isCurrentlyDisplayedInFrame())
-        return window->frame();
+    //if (window && window->isCurrentlyDisplayedInFrame())
+    return window->frame();
     // We return 0 here because |context| is detached from the LocalFrame. If we
     // did return |frame| we could get in trouble because the frame could be
     // navigated to another security origin.
-    return 0;
+    //return 0;
 }
 
 v8::Local<v8::Context> toV8Context(ExecutionContext* context, DOMWrapperWorld& world)

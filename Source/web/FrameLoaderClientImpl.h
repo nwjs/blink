@@ -61,6 +61,7 @@ public:
 
     virtual void didCreateScriptContext(v8::Handle<v8::Context>, int extensionGroup, int worldId) override;
     virtual void willReleaseScriptContext(v8::Handle<v8::Context>, int worldId) override;
+    virtual bool willSetSecurityToken(v8::Handle<v8::Context>) override;
 
     // Returns true if we should allow the given V8 extension to be added to
     // the script context at the currently loading page and given extension group.

@@ -152,6 +152,8 @@ noresize
 noshade
 novalidate
 nowrap
+nwdirectory
+nwsaveas
 object
 onabort
 onanimationstart

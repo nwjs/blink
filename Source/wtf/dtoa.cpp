@@ -44,6 +44,7 @@
 #pragma warning(disable: 4244)
 #pragma warning(disable: 4245)
 #pragma warning(disable: 4554)
+#pragma warning(disable: 4819)
 #endif
 
 namespace WTF {

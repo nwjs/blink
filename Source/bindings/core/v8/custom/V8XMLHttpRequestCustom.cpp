@@ -50,6 +50,8 @@
 #include "core/xmlhttprequest/XMLHttpRequest.h"
 #include <v8.h>
 
+#include "third_party/node/src/node_webkit.h"
+
 namespace blink {
 
 void V8XMLHttpRequest::constructorCustom(const v8::FunctionCallbackInfo<v8::Value>& info)
@@ -58,9 +60,14 @@ void V8XMLHttpRequest::constructorCustom(const v8::FunctionCallbackInfo<v8::Valu
 
     RefPtr<SecurityOrigin> securityOrigin;
     if (context->isDocument()) {
-        DOMWrapperWorld& world = DOMWrapperWorld::current(info.GetIsolate());
-        if (world.isIsolatedWorld())
+      v8::Local<v8::Context> v8context = info.GetIsolate()->GetEnteredContext();
+        if (v8context == node::g_context)
+            securityOrigin = context->securityOrigin();
+        else {
+          DOMWrapperWorld& world = DOMWrapperWorld::current(info.GetIsolate());
+          if (world.isIsolatedWorld())
             securityOrigin = world.isolatedWorldSecurityOrigin();
+        }
     }
 
     RefPtrWillBeRawPtr<XMLHttpRequest> xmlHttpRequest = XMLHttpRequest::create(context, securityOrigin);

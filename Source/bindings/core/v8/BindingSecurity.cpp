@@ -39,10 +39,17 @@
 #include "core/html/HTMLFrameElementBase.h"
 #include "platform/weborigin/SecurityOrigin.h"
 
+#include "third_party/node/src/node_webkit.h"
+
 namespace blink {
 
 static bool isDocumentAccessibleFromDOMWindow(Document* targetDocument, LocalDOMWindow* callingWindow)
 {
+    v8::Isolate* isolate = v8::Isolate::GetCurrent();
+        if (isolate->GetCallingContext() == node::g_context ||
+            isolate->GetEnteredContext() == node::g_context)
+        return true;
+
     if (!targetDocument)
         return false;
 

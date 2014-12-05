@@ -40,6 +40,7 @@ namespace blink {
 class Page;
 class ScriptPreprocessor;
 class ScriptSourceCode;
+class Frame;
 
 class PageScriptDebugServer final : public ScriptDebugServer {
     WTF_MAKE_NONCOPYABLE(PageScriptDebugServer);
@@ -72,6 +73,7 @@ public:
 
     virtual void muteWarningsAndDeprecations() override;
     virtual void unmuteWarningsAndDeprecations() override;
+    void rescanScripts(LocalFrame *frame);
 
 private:
     PageScriptDebugServer();

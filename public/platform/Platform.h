@@ -627,6 +627,9 @@ public:
 
     virtual WebNotificationManager* notificationManager() { return 0; }
 
+    // node-webkit --------------------------------------------------------
+
+    virtual bool supportNodeJS() { return false; }
 
     // Geofencing ---------------------------------------------------------
 

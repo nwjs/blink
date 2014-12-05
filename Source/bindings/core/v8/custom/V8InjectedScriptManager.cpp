@@ -44,6 +44,8 @@
 #include "core/inspector/InjectedScriptHost.h"
 #include "wtf/RefPtr.h"
 
+#include "third_party/node/src/node_webkit.h"
+
 namespace blink {
 
 InjectedScriptManager::CallbackData* InjectedScriptManager::createCallbackData(InjectedScriptManager* injectedScriptManager)
@@ -112,6 +114,8 @@ ScriptValue InjectedScriptManager::createInjectedScript(const String& scriptSour
 bool InjectedScriptManager::canAccessInspectedWindow(ScriptState* scriptState)
 {
     ScriptState::Scope scope(scriptState);
+    if (scriptState->context() == node::g_context)
+        return true;
     v8::Local<v8::Object> global = scriptState->context()->Global();
     if (global.IsEmpty())
         return false;

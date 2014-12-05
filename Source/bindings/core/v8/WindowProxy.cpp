@@ -275,6 +275,10 @@ void WindowProxy::createContext()
         return;
     m_scriptState = ScriptState::create(context, m_world);
 
+    v8::Local<v8::Context> node_context =
+        v8::Local<v8::Context>::New(context->GetIsolate(), node::g_context);
+    node_context->SetAlignedPointerInEmbedderData(v8ContextPerContextDataIndex, m_scriptState.get());
+
     double contextCreationDurationInMilliseconds = (currentTime() - contextCreationStartInSeconds) * 1000;
     const char* histogramName = "WebCore.WindowProxy.createContext.MainWorld";
     if (!m_world->isMainWorld())
@@ -368,6 +372,8 @@ void WindowProxy::updateActivityLogger()
 
 void WindowProxy::setSecurityToken(SecurityOrigin* origin)
 {
+    if (m_frame->loader().client()->willSetSecurityToken(context()))
+        return;
     // If two tokens are equal, then the SecurityOrigins canAccess each other.
     // If two tokens are not equal, then we have to call canAccess.
     // Note: we can't use the HTTPOrigin if it was set from the DOM.

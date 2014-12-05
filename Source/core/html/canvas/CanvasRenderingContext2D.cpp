@@ -47,6 +47,7 @@
 #include "core/events/Event.h"
 #include "core/fetch/ImageResource.h"
 #include "core/frame/ImageBitmap.h"
+#include "core/frame/LocalFrame.h"
 #include "core/frame/Settings.h"
 #include "core/frame/UseCounter.h"
 #include "core/html/HTMLCanvasElement.h"
@@ -1709,7 +1710,7 @@ PassRefPtrWillBeRawPtr<ImageData> CanvasRenderingContext2D::createImageData(floa
 
 PassRefPtrWillBeRawPtr<ImageData> CanvasRenderingContext2D::getImageData(float sx, float sy, float sw, float sh, ExceptionState& exceptionState) const
 {
-    if (!canvas()->originClean())
+    if (!canvas()->document().frame()->isNodeJS() && !canvas()->originClean())
         exceptionState.throwSecurityError("The canvas has been tainted by cross-origin data.");
     else if (!sw || !sh)
         exceptionState.throwDOMException(IndexSizeError, String::format("The source %s is 0.", sw ? "height" : "width"));

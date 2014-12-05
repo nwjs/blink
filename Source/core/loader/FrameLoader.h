@@ -181,6 +181,8 @@ public:
     void clearScrollPositionAndViewState();
 
     void restoreScrollPositionAndViewState();
+    void setUserAgentOverride(const String& agent);
+    String userAgentOverride() const;
 
     void trace(Visitor*);
 
@@ -276,6 +278,7 @@ private:
     Timer<FrameLoader> m_didAccessInitialDocumentTimer;
 
     SandboxFlags m_forcedSandboxFlags;
+    String m_userAgentOverride;
 };
 
 } // namespace blink

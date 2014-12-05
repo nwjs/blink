@@ -144,6 +144,8 @@ static void messageHandlerInMainThread(v8::Handle<v8::Message> message, v8::Hand
         return;
 
     v8::Isolate* isolate = v8::Isolate::GetCurrent();
+    v8::HandleScope handleScope(isolate);
+
     // If called during context initialization, there will be no entered window.
     LocalDOMWindow* enteredWindow = enteredDOMWindow(isolate);
     if (enteredWindow)  {

@@ -120,6 +120,7 @@ PassRefPtrWillBeRawPtr<ScriptCallStack> createScriptCallStackForConsole(size_t m
         v8::Isolate* isolate = v8::Isolate::GetCurrent();
         if (!isolate->InContext())
             return nullptr;
+        v8::HandleScope handle_scope(isolate);
         if (InspectorInstrumentation::consoleAgentEnabled(currentExecutionContext(isolate)))
             stackSize = maxStackSize;
     }

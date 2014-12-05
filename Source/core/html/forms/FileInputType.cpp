@@ -163,7 +163,8 @@ void FileInputType::handleDOMActivateEvent(Event* event)
         settings.useMediaCapture = RuntimeEnabledFeatures::mediaCaptureEnabled() && input.fastHasAttribute(captureAttr);
         settings.directoryChooser = input->fastHasAttribute(nwdirectoryAttr);
         settings.saveAs = input->fastHasAttribute(nwsaveasAttr);
-        chrome->runOpenPanel(input.document().frame(), newFileChooser(settings));
+        settings.initialPath = input->nwworkingdir();
+       chrome->runOpenPanel(input.document().frame(), newFileChooser(settings));
     }
     event->setDefaultHandled();
 }

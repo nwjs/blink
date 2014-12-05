@@ -79,6 +79,9 @@ struct WebFileChooserParams {
     // 'false' should be specified to the flag.
     bool needLocalPath;
 
+    // initial path of the file dialog
+    WebString initialPath;
+
     WebFileChooserParams()
         : multiSelect(false)
         , directory(false)

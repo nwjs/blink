@@ -33,6 +33,7 @@ interface HTMLIFrameElement : HTMLElement {
     [Reflect] attribute DOMString srcdoc;
     [Reflect] attribute DOMString width;
     [Reflect] attribute boolean nwdisable;
+    [Reflect] attribute boolean nwfaketop;
 
     // Introduced in DOM Level 2:
     [CheckSecurity=Node] readonly attribute Document contentDocument;

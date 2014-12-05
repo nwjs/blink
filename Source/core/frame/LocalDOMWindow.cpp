@@ -1904,10 +1904,10 @@ PassRefPtrWillBeRawPtr<LocalDOMWindow> LocalDOMWindow::open(const String& urlStr
     // In those cases, we schedule a location change right now and return early.
     Frame* targetFrame = 0;
     if (frameName == "_top")
-        targetFrame = frame()->tree().top();
+        targetFrame = frame()->isNwFakeTop() ? frame() : frame()->tree().find("_top");
     else if (frameName == "_parent") {
         if (Frame* parent = frame()->tree().parent())
-            targetFrame = parent;
+            targetFrame = frame()->isNwFakeTop() ? frame() : parent;
         else
             targetFrame = frame();
     }

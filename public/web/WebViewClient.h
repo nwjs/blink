@@ -94,7 +94,8 @@ public:
                                 const WebWindowFeatures& features,
                                 const WebString& name,
                                 WebNavigationPolicy policy,
-                                bool suppressOpener) {
+                                bool suppressOpener,
+                                WebString* manifest = NULL) {
         return 0;
     }
 

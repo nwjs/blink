@@ -937,11 +937,11 @@ unsigned FrameLoaderClientImpl::backForwardLength()
     return webview->client()->historyBackListCount() + 1 + webview->client()->historyForwardListCount();
 }
 
-void FrameLoaderClientImpl::willHandleNavigationPolicy(const ResourceRequest& request, NavigationPolicy* policy)
+void FrameLoaderClientImpl::willHandleNavigationPolicy(const ResourceRequest& request, NavigationPolicy* policy, WebString* manifest)
 {
     if (m_webFrame->client()) {
         WrappedResourceRequest webreq(request);
-        m_webFrame->client()->willHandleNavigationPolicy(m_webFrame, webreq, (WebNavigationPolicy*)policy);
+        m_webFrame->client()->willHandleNavigationPolicy(m_webFrame, webreq, (WebNavigationPolicy*)policy, manifest);
     }
 }
 

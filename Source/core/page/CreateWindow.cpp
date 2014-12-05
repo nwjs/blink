@@ -162,6 +162,10 @@ LocalFrame* createWindow(const String& urlString, const AtomicString& frameName,
     if (function)
         function(newFrame->localDOMWindow(), functionContext);
 
+    String agent = openerFrame.loader().userAgentOverride();
+    if (!agent.isEmpty())
+        newFrame->loader().setUserAgentOverride(agent);
+
     if (created)
         newFrame->loader().load(FrameLoadRequest(callingWindow.document(), completedURL));
     else if (!urlString.isEmpty())

@@ -32,6 +32,7 @@ interface HTMLIFrameElement : HTMLElement {
     [Reflect, URL] attribute DOMString src;
     [Reflect] attribute DOMString srcdoc;
     [Reflect] attribute DOMString width;
+    [Reflect, TreatNullAs=NullString, Custom=Setter] attribute DOMString nwUserAgent;
     [Reflect] attribute boolean nwdisable;
     [Reflect] attribute boolean nwfaketop;
 

@@ -145,6 +145,20 @@ static void messageHandlerInMainThread(v8::Handle<v8::Message> message, v8::Hand
     v8::Isolate* isolate = v8::Isolate::GetCurrent();
     // If called during context initialization, there will be no entered window.
     LocalDOMWindow* enteredWindow = enteredDOMWindow(isolate);
+    if (enteredWindow)  {
+        Frame* frame = enteredWindow->document()->frame();
+        if (frame && frame->isNodeJS()) {
+            v8::Local<v8::Context> node_context =
+                v8::Local<v8::Context>::New(isolate, node::g_context);
+            node_context->Enter();
+            node::OnMessage(message, data);
+            node_context->Exit();
+        }
+    } else {
+        node::OnMessage(message, data);
+        return;
+    }
+
     if (!enteredWindow || !enteredWindow->isCurrentlyDisplayedInFrame())
         return;
 

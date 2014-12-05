@@ -35,6 +35,8 @@
 #include "bindings/core/v8/V8Binding.h"
 #include "bindings/core/v8/V8ObjectConstructor.h"
 #include "wtf/StringExtras.h"
+#include <wtf/text/WTFString.h>
+#include <wtf/text/CString.h>
 
 #include <stdlib.h>
 
@@ -155,17 +157,13 @@ CustomElementBinding* V8PerContextData::customElementBinding(CustomElementDefini
 
 static v8::Handle<v8::Value> createDebugData(const char* worldName, int debugId, v8::Isolate* isolate)
 {
-    char buffer[32];
-    unsigned wanted;
+    String data;
     if (debugId == -1)
-        wanted = snprintf(buffer, sizeof(buffer), "%s", worldName);
+      data = String::format("%s", worldName);
     else
-        wanted = snprintf(buffer, sizeof(buffer), "%s,%d", worldName, debugId);
+      data = String::format("%s,%d", worldName, debugId);
 
-    if (wanted < sizeof(buffer))
-        return v8AtomicString(isolate, buffer);
-
-    return v8::Undefined(isolate);
+    return v8AtomicString(isolate, data.ascii().data());
 }
 
 static v8::Handle<v8::Value> debugData(v8::Handle<v8::Context> context)

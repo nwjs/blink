@@ -408,8 +408,10 @@ ResourcePtr<RawResource> ResourceFetcher::fetchMainResource(FetchRequest& reques
     ASSERT(request.resourceRequest().frameType() != WebURLRequest::FrameTypeNone);
     ASSERT(request.resourceRequest().requestContext() == WebURLRequest::RequestContextForm || request.resourceRequest().requestContext() == WebURLRequest::RequestContextFrame || request.resourceRequest().requestContext() == WebURLRequest::RequestContextHyperlink || request.resourceRequest().requestContext() == WebURLRequest::RequestContextIframe || request.resourceRequest().requestContext() == WebURLRequest::RequestContextInternal || request.resourceRequest().requestContext() == WebURLRequest::RequestContextLocation);
 
+    ResourcePtr<Resource> protector;
+
     if (substituteData.isValid())
-        preCacheSubstituteDataForMainResource(request, substituteData);
+        preCacheSubstituteDataForMainResource(request, substituteData, &protector);
     return toRawResource(requestResource(Resource::MainResource, request));
 }
 
@@ -427,7 +429,7 @@ ResourcePtr<RawResource> ResourceFetcher::fetchTextTrack(FetchRequest& request)
     return toRawResource(requestResource(Resource::TextTrack, request));
 }
 
-void ResourceFetcher::preCacheSubstituteDataForMainResource(const FetchRequest& request, const SubstituteData& substituteData)
+void ResourceFetcher::preCacheSubstituteDataForMainResource(const FetchRequest& request, const SubstituteData& substituteData, ResourcePtr<Resource>* protector)
 {
     const String cacheIdentifier = getCacheIdentifier();
     const KURL& url = request.url();
@@ -445,6 +447,13 @@ void ResourceFetcher::preCacheSubstituteDataForMainResource(const FetchRequest& 
     resource->setCacheIdentifier(cacheIdentifier);
     resource->finish();
     memoryCache()->add(resource.get());
+
+    // the destructor of 'resource' will trigger the removal of
+    // it from MemoryCache, which leads to fail loading of SVG Image
+    // the protector will prevent this and the resource will be
+    // removed from MemoryCache in requestResource()
+    if (protector)
+      *protector = resource;
 }
 
 bool ResourceFetcher::canRequest(Resource::Type type, const ResourceRequest& resourceRequest, const KURL& url, const ResourceLoaderOptions& options, bool forPreload, FetchRequest::OriginRestriction originRestriction) const

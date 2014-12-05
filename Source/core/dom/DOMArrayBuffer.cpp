@@ -24,6 +24,7 @@ v8::Handle<v8::Object> DOMArrayBuffer::wrap(v8::Handle<v8::Object> creationConte
     RefPtr<DOMArrayBuffer> protect(this);
 
     ASSERT(!DOMDataStore::containsWrapper(this, isolate));
+    v8::EscapableHandleScope handleScope(isolate);
     v8::Handle<v8::Context> context = isolate->GetCurrentContext();
     if (context == node::g_context) {
       context = nodeToDOMContext(context);
@@ -31,7 +32,7 @@ v8::Handle<v8::Object> DOMArrayBuffer::wrap(v8::Handle<v8::Object> creationConte
     v8::Context::Scope context_scope(context);
 
     const WrapperTypeInfo* wrapperTypeInfo = this->wrapperTypeInfo();
-    v8::Handle<v8::Object> wrapper = v8::ArrayBuffer::New(isolate, data(), byteLength());
+    v8::Local<v8::Object> wrapper = v8::ArrayBuffer::New(isolate, data(), byteLength());
 
     // Only when we create a new wrapper, let V8 know that we allocated and
     // associated a new memory block with the wrapper. Note that
@@ -39,7 +40,7 @@ v8::Handle<v8::Object> DOMArrayBuffer::wrap(v8::Handle<v8::Object> creationConte
     // DOMArrayBufferDeallocationObserver::blinkAllocatedMemory.
     buffer()->setDeallocationObserver(DOMArrayBufferDeallocationObserver::instance());
 
-    return associateWithWrapper(isolate, wrapperTypeInfo, wrapper);
+    return handleScope.Escape(associateWithWrapper(isolate, wrapperTypeInfo, wrapper));
 }
 
 v8::Handle<v8::Object> DOMArrayBuffer::associateWithWrapper(v8::Isolate* isolate, const WrapperTypeInfo* wrapperTypeInfo, v8::Handle<v8::Object> wrapper)

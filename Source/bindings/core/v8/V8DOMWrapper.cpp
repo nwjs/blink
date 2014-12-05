@@ -39,6 +39,10 @@
 #include "bindings/core/v8/V8ScriptRunner.h"
 #include "bindings/core/v8/V8Window.h"
 
+#include "ScriptController.h"
+
+#include "third_party/node/src/node_webkit.h"
+
 namespace blink {
 
 static v8::Local<v8::Object> wrapInShadowTemplate(v8::Local<v8::Object> wrapper, ScriptWrappable* scriptWrappable, v8::Isolate* isolate)

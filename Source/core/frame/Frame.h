@@ -116,6 +116,8 @@ public:
     // want Document::loadEventFinished() instead.
     void setIsLoading(bool isLoading) { m_isLoading = isLoading; }
     bool isLoading() const { return m_isLoading; }
+    void setNodeJS(bool node) { m_nodejs = node; }
+    bool isNodeJS() const { return m_nodejs; }
 
 protected:
     Frame(FrameClient*, FrameHost*, FrameOwner*);
@@ -130,6 +132,7 @@ private:
     WebLayer* m_remotePlatformLayer;
 
     bool m_isLoading;
+    bool m_nodejs;
 };
 
 inline FrameClient* Frame::client() const

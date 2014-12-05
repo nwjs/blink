@@ -220,6 +220,14 @@ void ConsoleBase::internalAddMessage(MessageType type, MessageLevel level, Scrip
 
     String message;
     bool gotStringMessage = arguments ? arguments->getFirstArgumentAsString(message) : false;
+    if (gotStringMessage)
+       for (unsigned i = 1; i < arguments->argumentCount(); ++i) {
+           String argAsString;
+           if (arguments->argumentAt(i).getString(arguments->globalState(), argAsString)) {
+               message.append(" ");
+               message.append(argAsString);
+           }
+       }
 
     RefPtrWillBeRawPtr<ConsoleMessage> consoleMessage = ConsoleMessage::create(ConsoleAPIMessageSource, level, gotStringMessage? message : String());
     consoleMessage->setType(type);

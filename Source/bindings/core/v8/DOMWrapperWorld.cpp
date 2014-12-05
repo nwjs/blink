@@ -29,6 +29,7 @@
  */
 
 #include "config.h"
+
 #include "bindings/core/v8/DOMWrapperWorld.h"
 
 #include "bindings/core/v8/DOMDataStore.h"
@@ -42,6 +43,9 @@
 #include "core/dom/ExecutionContext.h"
 #include "wtf/HashTraits.h"
 #include "wtf/StdLibExtras.h"
+#include "ScriptController.h"
+
+#include "third_party/node/src/node_webkit.h"
 
 namespace blink {
 
@@ -59,6 +63,26 @@ DOMWrapperWorld::DOMWrapperWorld(v8::Isolate* isolate, int worldId, int extensio
     , m_domDataStore(adoptPtr(new DOMDataStore(isolate, isMainWorld())))
 {
 }
+
+DOMWrapperWorld& DOMWrapperWorld::current(v8::Isolate* isolate)
+{
+    if (isMainThread() && worldOfInitializingWindow) {
+        // It's possible that current() is being called while window is being initialized.
+        // In order to make current() workable during the initialization phase,
+        // we cache the world of the initializing window on worldOfInitializingWindow.
+        // If there is no initiazing window, worldOfInitializingWindow is 0.
+        return *worldOfInitializingWindow;
+    }
+    v8::Handle<v8::Context> context = isolate->GetCurrentContext();
+    if (context == node::g_context) {
+        LocalDOMWindow* window = toDOMWindow(context);
+        context = toV8Context(window->frame(), DOMWrapperWorld::mainWorld());
+        if (context.IsEmpty())
+            return mainWorld();
+    }
+    return world(context);
+}
+
 
 DOMWrapperWorld& DOMWrapperWorld::mainWorld()
 {

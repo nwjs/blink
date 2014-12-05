@@ -588,11 +588,36 @@ void ScriptDebugServer::dispatchDidParseSource(ScriptDebugListener* listener, v8
     String sourceID = String::number(id->Int32Value());
 
     ScriptDebugListener::Script script;
-    script.setURL(toCoreStringWithUndefinedOrNullCheck(object->Get(v8AtomicString(m_isolate, "name"))))
-        .setSourceURL(toCoreStringWithUndefinedOrNullCheck(object->Get(v8AtomicString(m_isolate, "sourceURL"))))
-        .setSourceMappingURL(toCoreStringWithUndefinedOrNullCheck(object->Get(v8AtomicString(m_isolate, "sourceMappingURL"))))
-        .setSource(toCoreStringWithUndefinedOrNullCheck(object->Get(v8AtomicString(m_isolate, "source"))))
-        .setStartLine(object->Get(v8AtomicString(m_isolate, "startLine"))->ToInteger(m_isolate)->Value())
+    v8::Handle<v8::String> v8String;
+    v8::Handle<v8::Value> value;
+
+    v8String = object->Get(v8AtomicString(m_isolate, "name"))->ToString();
+    int length = v8String->Length();
+    script.setURL(StringTraits<String>::fromV8String<V8StringOneByteTrait>(v8String, length));
+
+    v8String = object->Get(v8AtomicString(m_isolate, "source"))->ToString();
+    length = v8String->Length();
+    script.setSource(StringTraits<String>::fromV8String<V8StringOneByteTrait>(v8String, length));
+
+    value = object->Get(v8AtomicString(m_isolate, "sourceMappingURL"));
+    if (value.IsEmpty() || value->IsNull() || value->IsUndefined())
+        script.setSourceMappingURL(String());
+    else {
+        v8String = value->ToString();
+        length = v8String->Length();
+        script.setSourceMappingURL(StringTraits<String>::fromV8String<V8StringOneByteTrait>(v8String, length));
+    }
+
+    value = object->Get(v8AtomicString(m_isolate, "sourceURL"));
+    if (value.IsEmpty() || value->IsNull() || value->IsUndefined())
+        script.setSourceURL(String());
+    else {
+        v8String = value->ToString();
+        length = v8String->Length();
+        script.setSourceURL(StringTraits<String>::fromV8String<V8StringOneByteTrait>(v8String, length));
+    }
+
+    script.setStartLine(object->Get(v8AtomicString(m_isolate, "startLine"))->ToInteger(m_isolate)->Value())
         .setStartColumn(object->Get(v8AtomicString(m_isolate, "startColumn"))->ToInteger(m_isolate)->Value())
         .setEndLine(object->Get(v8AtomicString(m_isolate, "endLine"))->ToInteger(m_isolate)->Value())
         .setEndColumn(object->Get(v8AtomicString(m_isolate, "endColumn"))->ToInteger(m_isolate)->Value())

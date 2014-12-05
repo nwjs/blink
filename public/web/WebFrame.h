@@ -662,6 +662,9 @@ public:
 #endif
 #endif
 
+    virtual void setNodeJS(bool) = 0;
+    virtual bool isNodeJS() const = 0;
+
 protected:
     WebFrame();
     virtual ~WebFrame();

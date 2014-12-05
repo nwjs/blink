@@ -32,6 +32,7 @@
 #include <string.h>
 
 #define UNIMPLEMENTED ASSERT_NOT_REACHED
+#undef UNREACHABLE
 #define UNREACHABLE ASSERT_NOT_REACHED
 
 // Double operations detection based on target architecture.

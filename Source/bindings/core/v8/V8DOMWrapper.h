@@ -32,11 +32,14 @@
 #define V8DOMWrapper_h
 
 #include "bindings/core/v8/DOMDataStore.h"
+#include "bindings/core/v8/V8Binding.h"
 #include "bindings/core/v8/ScriptWrappable.h"
 #include "wtf/PassRefPtr.h"
 #include "wtf/RawPtr.h"
 #include "wtf/text/AtomicString.h"
 #include <v8.h>
+
+#include "third_party/node/src/node_webkit.h"
 
 namespace blink {
 
@@ -100,6 +103,9 @@ public:
         : m_didEnterContext(false)
         , m_context(isolate->GetCurrentContext())
     {
+        if (m_context == node::g_context) {
+            m_context = nodeToDOMContext(m_context);
+        }
         // creationContext should not be empty. Because if we have an
         // empty creationContext, we will end up creating
         // a new object in the context currently entered. This is wrong.

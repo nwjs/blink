@@ -60,6 +60,7 @@ protected:
     void enable() override;
     void disable() override;
 
+    virtual PageScriptDebugServer& scriptDebugServer() override;
 private:
     void startListeningScriptDebugServer() override;
     void stopListeningScriptDebugServer() override;

@@ -81,6 +81,8 @@
 #include "wtf/text/StringBuilder.h"
 #include "wtf/text/TextPosition.h"
 
+#include "third_party/node/src/node_webkit.h"
+
 namespace blink {
 
 bool ScriptController::canAccessFromCurrentOrigin(LocalFrame *frame)
@@ -229,6 +231,8 @@ bool ScriptController::shouldBypassMainWorldCSP()
 {
     v8::HandleScope handleScope(isolate());
     v8::Handle<v8::Context> context = isolate()->GetCurrentContext();
+    if (context == node::g_context)
+        return true;
     if (context.IsEmpty() || !toDOMWindow(context))
         return false;
     DOMWrapperWorld& world = DOMWrapperWorld::current(isolate());

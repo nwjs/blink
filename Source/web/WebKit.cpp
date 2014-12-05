@@ -65,6 +65,10 @@
 #include "wtf/text/TextEncoding.h"
 #include <v8.h>
 
+#include "third_party/node/src/node_webkit.h"
+
+#include "content/nw/src/api/window_bindings.h"
+
 namespace blink {
 
 namespace {
@@ -94,12 +98,27 @@ static ThreadState::Interruptor* s_isolateInterruptor = 0;
 // Doing so may cause hard to reproduce crashes.
 static bool s_webKitInitialized = false;
 
+static inline v8::Local<v8::String> v8_str(const char* x) {
+    return v8::String::NewFromUtf8(v8::Isolate::GetCurrent(), x);
+}
+
 void initialize(Platform* platform)
 {
     initializeWithoutV8(platform);
 
     V8Initializer::initializeMainThreadIfNeeded();
 
+    v8::Isolate* isolate = V8PerIsolateData::mainThreadIsolate();
+
+    if (platform->supportNodeJS()) {
+        isolate->Enter();
+        int argc = 1;
+        char* argv[] = { const_cast<char*>("node"), NULL, NULL };
+        // Initialize uv.
+        node::SetupUv(argc, argv);
+    }
+
+    v8::Isolate* isolate = V8PerIsolateData::initialize();
     s_isolateInterruptor = new V8IsolateInterruptor(V8PerIsolateData::mainThreadIsolate());
     ThreadState::current()->addInterruptor(s_isolateInterruptor);
     ThreadState::current()->registerTraceDOMWrappers(V8PerIsolateData::mainThreadIsolate(), V8GCController::traceDOMWrappers);
@@ -109,6 +128,25 @@ void initialize(Platform* platform)
         ASSERT(!s_endOfTaskRunner);
         s_endOfTaskRunner = new EndOfTaskRunner;
         currentThread->addTaskObserver(s_endOfTaskRunner);
+    }
+    if (platform->supportNodeJS()) {
+        int argc = 1;
+        char* argv[] = { const_cast<char*>("node"), NULL, NULL };
+        v8::Isolate* isolate = v8::Isolate::GetCurrent();
+        v8::HandleScope scope(isolate);
+
+        v8::RegisterExtension(new nwapi::WindowBindings());
+        const char* names[] = { "window_bindings.js" };
+        v8::ExtensionConfiguration extension_configuration(1, names);
+
+
+        v8::Local<v8::Context> context = v8::Context::New(isolate, &extension_configuration);
+        node::g_context.Reset(isolate, context);
+        context->SetSecurityToken(v8_str("nw-token"));
+        context->Enter();
+        context->SetEmbedderData(0, v8_str("node"));
+
+        node::SetupContext(argc, argv, context);
     }
 }
 

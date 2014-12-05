@@ -115,6 +115,7 @@ WebInspector.Main.prototype = {
     {
         console.timeStamp("Main._loaded");
 
+        document.devtoolsMode = 'on';
         this._createSettings();
         this._createAppUI();
     },

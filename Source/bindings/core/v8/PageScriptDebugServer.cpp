@@ -53,10 +53,32 @@
 #include "wtf/TemporaryChange.h"
 #include "wtf/text/StringBuilder.h"
 
-#include "third_party/node/src/node.h"
-#include "third_party/node/src/req_wrap.h"
+#include "third_party/node/src/node_webkit.h"
+
 
 namespace blink {
+
+static LocalFrame* retrieveFrameWithNodeContext(v8::Handle<v8::Context> context)
+{
+  v8::Isolate* isolate = context->GetIsolate();
+  v8::HandleScope handle_scope(isolate);
+  v8::Local<v8::Context> node_context =
+    v8::Local<v8::Context>::New(isolate, node::g_context);
+
+  v8::Context::Scope context_scope(node_context);
+  v8::Handle<v8::Object> global = node_context->Global();
+  v8::Local<v8::Value> val_window = global->Get(v8AtomicString(isolate, "window"));
+  if (val_window->IsUndefined())
+    return 0;
+  v8::Local<v8::Object> window = v8::Local<v8::Object>::Cast(val_window);
+  global = V8Window::findInstanceInPrototypeChain(window, isolate);
+  if (global.IsEmpty())
+    return 0;
+  LocalDOMWindow* win = V8Window::toNative(global);
+  if (!win)
+    return 0;
+  return win->frame();
+}
 
 static LocalFrame* retrieveFrameWithGlobalObjectCheck(v8::Handle<v8::Context> context)
 {
@@ -70,24 +92,18 @@ static LocalFrame* retrieveFrameWithGlobalObjectCheck(v8::Handle<v8::Context> co
     // because there is no way in the embedder side to check if the context is half-baked or not.
     if (isMainThread() && DOMWrapperWorld::windowIsBeingInitialized())
         return 0;
-    v8::HandleScope handle_scope;
+    v8::HandleScope handle_scope(context->GetIsolate());
+
+    {
+      v8::Handle<v8::Object> global = context->Global();
+        if (global.IsEmpty())
+            return retrieveFrameWithNodeContext(context);
+    }
 
     v8::Handle<v8::Value> global = V8Window::findInstanceInPrototypeChain(context->Global(), context->GetIsolate());
 
     if (global.IsEmpty()) {
-        v8::Context::Scope context_scope(node::g_context);
-        global = node::g_context->Global();
-        v8::Local<v8::Value> val_window = global->Get(v8::String::New("window"));
-        if (val_window->IsUndefined())
-            return 0;
-        v8::Local<v8::Object> window = v8::Local<v8::Object>::Cast(val_window);
-        global = window->FindInstanceInPrototypeChain(V8DOMWindow::GetTemplate(context->GetIsolate(), worldTypeInMainThread(context->GetIsolate())));
-        if (global.IsEmpty())
-            return 0;
-        DOMWindow* win = V8DOMWindow::toNative(global);
-        if (!win)
-            return 0;
-        return win->frame();
+        return retrieveFrameWithNodeContext(context);
     }
 
     return toFrameIfNotDetached(context);
@@ -155,11 +171,11 @@ void PageScriptDebugServer::rescanScripts(LocalFrame* frame)
     v8::Local<v8::Context> context = windowProxy->context();
     v8::Handle<v8::Function> getScriptsFunction = v8::Local<v8::Function>::Cast(debuggerScript->Get(v8AtomicString(m_isolate, "getScripts")));
 
-    v8::Local<v8::String> prefix = v8::String::New("");
-    Frame* jail;
-    if ((jail = frame->getDevtoolsJail()) && jail->ownerElement()) {
-        String id = jail->ownerElement()->getIdAttribute();
-        prefix = v8::String::New(id.ascii().data());
+    v8::Local<v8::String> prefix = v8AtomicString(m_isolate, "");
+    LocalFrame* jail;
+    if ((jail = (LocalFrame*)frame->getDevtoolsJail()) && jail->deprecatedLocalOwner()) {
+        String id = jail->deprecatedLocalOwner()->getIdAttribute();
+        prefix = v8AtomicString(m_isolate, id.ascii().data());
     }
 
     v8::Handle<v8::Value> argv[] = { context->GetEmbedderData(0), prefix };

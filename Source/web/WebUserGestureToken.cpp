@@ -42,12 +42,14 @@ bool WebUserGestureToken::hasGestures() const
 
 void WebUserGestureToken::setOutOfProcess()
 {
-    m_token->setOutOfProcess();
+    if (!m_token.isNull())
+        m_token->setOutOfProcess();
 }
 
 void WebUserGestureToken::setJavascriptPrompt()
 {
-    m_token->setJavascriptPrompt();
+    if (!m_token.isNull())
+        m_token->setJavascriptPrompt();
 }
 
 WebUserGestureToken::WebUserGestureToken(PassRefPtr<UserGestureToken> token)

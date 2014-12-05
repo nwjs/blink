@@ -628,6 +628,7 @@ public:
 
     // node-webkit --------------------------------------------------------
 
+    virtual bool supportTransparency() { return false; }
     virtual bool supportNodeJS() { return false; }
     virtual void getCmdArg(int* argc, char*** argv, std::string& snapshot_path) {}
 

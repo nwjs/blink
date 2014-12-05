@@ -306,6 +306,10 @@ public:
     bool isNodeJS() const { return frame()->isNodeJS(); }
     bool isNwDisabledChildFrame() const { return frame()->isNwDisabledChildFrame(); }
     bool isNwFakeTop() const { return frame()->isNwFakeTop(); }
+    void setDevtoolsJail(WebFrame* iframe) {
+      frame()->setDevtoolsJail(iframe ? static_cast<const WebLocalFrameImpl*>(iframe)->frame() : NULL);
+    }
+    WebFrame* getDevtoolsJail() { return fromFrame((blink::LocalFrame*)frame()->getDevtoolsJail()); }
 
     static void selectWordAroundPosition(LocalFrame*, VisiblePosition);
 

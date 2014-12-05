@@ -588,12 +588,12 @@ void InspectorPageAgent::reload(ErrorString*, const bool* const optionalIgnoreCa
 {
     m_pendingScriptToEvaluateOnLoadOnce = optionalScriptToEvaluateOnLoad ? *optionalScriptToEvaluateOnLoad : "";
     m_pendingScriptPreprocessor = optionalScriptPreprocessor ? *optionalScriptPreprocessor : "";
-    m_page->mainFrame()->reload(asBool(optionalIgnoreCache) ? EndToEndReload : NormalReload, NotClientRedirect);
+    mainFrame()->reload(asBool(optionalIgnoreCache) ? EndToEndReload : NormalReload, NotClientRedirect);
 }
 
 void InspectorPageAgent::navigate(ErrorString*, const String& url, String* outFrameId)
 {
-    LocalFrame* frame = m_page->deprecatedLocalMainFrame();
+    LocalFrame* frame = mainFrame();
     *outFrameId = frameId(frame);
 }
 
@@ -722,7 +722,7 @@ void InspectorPageAgent::getCookies(ErrorString*, RefPtr<TypeBuilder::Array<Type
 void InspectorPageAgent::deleteCookie(ErrorString*, const String& cookieName, const String& url)
 {
     KURL parsedURL(ParsedURLString, url);
-    for (Frame* frame = m_page->mainFrame(); frame; frame = frame->tree().traverseNext(m_page->mainFrame())) {
+    for (Frame* frame = mainFrame(); frame; frame = frame->tree().traverseNext(m_page->mainFrame())) { // node-webkit  FIXME
         if (frame->isLocalFrame())
             blink::deleteCookie(toLocalFrame(frame)->document(), parsedURL, cookieName);
     }
@@ -730,7 +730,7 @@ void InspectorPageAgent::deleteCookie(ErrorString*, const String& cookieName, co
 
 void InspectorPageAgent::getResourceTree(ErrorString*, RefPtr<TypeBuilder::Page::FrameResourceTree>& object)
 {
-    object = buildObjectForFrameTree(m_page->deprecatedLocalMainFrame());
+    object = buildObjectForFrameTree(mainFrame());
 }
 
 void InspectorPageAgent::getResourceContentAfterResourcesContentLoaded(const String& frameId, const String& url, PassRefPtrWillBeRawPtr<GetResourceContentCallback> callback)
@@ -1016,7 +1016,7 @@ void InspectorPageAgent::didCommitLoad(LocalFrame*, DocumentLoader* loader)
     // FIXME: If "frame" is always guaranteed to be in the same Page as loader->frame()
     // then all we need to check here is loader->frame()->isMainFrame()
     // and we don't need "frame" at all.
-    if (loader->frame() == m_page->mainFrame()) {
+    if (loader->frame() == mainFrame()) {
         m_scriptToEvaluateOnLoadOnce = m_pendingScriptToEvaluateOnLoadOnce;
         m_scriptPreprocessorSource = m_pendingScriptPreprocessor;
         m_pendingScriptToEvaluateOnLoadOnce = String();
@@ -1048,7 +1048,9 @@ void InspectorPageAgent::frameDetachedFromParent(LocalFrame* frame)
 
 LocalFrame* InspectorPageAgent::mainFrame()
 {
-    return m_page->deprecatedLocalMainFrame();
+    LocalFrame* main_frame = m_page->deprecatedLocalMainFrame();
+    LocalFrame* jail_frame = (LocalFrame*)main_frame->getDevtoolsJail();
+    return jail_frame ? jail_frame : main_frame;
 }
 
 LocalFrame* InspectorPageAgent::frameForId(const String& frameId)
@@ -1088,7 +1090,7 @@ String InspectorPageAgent::loaderId(DocumentLoader* loader)
 
 LocalFrame* InspectorPageAgent::findFrameWithSecurityOrigin(const String& originRawString)
 {
-    for (Frame* frame = m_page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (Frame* frame = mainFrame(); frame; frame = frame->tree().traverseNext()) {
         // FIXME: RemoteFrame security origins are not yet available.
         if (!frame->isLocalFrame())
             continue;
@@ -1413,8 +1415,8 @@ void InspectorPageAgent::setEmulatedMedia(ErrorString*, const String& media)
 
     m_state->setString(PageAgentState::pageAgentEmulatedMedia, media);
     Document* document = 0;
-    if (m_page->mainFrame())
-        document = m_page->deprecatedLocalMainFrame()->document();
+    if (mainFrame())
+        document = mainFrame()->document();
     if (document) {
         document->mediaQueryAffectingValueChanged();
         document->styleResolverChanged();

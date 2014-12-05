@@ -1715,7 +1715,17 @@ String HTMLInputElement::nwworkingdir() const
 
 void HTMLInputElement::setNwworkingdir(const String& value)
 {
-    setAttribute(nwworkingdirAttr, value);
+    setAttribute(nwworkingdirAttr, AtomicString(value));
+}
+
+String HTMLInputElement::nwsaveas() const
+{
+    return fastGetAttribute(nwsaveasAttr);
+}
+
+void HTMLInputElement::setNwsaveas(const String& value)
+{
+    setAttribute(nwsaveasAttr, AtomicString(value));
 }
 
 bool HTMLInputElement::isInRequiredRadioButtonGroup()

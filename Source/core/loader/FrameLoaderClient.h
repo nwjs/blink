@@ -39,6 +39,7 @@
 #include "platform/heap/Handle.h"
 #include "platform/network/ResourceLoadPriority.h"
 #include "platform/weborigin/Referrer.h"
+#include "platform/network/ResourceRequest.h"
 #include "wtf/Forward.h"
 #include "wtf/Vector.h"
 #include <v8.h>
@@ -228,6 +229,8 @@ namespace blink {
         virtual unsigned backForwardLength() { return 0; }
 
         virtual bool isFrameLoaderClientImpl() const { return false; }
+
+        virtual void willHandleNavigationPolicy(const ResourceRequest& request, NavigationPolicy* policy) {}
     };
 
 } // namespace blink

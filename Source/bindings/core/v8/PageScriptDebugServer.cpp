@@ -173,7 +173,7 @@ void PageScriptDebugServer::rescanScripts(LocalFrame* frame)
 
     v8::Local<v8::String> prefix = v8AtomicString(m_isolate, "");
     LocalFrame* jail;
-    if ((jail = (LocalFrame*)frame->getDevtoolsJail()) && jail->deprecatedLocalOwner()) {
+    if ((jail = (LocalFrame*)frame->getDevtoolsJail()) != NULL && jail->deprecatedLocalOwner()) {
         String id = jail->deprecatedLocalOwner()->getIdAttribute();
         prefix = v8AtomicString(m_isolate, id.ascii().data());
     }

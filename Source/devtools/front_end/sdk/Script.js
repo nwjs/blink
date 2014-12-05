@@ -38,7 +38,7 @@
  * @param {string=} sourceMapURL
  * @param {boolean=} hasSourceURL
  */
-WebInspector.Script = function(target, scriptId, sourceURL, startLine, startColumn, endLine, endColumn, isContentScript, sourceMapURL, hasSourceURL)
+WebInspector.Script = function(target, scriptId, sourceURL, startLine, startColumn, endLine, endColumn, isContentScript, sourceMapURL, hasSourceURL, contextData)
 {
     WebInspector.SDKObject.call(this, target);
     this.scriptId = scriptId;
@@ -50,6 +50,7 @@ WebInspector.Script = function(target, scriptId, sourceURL, startLine, startColu
     this._isContentScript = isContentScript;
     this.sourceMapURL = sourceMapURL;
     this.hasSourceURL = hasSourceURL;
+    this._contextData = contextData;
 }
 
 WebInspector.Script.Events = {

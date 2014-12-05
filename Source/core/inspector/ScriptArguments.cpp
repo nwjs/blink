@@ -142,7 +142,7 @@ private:
         if (m_tryCatch.HasCaught())
             return false;
         if (!string.IsEmpty())
-            m_builder.append(toCoreString(string));
+            m_builder.append(v8StringToWebCoreString<String>(string, DoNotExternalize));
         return true;
     }
 

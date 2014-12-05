@@ -310,7 +310,16 @@ Frame::Frame(FrameClient* client, FrameHost* host, FrameOwner* owner)
 
 bool Frame::isNwDisabledChildFrame() const
 {
-    if (m_ownerElement && m_ownerElement->fastHasAttribute(nwdisableAttr))
+    HTMLFrameOwnerElement* owner = deprecatedLocalOwner();
+    if (owner && owner->fastHasAttribute(nwdisableAttr))
+        return true;
+    return false;
+}
+
+bool Frame::isNwFakeTop() const
+{
+    HTMLFrameOwnerElement* owner = deprecatedLocalOwner();
+    if (owner && owner->fastHasAttribute(nwfaketopAttr))
         return true;
     return false;
 }

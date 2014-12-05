@@ -119,6 +119,7 @@ public:
     void setNodeJS(bool node) { m_nodejs = node; }
     bool isNodeJS() const;
     bool isNwDisabledChildFrame() const;
+    bool isNwFakeTop() const;
 
 protected:
     Frame(FrameClient*, FrameHost*, FrameOwner*);

@@ -85,6 +85,7 @@ public:
         // Used from outside for caching.
         bool m_isBlackboxedURL;
         unsigned m_blackboxGeneration;
+        String context_data;
     };
 
     enum SkipPauseRequest {

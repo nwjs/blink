@@ -623,6 +623,10 @@ void ScriptDebugServer::dispatchDidParseSource(ScriptDebugListener* listener, v8
         .setEndColumn(object->Get(v8AtomicString(m_isolate, "endColumn"))->ToInteger(m_isolate)->Value())
         .setIsContentScript(object->Get(v8AtomicString(m_isolate, "isContentScript"))->ToBoolean(m_isolate)->Value());
 
+    v8String = object->Get(v8AtomicString(m_isolate, "context_data"))->ToString();
+    length = v8String->Length();
+    script.context_data = StringTraits<String>::fromV8String<V8StringOneByteTrait>(v8String, length);
+
     listener->didParseSource(sourceID, script, compileResult);
 }
 

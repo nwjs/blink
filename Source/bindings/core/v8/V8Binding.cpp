@@ -943,7 +943,7 @@ PassRefPtr<JSONValue> v8ToJSONValue(v8::Isolate* isolate, v8::Handle<v8::Value> 
     if (value->IsNumber())
         return JSONBasicValue::create(value->NumberValue());
     if (value->IsString())
-        return JSONString::create(toCoreString(value.As<v8::String>()));
+        return JSONString::create(v8StringToWebCoreString<String>(value.As<v8::String>(), DoNotExternalize));
     if (value->IsArray()) {
         v8::Handle<v8::Array> array = v8::Handle<v8::Array>::Cast(value);
         RefPtr<JSONArray> inspectorArray = JSONArray::create();

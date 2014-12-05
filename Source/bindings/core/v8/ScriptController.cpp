@@ -432,9 +432,9 @@ void ScriptController::collectIsolatedContexts(Vector<std::pair<ScriptState*, Se
     m_windowProxyManager->collectIsolatedContexts(result);
 }
 
-void ScriptController::setWorldDebugId(int worldId, int debuggerId)
+void ScriptController::setWorldDebugId(int worldId, int debuggerId, const char* prefix)
 {
-    m_windowProxyManager->setWorldDebugId(worldId, debuggerId);
+    m_windowProxyManager->setWorldDebugId(worldId, debuggerId, prefix);
 }
 
 void ScriptController::updateDocument()

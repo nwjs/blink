@@ -41,6 +41,7 @@
 #include "core/frame/FrameView.h"
 #include "core/frame/LocalFrame.h"
 #include "core/frame/Settings.h"
+#include "core/html/HTMLFrameOwnerElement.h"
 #include "core/inspector/InjectedScriptHost.h"
 #include "core/inspector/InspectorController.h"
 #include "core/page/FocusController.h"
@@ -298,8 +299,21 @@ void WebDevToolsAgentImpl::didComposite()
 
 void WebDevToolsAgentImpl::didCreateScriptContext(WebLocalFrameImpl* webframe, int worldId)
 {
+    blink::LocalFrame* f = webframe->frame();
+    String prefix;
+    while (f) {
+      if (f->deprecatedLocalOwner()) {
+        String id = f->deprecatedLocalOwner()->getIdAttribute();
+        if (!id.isEmpty())
+          prefix = id + "." + prefix;
+        else
+          prefix = "(null)." + prefix;
+      }else
+        prefix = "(null)." + prefix;
+      f = toLocalFrame(f->tree().parent());
+    }
     if (LocalFrame* frame = webframe->frame())
-        frame->script().setWorldDebugId(worldId, m_debuggerId);
+        frame->script().setWorldDebugId(worldId, m_debuggerId, prefix.ascii().data());
     // Skip non main world contexts.
     if (worldId)
         return;

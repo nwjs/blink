@@ -117,7 +117,8 @@ public:
     void setIsLoading(bool isLoading) { m_isLoading = isLoading; }
     bool isLoading() const { return m_isLoading; }
     void setNodeJS(bool node) { m_nodejs = node; }
-    bool isNodeJS() const { return m_nodejs; }
+    bool isNodeJS() const;
+    bool isNwDisabledChildFrame() const;
 
 protected:
     Frame(FrameClient*, FrameHost*, FrameOwner*);

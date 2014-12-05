@@ -308,4 +308,17 @@ Frame::Frame(FrameClient* client, FrameHost* host, FrameOwner* owner)
     }
 }
 
+bool Frame::isNwDisabledChildFrame() const
+{
+    if (m_ownerElement && m_ownerElement->fastHasAttribute(nwdisableAttr))
+        return true;
+    return false;
+}
+
+bool Frame::isNodeJS() const
+{
+    return m_nodejs;
+}
+
 } // namespace blink
+

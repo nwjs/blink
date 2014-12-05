@@ -59,6 +59,8 @@
 #include "wtf/text/WTFString.h"
 #include <v8-debug.h>
 
+#include "third_party/node/src/node_webkit.h"
+
 namespace blink {
 
 static Frame* findFrame(v8::Local<v8::Object> host, v8::Local<v8::Value> data, v8::Isolate* isolate)
@@ -133,6 +135,7 @@ static String extractMessageForConsole(v8::Handle<v8::Value> data)
 static void messageHandlerInMainThread(v8::Handle<v8::Message> message, v8::Handle<v8::Value> data)
 {
     ASSERT(isMainThread());
+
     // It's possible that messageHandlerInMainThread() is invoked while we're initializing a window.
     // In that half-baked situation, we don't have a valid context nor a valid world,
     // so just return immediately.

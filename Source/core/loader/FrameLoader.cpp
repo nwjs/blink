@@ -755,10 +755,14 @@ void FrameLoader::load(const FrameLoadRequest& passedRequest)
     if (action.resourceRequest().requestContext() == WebURLRequest::RequestContextUnspecified)
         action.mutableResourceRequest().setRequestContext(determineRequestContextFromNavigationType(action.type()));
     if (shouldOpenInNewWindow(targetFrame.get(), request, action)) {
-        if (action.policy() == NavigationPolicyDownload)
+        NavigationPolicy navigationPolicy = action.policy();
+        m_client->willHandleNavigationPolicy(request.resourceRequest(), &navigationPolicy);
+        if (navigationPolicy == NavigationPolicyIgnore)
+            return;
+        if (navigationPolicy == NavigationPolicyDownload)
             client()->loadURLExternally(action.resourceRequest(), NavigationPolicyDownload);
         else
-            createWindowForRequest(request, *m_frame, action.policy(), request.shouldSendReferrer());
+            createWindowForRequest(request, *m_frame, navigationPolicy, request.shouldSendReferrer());
         return;
     }
 

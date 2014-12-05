@@ -657,7 +657,7 @@ public:
     // text form. This is used only by layout tests.
     virtual WebString layerTreeAsText(bool showDebugInfo = false) const = 0;
 
-#if BLINK_IMPLEMENTATION
+#if 1
     static WebFrame* fromFrame(Frame*);
 #if ENABLE(OILPAN)
     static void traceFrames(Visitor*, WebFrame*);
@@ -665,10 +665,12 @@ public:
 #endif
 #endif
 
-    virtual void setNodeJS(bool) = 0;
-    virtual bool isNodeJS() const = 0;
-    virtual bool isNwDisabledChildFrame() const = 0;
-    virtual bool isNwFakeTop() const = 0;
+    virtual void setNodeJS(bool) {}
+    virtual bool isNodeJS() const { return false; }
+    virtual bool isNwDisabledChildFrame() const {return false;} //FIXME
+    virtual bool isNwFakeTop() const {return false;}
+    virtual void setDevtoolsJail(WebFrame*) {}
+    virtual WebFrame* getDevtoolsJail() {return NULL;}
 
 protected:
     WebFrame();

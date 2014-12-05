@@ -104,6 +104,8 @@ public:
     bool isNodeJS() const;
     bool isNwDisabledChildFrame() const;
     bool isNwFakeTop() const;
+    void setDevtoolsJail(Frame* iframe);
+    Frame* getDevtoolsJail() { return m_devtoolsJail; }
 
 protected:
     Frame(FrameClient*, FrameHost*, FrameOwner*);
@@ -117,6 +119,8 @@ private:
     FrameClient* m_client;
     WebLayer* m_remotePlatformLayer;
     bool m_nodejs;
+    Frame* m_devtoolsJail;
+    Frame* m_devJailOwner;
 };
 
 inline FrameClient* Frame::client() const

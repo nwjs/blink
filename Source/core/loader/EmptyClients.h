@@ -83,7 +83,7 @@ public:
 
     virtual void focusedNodeChanged(Node*) override { }
     virtual void focusedFrameChanged(LocalFrame*) override { }
-    virtual Page* createWindow(LocalFrame*, const FrameLoadRequest&, const WindowFeatures&, NavigationPolicy, ShouldSendReferrer) override { return 0; }
+    virtual Page* createWindow(LocalFrame*, const FrameLoadRequest&, const WindowFeatures&, NavigationPolicy, ShouldSendReferrer, WebString*) override { return 0; }
     virtual void show(NavigationPolicy) override { }
 
     virtual bool canRunModal() override { return false; }

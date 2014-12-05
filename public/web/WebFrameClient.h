@@ -565,7 +565,7 @@ public:
     virtual void initializeChildFrame(const WebRect& frameRect, float scaleFactor) { }
 
     virtual void willHandleNavigationPolicy(
-         WebFrame*, const WebURLRequest&, WebNavigationPolicy*) { }
+                                            WebFrame*, const WebURLRequest&, WebNavigationPolicy*, WebString* manifest = NULL) { }
 
     // Screen Orientation --------------------------------------------------
 

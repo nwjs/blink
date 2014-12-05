@@ -790,14 +790,15 @@ void FrameLoader::load(const FrameLoadRequest& passedRequest)
     if (shouldOpenInNewWindow(targetFrame.get(), request, policy)) {
         if (request.frameName() == "_blank")
             policy = NavigationPolicyNewWindow;
-        client()->willHandleNavigationPolicy(request.resourceRequest(), &policy);
+        WebString manifest;
+        client()->willHandleNavigationPolicy(request.resourceRequest(), &policy, &manifest);
         if (policy == NavigationPolicyIgnore)
             return;
         if (navigationPolicy != NavigationPolicyCurrentTab && shouldOpenInNewWindow(targetFrame.get(), request, action)) {
             if (policy == NavigationPolicyDownload)
                 client()->loadURLExternally(request.resourceRequest(), NavigationPolicyDownload);
             else
-                createWindowForRequest(request, *m_frame, policy, request.shouldSendReferrer());
+                createWindowForRequest(request, *m_frame, policy, request.shouldSendReferrer(), manifest);
             return;
         }
     }

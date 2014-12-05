@@ -461,6 +461,8 @@ void ScriptController::namedItemRemoved(HTMLDocument* doc, const AtomicString& n
 
 static bool isInPrivateScriptIsolateWorld(v8::Isolate* isolate)
 {
+    v8::HandleScope handleScope(isolate);
+
     v8::Handle<v8::Context> context = isolate->GetCurrentContext();
     return !context.IsEmpty() && toDOMWindow(context) && DOMWrapperWorld::current(isolate).isPrivateScriptIsolatedWorld();
 }

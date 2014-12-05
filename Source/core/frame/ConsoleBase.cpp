@@ -220,15 +220,20 @@ void ConsoleBase::internalAddMessage(MessageType type, MessageLevel level, Scrip
 
     String message;
     bool gotStringMessage = arguments ? arguments->getFirstArgumentAsString(message) : false;
-    if (gotStringMessage)
-       for (unsigned i = 1; i < arguments->argumentCount(); ++i) {
+    if (gotStringMessage) {
+       message = "";
+       for (unsigned i = 0; i < arguments->argumentCount(); ++i) {
            String argAsString;
            if (arguments->argumentAt(i).getString(arguments->globalState(), argAsString)) {
-               message.append(" ");
-               message.append(argAsString);
+               RefPtr<JSONValue> value = arguments->argumentAt(i).toJSONValue(scriptState);
+               if (!value)
+                   continue;
+               if (i)
+                   message.append(" ");
+               message.append(value->toJSONString());
            }
        }
-
+    }
     RefPtrWillBeRawPtr<ConsoleMessage> consoleMessage = ConsoleMessage::create(ConsoleAPIMessageSource, level, gotStringMessage? message : String());
     consoleMessage->setType(type);
     consoleMessage->setScriptState(scriptState);

@@ -603,7 +603,10 @@ public:
     // Access the embedder API for speech recognition services.
     virtual WebSpeechRecognizer* speechRecognizer() { return 0; }
 
-protected:
+    virtual void windowOpenBegin(const WebURL& url) {}
+    virtual void windowOpenEnd() {}
+
+ protected:
     virtual ~WebFrameClient() { }
 };
 

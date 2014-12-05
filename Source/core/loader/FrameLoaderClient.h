@@ -230,6 +230,8 @@ namespace blink {
         virtual bool isFrameLoaderClientImpl() const { return false; }
 
         virtual void willHandleNavigationPolicy(const ResourceRequest& request, NavigationPolicy* policy) {}
+        virtual void windowOpenBegin(const KURL& url) {}
+        virtual void windowOpenEnd() {}
     };
 
 } // namespace blink

@@ -101,7 +101,8 @@ public:
     bool isRemoteFrameTemporary() const { return m_remotePlatformLayer; }
 
     void setNodeJS(bool node) { m_nodejs = node; }
-    bool isNodeJS() const { return m_nodejs; }
+    bool isNodeJS() const;
+    bool isNwDisabledChildFrame() const;
 
 protected:
     Frame(FrameClient*, FrameHost*, FrameOwner*);

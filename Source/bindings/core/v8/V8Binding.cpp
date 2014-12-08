@@ -744,7 +744,7 @@ LocalFrame* toFrameIfNotDetached(v8::Handle<v8::Context> context)
 {
     LocalDOMWindow* window = toDOMWindow(context);
     //if (window && window->isCurrentlyDisplayedInFrame())
-    return window->frame();
+    return window ? window->frame() : 0;
     // We return 0 here because |context| is detached from the LocalFrame. If we
     // did return |frame| we could get in trouble because the frame could be
     // navigated to another security origin.

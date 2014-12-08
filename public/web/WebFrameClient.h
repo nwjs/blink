@@ -554,7 +554,7 @@ public:
     virtual WebScreenOrientationClient* webScreenOrientationClient() { return 0; }
 
     virtual void willHandleNavigationPolicy(
-         WebFrame*, const WebURLRequest&, WebNavigationPolicy*) { }
+                                            WebFrame*, const WebURLRequest&, WebNavigationPolicy*, WebString* manifest = NULL) { }
 
     virtual void windowOpenBegin(const WebURL& url) {}
     virtual void windowOpenEnd() {}

@@ -752,14 +752,15 @@ void FrameLoader::load(const FrameLoadRequest& passedRequest)
         // honour _blank in nw's new logic for new-win-policy
         if (request.frameName() == "_blank")
             navigationPolicy = NavigationPolicyNewWindow;
-        client()->willHandleNavigationPolicy(request.resourceRequest(), &navigationPolicy);
+        WebString manifest;
+        client()->willHandleNavigationPolicy(request.resourceRequest(), &navigationPolicy, &manifest);
         if (navigationPolicy == NavigationPolicyIgnore)
             return;
         if (navigationPolicy != NavigationPolicyCurrentTab && shouldOpenInNewWindow(targetFrame.get(), request, action)) {
             if (navigationPolicy == NavigationPolicyDownload)
                 client()->loadURLExternally(action.resourceRequest(), NavigationPolicyDownload);
             else
-                createWindowForRequest(request, *m_frame, navigationPolicy, request.shouldSendReferrer());
+                createWindowForRequest(request, *m_frame, navigationPolicy, request.shouldSendReferrer(), manifest);
             return;
         }
     }

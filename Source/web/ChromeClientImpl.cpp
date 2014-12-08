@@ -212,7 +212,7 @@ void ChromeClientImpl::focusedFrameChanged(LocalFrame* frame)
 }
 
 Page* ChromeClientImpl::createWindow(LocalFrame* frame, const FrameLoadRequest& r, const WindowFeatures& features,
-    NavigationPolicy navigationPolicy, ShouldSendReferrer shouldSendReferrer)
+                                     NavigationPolicy navigationPolicy, ShouldSendReferrer shouldSendReferrer, WebString* manifest)
 {
     if (!m_webView->client())
         return 0;
@@ -225,7 +225,7 @@ Page* ChromeClientImpl::createWindow(LocalFrame* frame, const FrameLoadRequest& 
     FullscreenElementStack::from(*frame->document()).fullyExitFullscreen();
 
     WebViewImpl* newView = toWebViewImpl(
-        m_webView->client()->createView(WebLocalFrameImpl::fromFrame(frame), WrappedResourceRequest(r.resourceRequest()), features, r.frameName(), policy, shouldSendReferrer == NeverSendReferrer));
+                                         m_webView->client()->createView(WebLocalFrameImpl::fromFrame(frame), WrappedResourceRequest(r.resourceRequest()), features, r.frameName(), policy, shouldSendReferrer == NeverSendReferrer, manifest));
     if (!newView)
         return 0;
     return newView->page();

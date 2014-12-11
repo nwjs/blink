@@ -654,8 +654,8 @@ public:
     // text form. This is used only by layout tests.
     virtual WebString layerTreeAsText(bool showDebugInfo = false) const = 0;
 
-#if 1
     static WebFrame* fromFrame(Frame*);
+#if BLINK_IMPLEMENTATION
 #if ENABLE(OILPAN)
     static void traceFrames(Visitor*, WebFrame*);
     void clearWeakFrames(Visitor*);

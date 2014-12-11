@@ -769,7 +769,7 @@ static LocalDOMWindow* DOMWindowFromNode(v8::Handle<v8::Context> context)
     global = V8Window::findInstanceInPrototypeChain(window, context->GetIsolate());
 
     ASSERT (!global.IsEmpty());
-    return V8Window::toNative(global);
+    return toLocalDOMWindow(V8Window::toImpl(global));
 }
 
 DOMWindow* toDOMWindow(v8::Handle<v8::Context> context)
@@ -783,7 +783,7 @@ DOMWindow* toDOMWindow(v8::Handle<v8::Context> context)
 }
 
 v8::Handle<v8::Context> nodeToDOMContext(v8::Handle<v8::Context> context) {
-    LocalDOMWindow* window = toDOMWindow(context);
+    LocalDOMWindow* window = (LocalDOMWindow*)toDOMWindow(context);
     return toV8Context(window->frame(), DOMWrapperWorld::mainWorld());
 }
 
@@ -1012,7 +1012,7 @@ PassRefPtr<JSONValue> v8ToJSONValue(v8::Isolate* isolate, v8::Handle<v8::Value> 
             // this happens when accessing objects in
             // another domain.
             // see nw #1573
-            isolate->NWClearPendingException();
+            // FIXME isolate->NWClearPendingException();
             return nullptr;
         }
         uint32_t length = propertyNames->Length();

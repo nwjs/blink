@@ -48,7 +48,7 @@ void V8File::constructorCustom(const v8::FunctionCallbackInfo<v8::Value>& info)
     if (context && context->isDocument()) {
         Document* document = toDocument(context);
         if (document->frame()->isNwDisabledChildFrame()) {
-            V8ThrowException::throwTypeError("File constructor cannot be called in nwdisabled frame.", info.GetIsolate());
+            V8ThrowException::throwTypeError(info.GetIsolate(), "File constructor cannot be called in nwdisabled frame.");
             return;
         }
     }
@@ -63,8 +63,8 @@ void V8File::constructorCustom(const v8::FunctionCallbackInfo<v8::Value>& info)
     if (!info[0]->IsArray()) {
         TOSTRING_VOID(V8StringResource<>, path, info[0]);
         TOSTRING_VOID(V8StringResource<>, name, info[1]);
-        RefPtrWillBeRawPtr<File> file = File::create(path, name);
-        v8SetReturnValue(info, file.release());
+        File* file = File::create(path, name);
+        v8SetReturnValue(info, file);
         return;
     }
 

@@ -112,8 +112,7 @@ void initialize(Platform* platform)
 
     V8Initializer::initializeMainThreadIfNeeded();
 
-    v8::Isolate* isolate = V8PerIsolateData::mainThreadIsolate();
-
+    v8::Isolate* isolate = mainThreadIsolate();
     if (platform->supportNodeJS()) {
         isolate->Enter();
         platform->getCmdArg(&argc, &argv, snapshot_path);
@@ -126,7 +125,6 @@ void initialize(Platform* platform)
         v8::V8::SetFlagsFromString(snapshot_flag.c_str(), static_cast<int>(snapshot_flag.size()));
     }
 
-    v8::Isolate* isolate = V8PerIsolateData::initialize();
     s_isolateInterruptor = new V8IsolateInterruptor(V8PerIsolateData::mainThreadIsolate());
     ThreadState::current()->addInterruptor(s_isolateInterruptor);
     ThreadState::current()->registerTraceDOMWrappers(V8PerIsolateData::mainThreadIsolate(), V8GCController::traceDOMWrappers);
@@ -137,6 +135,7 @@ void initialize(Platform* platform)
         s_endOfTaskRunner = new EndOfTaskRunner;
         currentThread->addTaskObserver(s_endOfTaskRunner);
     }
+#if 1 //defined(NW_IMPLEMENTATION)
     if (platform->supportNodeJS()) {
         v8::Isolate* isolate = v8::Isolate::GetCurrent();
         v8::HandleScope scope(isolate);
@@ -154,6 +153,7 @@ void initialize(Platform* platform)
 
         node::SetupContext(argc, argv, context);
     }
+#endif
 }
 
 v8::Isolate* mainThreadIsolate()

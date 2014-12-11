@@ -74,7 +74,7 @@ static LocalFrame* retrieveFrameWithNodeContext(v8::Handle<v8::Context> context)
   global = V8Window::findInstanceInPrototypeChain(window, isolate);
   if (global.IsEmpty())
     return 0;
-  LocalDOMWindow* win = V8Window::toNative(global);
+  LocalDOMWindow* win = toLocalDOMWindow(V8Window::toImpl(global));
   if (!win)
     return 0;
   return win->frame();

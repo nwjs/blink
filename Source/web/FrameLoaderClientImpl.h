@@ -176,9 +176,9 @@ public:
 
     virtual unsigned backForwardLength() override;
 
-    virtual void willHandleNavigationPolicy(const blink::ResourceRequest& request, blink::NavigationPolicy* policy, WebString* manifest = NULL) OVERRIDE;
-    virtual void windowOpenBegin(const KURL& url) OVERRIDE;
-    virtual void windowOpenEnd() OVERRIDE;
+    virtual void willHandleNavigationPolicy(const blink::ResourceRequest& request, blink::NavigationPolicy* policy, WebString* manifest = NULL) override;
+    virtual void windowOpenBegin(const KURL& url) override;
+    virtual void windowOpenEnd() override;
 
 private:
     virtual bool isFrameLoaderClientImpl() const override { return true; }

@@ -70,7 +70,7 @@ namespace blink {
 
 void V8Window::parentAttributeGetterCustom(const v8::PropertyCallbackInfo<v8::Value>& info)
 {
-    LocalDOMWindow* imp = V8Window::toNative(info.Holder());
+  LocalDOMWindow* imp = toLocalDOMWindow(V8Window::toImpl(info.Holder()));
     LocalFrame* frame = imp->frame();
     ASSERT(frame);
     if (frame->isNwFakeTop()) {
@@ -82,7 +82,7 @@ void V8Window::parentAttributeGetterCustom(const v8::PropertyCallbackInfo<v8::Va
 
 void V8Window::topAttributeGetterCustom(const v8::PropertyCallbackInfo<v8::Value>& info)
 {
-    LocalDOMWindow* imp = V8Window::toNative(info.Holder());
+    LocalDOMWindow* imp = toLocalDOMWindow(V8Window::toImpl(info.Holder()));
     LocalFrame* frame = imp->frame();
     ASSERT(frame);
     for (LocalFrame* f = frame; f; f = toLocalFrame(f->tree().parent())) {
@@ -98,7 +98,7 @@ void V8Window::topAttributeGetterCustom(const v8::PropertyCallbackInfo<v8::Value
 #if 0
 void V8Window::frameElementAttributeGetterCustom(const v8::PropertyCallbackInfo<v8::Value>& info)
 {
-    LocalDOMWindow* imp = V8Window::toNative(info.Holder());
+    LocalDOMWindow* imp = V8Window::toImpl(info.Holder());
     LocalFrame* frame = imp->frame();
     if (!BindingSecurity::shouldAllowAccessToFrame(info.GetIsolate(), frame))
         return;

@@ -40,7 +40,9 @@ v8::Handle<v8::Object> DOMArrayBuffer::wrap(v8::Handle<v8::Object> creationConte
     // DOMArrayBufferDeallocationObserver::blinkAllocatedMemory.
     buffer()->setDeallocationObserver(DOMArrayBufferDeallocationObserver::instance());
 
-    return handleScope.Escape(associateWithWrapper(isolate, wrapperTypeInfo, wrapper));
+    // FIXME: escape
+    associateWithWrapper(isolate, wrapperTypeInfo, wrapper);
+    return handleScope.Escape(wrapper);
 }
 
 v8::Handle<v8::Object> DOMArrayBuffer::associateWithWrapper(v8::Isolate* isolate, const WrapperTypeInfo* wrapperTypeInfo, v8::Handle<v8::Object> wrapper)

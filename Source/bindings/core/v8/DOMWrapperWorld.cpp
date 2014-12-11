@@ -45,6 +45,7 @@
 #include "wtf/StdLibExtras.h"
 #include "ScriptController.h"
 
+#include "core/frame/LocalDOMWindow.h"
 #include "third_party/node/src/node_webkit.h"
 
 namespace blink {
@@ -77,7 +78,7 @@ DOMWrapperWorld& DOMWrapperWorld::current(v8::Isolate* isolate)
     }
     v8::Handle<v8::Context> context = isolate->GetCurrentContext();
     if (context == node::g_context) {
-        LocalDOMWindow* window = toDOMWindow(context);
+        LocalDOMWindow* window = (LocalDOMWindow*)toDOMWindow(context);
         context = toV8Context(window->frame(), DOMWrapperWorld::mainWorld());
         if (context.IsEmpty())
             return mainWorld();

@@ -230,7 +230,7 @@ void ConsoleBase::internalAddMessage(MessageType type, MessageLevel level, Scrip
        message = "";
        for (unsigned i = 0; i < arguments->argumentCount(); ++i) {
            String argAsString;
-           if (arguments->argumentAt(i).getString(arguments->globalState(), argAsString)) {
+           if (arguments->argumentAt(i).toString(argAsString)) {
                RefPtr<JSONValue> value = arguments->argumentAt(i).toJSONValue(scriptState);
                if (!value)
                    continue;

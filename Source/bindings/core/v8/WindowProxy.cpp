@@ -275,9 +275,11 @@ void WindowProxy::createContext()
         return;
     m_scriptState = ScriptState::create(context, m_world);
 
+#if 1 //defined(NW_IMPLEMENTATION)
     v8::Local<v8::Context> node_context =
         v8::Local<v8::Context>::New(context->GetIsolate(), node::g_context);
     node_context->SetAlignedPointerInEmbedderData(v8ContextPerContextDataIndex, m_scriptState.get());
+#endif
 
     double contextCreationDurationInMilliseconds = (currentTime() - contextCreationStartInSeconds) * 1000;
     const char* histogramName = "WebCore.WindowProxy.createContext.MainWorld";

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2007-2009 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -29,37 +29,33 @@
  */
 
 #include "config.h"
-#include "bindings/core/v8/V8EventListenerList.h"
+#include "bindings/core/v8/V8HTMLIFrameElement.h"
 
+#include "core/HTMLNames.h"
+#include "bindings/core/v8/BindingSecurity.h"
+#include "bindings/core/v8/ExceptionState.h"
 #include "bindings/core/v8/V8Binding.h"
-#include "bindings/core/v8/V8Window.h"
-#include "bindings/core/v8/V8WorkerGlobalScopeEventListener.h"
-
-#include "ScriptController.h"
-
-#include "core/frame/LocalDOMWindow.h"
-#include "third_party/node/src/node_webkit.h"
+#include "core/html/HTMLFrameElement.h"
+#include "core/html/parser/HTMLParserIdioms.h"
+#include "core/loader/FrameLoader.h"
+#include "core/frame/LocalFrame.h"
 
 namespace blink {
 
-PassRefPtr<EventListener> V8EventListenerList::getEventListener(ScriptState* scriptState, v8::Local<v8::Value> value, bool isAttribute, ListenerLookupType lookup)
+using namespace HTMLNames;
+
+void V8HTMLIFrameElement::nwUserAgentAttributeSetterCustom(v8::Local<v8::Value> value, const v8::PropertyCallbackInfo<void>& info)
 {
-    ASSERT(scriptState->contextIsValid());
-    if (lookup == ListenerFindOnly) {
-        // Used by EventTarget::removeEventListener, specifically
-        // EventTargetV8Internal::removeEventListenerMethod
-        ASSERT(!isAttribute);
-        return V8EventListenerList::findWrapper(value, scriptState);
+    HTMLIFrameElement* frame = V8HTMLIFrameElement::toImpl(info.Holder());
+    // String agentValue = toCoreStringWithNullCheck(value);
+    TOSTRING_VOID(V8StringResource<>, agentValue, value);
+
+    frame->setAttribute(HTMLNames::nwuseragentAttr, agentValue);
+
+    if (frame->contentFrame()->isLocalFrame()) {
+        LocalFrame* lframe = toLocalFrame(frame->contentFrame());
+        lframe->loader().setUserAgentOverride(agentValue);
     }
-    v8::HandleScope scope(scriptState->context()->GetIsolate());
-    v8::Local<v8::Context> context = scriptState->context();
-    if (context == node::g_context) {
-        LocalDOMWindow* window = (LocalDOMWindow*)toDOMWindow(context);
-        context = toV8Context(window->frame(), DOMWrapperWorld::mainWorld());
-    }
-    if (toDOMWindow(context))
-        return V8EventListenerList::findOrCreateWrapper<V8EventListener>(value, isAttribute, scriptState);
-    return V8EventListenerList::findOrCreateWrapper<V8WorkerGlobalScopeEventListener>(value, isAttribute, scriptState);
 }
 
-} // namespace blink
+} // namespace WebCore

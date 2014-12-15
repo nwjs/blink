@@ -135,7 +135,7 @@ void initialize(Platform* platform)
         s_endOfTaskRunner = new EndOfTaskRunner;
         currentThread->addTaskObserver(s_endOfTaskRunner);
     }
-#if 1 //defined(NW_IMPLEMENTATION)
+#if 0 //defined(NW_IMPLEMENTATION)
     if (platform->supportNodeJS()) {
         v8::Isolate* isolate = v8::Isolate::GetCurrent();
         v8::HandleScope scope(isolate);

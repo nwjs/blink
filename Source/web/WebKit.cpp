@@ -72,6 +72,9 @@
 namespace blink {
 
 namespace {
+static inline v8::Local<v8::String> v8_str(const char* x) {
+  return v8::String::NewFromUtf8(v8::Isolate::GetCurrent(), x);
+}
 
 class EndOfTaskRunner : public WebThread::TaskObserver {
 public:
@@ -98,9 +101,6 @@ static ThreadState::Interruptor* s_isolateInterruptor = 0;
 // Doing so may cause hard to reproduce crashes.
 static bool s_webKitInitialized = false;
 
-static inline v8::Local<v8::String> v8_str(const char* x) {
-    return v8::String::NewFromUtf8(v8::Isolate::GetCurrent(), x);
-}
 
 void initialize(Platform* platform)
 {
@@ -135,7 +135,7 @@ void initialize(Platform* platform)
         s_endOfTaskRunner = new EndOfTaskRunner;
         currentThread->addTaskObserver(s_endOfTaskRunner);
     }
-#if 0 //defined(NW_IMPLEMENTATION)
+#if 1 //defined(NW_IMPLEMENTATION)
     if (platform->supportNodeJS()) {
         v8::Isolate* isolate = v8::Isolate::GetCurrent();
         v8::HandleScope scope(isolate);

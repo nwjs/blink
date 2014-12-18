@@ -784,6 +784,8 @@ DOMWindow* toDOMWindow(v8::Handle<v8::Context> context)
 
 v8::Handle<v8::Context> nodeToDOMContext(v8::Handle<v8::Context> context) {
     LocalDOMWindow* window = (LocalDOMWindow*)toDOMWindow(context);
+    if (!window)
+      return context;
     return toV8Context(window->frame(), DOMWrapperWorld::mainWorld());
 }
 

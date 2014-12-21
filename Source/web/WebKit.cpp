@@ -265,6 +265,8 @@ void shutdown()
     // so that the main thread won't get involved in a GC during the shutdown.
     ThreadState::detachMainThread();
 
+    if (isolate == v8::Isolate::GetCurrent())
+      isolate->Exit();
     V8PerIsolateData::destroy(isolate);
 
     shutdownWithoutV8();

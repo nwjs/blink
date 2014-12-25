@@ -800,7 +800,9 @@ ExecutionContext* toExecutionContext(v8::Handle<v8::Context> context)
         return V8WorkerGlobalScope::toImpl(workerWrapper)->executionContext();
     // FIXME: Is this line of code reachable?
     if (context == node::g_context) {
-      return toExecutionContext(nodeToDOMContext(context));
+      v8::Handle<v8::Context> ctx = nodeToDOMContext(context);
+      if (ctx != node::g_context)
+        return toExecutionContext(ctx);
     }
     return 0;
 }

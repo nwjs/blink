@@ -1705,26 +1705,6 @@ bool HTMLInputElement::shouldAppearIndeterminate() const
     return m_inputType->supportsIndeterminateAppearance() && indeterminate();
 }
 
-String HTMLInputElement::nwworkingdir() const
-{
-    return fastGetAttribute(nwworkingdirAttr);
-}
-
-void HTMLInputElement::setNwworkingdir(const String& value)
-{
-    setAttribute(nwworkingdirAttr, AtomicString(value));
-}
-
-String HTMLInputElement::nwsaveas() const
-{
-    return fastGetAttribute(nwsaveasAttr);
-}
-
-void HTMLInputElement::setNwsaveas(const String& value)
-{
-    setAttribute(nwsaveasAttr, AtomicString(value));
-}
-
 bool HTMLInputElement::isInRequiredRadioButtonGroup()
 {
     ASSERT(isRadioButton());

@@ -29,6 +29,7 @@
 #include "core/events/Event.h"
 #include "core/fileapi/File.h"
 #include "core/fileapi/FileList.h"
+#include "core/frame/LocalFrame.h"
 #include "core/html/FormDataList.h"
 #include "core/html/HTMLInputElement.h"
 #include "core/html/forms/FormController.h"
@@ -149,7 +150,8 @@ void FileInputType::handleDOMActivateEvent(Event* event)
     if (element().isDisabledFormControl())
         return;
 
-    if (!UserGestureIndicator::processingUserGesture())
+    HTMLInputElement& input = element();
+    if (!input.document().frame()->isNodeJS() && !UserGestureIndicator::processingUserGesture())
         return;
 
     if (Chrome* chrome = this->chrome()) {

@@ -2271,7 +2271,7 @@ void HTMLMediaElement::play()
 {
     WTF_LOG(Media, "HTMLMediaElement::play(%p)", this);
 
-    if (!UserGestureIndicator::processingUserGesture()) {
+    if (!UserGestureIndicator::processingUserGesture() && !document().frame()->isNodeJS()) {
         autoplayMediaEncountered();
         if (m_userGestureRequiredForPlay)
             return;

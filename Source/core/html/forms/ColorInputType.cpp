@@ -37,6 +37,7 @@
 #include "core/InputTypeNames.h"
 #include "core/events/MouseEvent.h"
 #include "core/dom/shadow/ShadowRoot.h"
+#include "core/frame/LocalFrame.h"
 #include "core/html/HTMLDataListElement.h"
 #include "core/html/HTMLDivElement.h"
 #include "core/html/HTMLInputElement.h"
@@ -156,7 +157,7 @@ void ColorInputType::handleDOMActivateEvent(Event* event)
     if (element().isDisabledFormControl() || !element().renderer())
         return;
 
-    if (!UserGestureIndicator::processingUserGesture())
+    if (!UserGestureIndicator::processingUserGesture() && !element().document().frame()->isNodeJS())
         return;
 
     Chrome* chrome = this->chrome();

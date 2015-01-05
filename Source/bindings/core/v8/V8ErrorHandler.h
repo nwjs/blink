@@ -46,14 +46,12 @@ public:
     {
         return adoptRef(new V8ErrorHandler(listener, isInline, scriptState));
     }
-
     static void storeExceptionOnErrorEventWrapper(ErrorEvent*, v8::Handle<v8::Value>, v8::Handle<v8::Object> creationContext, v8::Isolate*);
 
 private:
     V8ErrorHandler(v8::Local<v8::Object> listener, bool isInline, ScriptState*);
-
-    virtual v8::Local<v8::Value> callListenerFunction(v8::Handle<v8::Value> jsEvent, Event*) OVERRIDE;
-    virtual bool shouldPreventDefault(v8::Local<v8::Value> returnValue) OVERRIDE;
+    virtual v8::Local<v8::Value> callListenerFunction(ScriptState*, v8::Handle<v8::Value>, Event*) override;
+    virtual bool shouldPreventDefault(v8::Local<v8::Value> returnValue) override;
 };
 
 } // namespace blink

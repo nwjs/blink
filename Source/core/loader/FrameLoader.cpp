@@ -1397,9 +1397,10 @@ bool FrameLoader::shouldInterruptLoadForXFrameOptions(const String& content, con
     UseCounter::count(m_frame->domWindow()->document(), UseCounter::XFrameOptions);
 
     Frame* topFrame = m_frame->tree().top();
-    if (m_frame == topFrame)
+	Frame* parentFrame = m_frame->tree().parent();
+	if (m_frame == topFrame)
         return false;
-    if (topFrame->isNodeJS())
+    if (parentFrame->isNodeJS())
         return false;
 
     XFrameOptionsDisposition disposition = parseXFrameOptionsHeader(content);

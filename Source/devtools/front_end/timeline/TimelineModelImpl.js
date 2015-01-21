@@ -346,7 +346,7 @@ WebInspector.TimelineModel.RecordImpl = function(model, timelineEvent, parentRec
         // Consider style recalculation as a reason for layout invalidation,
         // but only if we had no earlier layout invalidation records.
         var layoutInitator = this;
-        if (!bindings._layoutInvalidate[this.frameId()] && parentRecord.type() === recordTypes.RecalculateStyles)
+        if (!bindings._layoutInvalidate[this.frameId()] && parentRecord && parentRecord.type() === recordTypes.RecalculateStyles)
             layoutInitator = parentRecord._initiator;
         bindings._layoutInvalidate[this.frameId()] = layoutInitator;
         break;

@@ -323,7 +323,7 @@ WebInspector.TimelineFrameModel.prototype = {
             this._lastFrame._addTimeFromRecord(record);
 
             // Account for "other" time at the same time as the first child.
-            if (programRecord.children()[0] === record)
+            if (programRecord && programRecord.children()[0] === record)
                 this._lastFrame._addTimeForCategory("other", this._deriveOtherTime(programRecord));
             return;
         }
@@ -332,7 +332,7 @@ WebInspector.TimelineFrameModel.prototype = {
             return;
 
         WebInspector.TimelineUIUtilsImpl.aggregateTimeForRecord(this._framePendingCommit.timeByCategory, record);
-        if (programRecord.children()[0] === record)
+        if (programRecord && programRecord.children()[0] === record)
             this._framePendingCommit.timeByCategory["other"] = (this._framePendingCommit.timeByCategory["other"] || 0) + this._deriveOtherTime(programRecord);
 
         if (record.type() === recordTypes.CompositeLayers)

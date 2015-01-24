@@ -582,7 +582,12 @@ WebInspector.ElementsPanel.prototype = {
     {
         var index = this._currentSearchResultIndex;
         var searchResults = this._searchResults;
+
+        if (!searchResults) return;
+
         var searchResult = searchResults[index];
+
+        if (!searchResult) return;
 
         if (searchResult.node === null) {
             this._searchableView.updateCurrentMatchIndex(index);

@@ -111,6 +111,7 @@ namespace blink {
         SpellChecker& spellChecker() const;
         FrameConsole& console() const;
 
+        void transferChildFrameToNewDocument();
         void didChangeVisibilityState();
 
         // This method is used to get the highest level LocalFrame in this

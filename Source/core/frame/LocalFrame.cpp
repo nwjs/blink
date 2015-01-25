@@ -326,6 +326,17 @@ void LocalFrame::disconnectOwnerElement()
     Frame::disconnectOwnerElement();
 }
 
+void LocalFrame::transferChildFrameToNewDocument()
+{
+    ASSERT(m_owner);
+    LocalFrame* newParent = deprecatedLocalOwner()->document().frame();
+    FrameHost* newHost = newParent->host();
+    FrameHost* oldHost = m_host;
+    if (newHost != oldHost) {
+        m_host = newHost;
+    }
+}
+
 void LocalFrame::addDestructionObserver(FrameDestructionObserver* observer)
 {
     m_destructionObservers.add(observer);

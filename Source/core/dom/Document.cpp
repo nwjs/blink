@@ -1021,6 +1021,7 @@ PassRefPtrWillBeRawPtr<Node> Document::adoptNode(PassRefPtrWillBeRawPtr<Node> so
                 exceptionState.throwDOMException(HierarchyRequestError, "The node provided is a frame which contains this document.");
                 return nullptr;
             }
+            frameOwnerElement->setRemainsAliveOnRemovalFromTree(true);
         }
         if (source->parentNode()) {
             source->parentNode()->removeChild(source.get(), exceptionState);

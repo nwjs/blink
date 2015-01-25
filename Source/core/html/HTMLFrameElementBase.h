@@ -38,7 +38,12 @@ public:
 
     virtual bool canContainRangeEndPoint() const override final { return false; }
 
-protected:
+    virtual void disconnectContentFrame() override;
+    void checkInDocumentTimerFired(Timer<HTMLFrameElementBase>*);
+    virtual void setRemainsAliveOnRemovalFromTree(bool) override;
+    void updateOnReparenting();
+
+ protected:
     HTMLFrameElementBase(const QualifiedName&, Document&);
 
     bool isURLAllowed() const;
@@ -73,6 +78,9 @@ private:
 
     int m_marginWidth;
     int m_marginHeight;
+
+    Timer<HTMLFrameElementBase> m_checkInDocumentTimer;
+    bool m_remainsAliveOnRemovalFromTree;
 };
 
 inline bool isHTMLFrameElementBase(const HTMLElement& element)

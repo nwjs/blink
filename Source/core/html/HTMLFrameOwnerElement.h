@@ -79,7 +79,9 @@ public:
 
     virtual void trace(Visitor*) override;
 
-protected:
+    virtual void setRemainsAliveOnRemovalFromTree(bool) { }
+
+ protected:
     HTMLFrameOwnerElement(const QualifiedName& tagName, Document&);
     void setSandboxFlags(SandboxFlags);
 

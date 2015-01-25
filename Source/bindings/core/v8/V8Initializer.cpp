@@ -136,15 +136,20 @@ static void messageHandlerInMainThread(v8::Handle<v8::Message> message, v8::Hand
 {
     ASSERT(isMainThread());
 
-    // It's possible that messageHandlerInMainThread() is invoked while we're initializing a window.
-    // In that half-baked situation, we don't have a valid context nor a valid world,
-    // so just return immediately.
-    if (DOMWrapperWorld::windowIsBeingInitialized())
-        return;
-
     v8::Isolate* isolate = v8::Isolate::GetCurrent();
     v8::HandleScope handleScope(isolate);
 
+    // It's possible that messageHandlerInMainThread() is invoked while we're initializing a window.
+    // In that half-baked situation, we don't have a valid context nor a valid world,
+    // so just return immediately.
+    if (DOMWrapperWorld::windowIsBeingInitialized()) {
+            v8::Local<v8::Context> node_context =
+                v8::Local<v8::Context>::New(isolate, node::g_context);
+            node_context->Enter();
+            node::OnMessage(message, data);
+            node_context->Exit();
+            return;
+    }
     // If called during context initialization, there will be no entered window.
     LocalDOMWindow* enteredWindow = enteredDOMWindow(isolate);
     if (enteredWindow)  {

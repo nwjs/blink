@@ -232,7 +232,7 @@ bool ScriptController::shouldBypassMainWorldCSP()
     v8::HandleScope handleScope(isolate());
     v8::Handle<v8::Context> context = isolate()->GetCurrentContext();
     if (context == node::g_context) {
-        if (m_frame->document()->securityOrigin()->hasUniversalAccess())
+      if (frame()->document()->securityOrigin()->hasUniversalAccess())
           return true;
     }
     if (context.IsEmpty() || !toDOMWindow(context))

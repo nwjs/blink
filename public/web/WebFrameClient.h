@@ -615,10 +615,11 @@ public:
     virtual bool enterFullscreen() { return false; }
     virtual bool exitFullscreen() { return false; }
 
-protected:
+ public:
     virtual void windowOpenBegin(const WebURL& url) {}
     virtual void windowOpenEnd() {}
 
+protected:
     virtual ~WebFrameClient() { }
 };
 

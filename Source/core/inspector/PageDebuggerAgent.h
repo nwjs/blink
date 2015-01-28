@@ -60,11 +60,10 @@ protected:
     void enable() override;
     void disable() override;
 
-    virtual PageScriptDebugServer& scriptDebugServer() override;
+    PageScriptDebugServer& scriptDebugServer() override;
 private:
     void startListeningScriptDebugServer() override;
     void stopListeningScriptDebugServer() override;
-    PageScriptDebugServer& scriptDebugServer() override;
     void muteConsole() override;
     void unmuteConsole() override;
 

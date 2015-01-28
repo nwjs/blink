@@ -394,8 +394,11 @@ void WindowProxy::setSecurityToken(SecurityOrigin* origin)
 {
     v8::HandleScope handleScope(m_isolate);
 
-    if (m_frame->loader().client()->willSetSecurityToken(context()))
-        return;
+    if (m_frame->isLocalFrame()) {
+        LocalFrame* frame = toLocalFrame(m_frame);
+        if (frame->loader().client()->willSetSecurityToken(context()))
+            return;
+    }
     // If two tokens are equal, then the SecurityOrigins canAccess each other.
     // If two tokens are not equal, then we have to call canAccess.
     // Note: we can't use the HTTPOrigin if it was set from the DOM.

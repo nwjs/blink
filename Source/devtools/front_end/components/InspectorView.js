@@ -81,7 +81,7 @@ WebInspector.InspectorView = function()
     // Windows and Mac have two different definitions of '[' and ']', so accept both of each.
     this._openBracketIdentifiers = ["U+005B", "U+00DB"].keySet();
     this._closeBracketIdentifiers = ["U+005D", "U+00DD"].keySet();
-    this._lastActivePanelSetting = WebInspector.settings.createSetting("lastActivePanel", "elements");
+    this._lastActivePanelSetting = WebInspector.settings.createSetting("lastActivePanel", "console");
 
     InspectorFrontendHost.events.addEventListener(InspectorFrontendHostAPI.Events.ShowConsole, showConsole.bind(this));
     this._loadPanelDesciptors();

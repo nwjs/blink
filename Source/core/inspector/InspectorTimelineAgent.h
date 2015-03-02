@@ -200,7 +200,7 @@ public:
     void willSendRequest(unsigned long, DocumentLoader*, const ResourceRequest&, const ResourceResponse&, const FetchInitiatorInfo&);
     void didReceiveResourceResponse(LocalFrame*, unsigned long, DocumentLoader*, const ResourceResponse&, ResourceLoader*);
     void didFinishLoading(unsigned long, DocumentLoader*, double monotonicFinishTime, int64_t);
-    void didFailLoading(unsigned long identifier, const ResourceError&);
+    void didFailLoading(unsigned long identifier, const ResourceError&, bool isInternalRequest);
     void didReceiveData(LocalFrame*, unsigned long identifier, const char* data, int dataLength, int encodedDataLength);
 
     void didRequestAnimationFrame(Document*, int callbackId);

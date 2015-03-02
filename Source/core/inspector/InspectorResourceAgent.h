@@ -93,7 +93,7 @@ public:
     void didReceiveData(LocalFrame*, unsigned long identifier, const char* data, int dataLength, int encodedDataLength);
     void didFinishLoading(unsigned long identifier, DocumentLoader*, double monotonicFinishTime, int64_t encodedDataLength);
     void didReceiveCORSRedirectResponse(LocalFrame*, unsigned long identifier, DocumentLoader*, const ResourceResponse&, ResourceLoader*);
-    void didFailLoading(unsigned long identifier, const ResourceError&);
+    void didFailLoading(unsigned long identifier, const ResourceError&, bool isInternalRequest);
     void didCommitLoad(LocalFrame*, DocumentLoader*);
     void scriptImported(unsigned long identifier, const String& sourceString);
     void didReceiveScriptResponse(unsigned long identifier);

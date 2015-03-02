@@ -305,7 +305,7 @@ interface InspectorInstrumentation {
     void didReceiveCORSRedirectResponse([Keep] LocalFrame*, unsigned long identifier, DocumentLoader*, const ResourceResponse&, ResourceLoader*);
 
     [Timeline, Resource, Console] // Console should come AFTER Resource notification, front-end relies on this.
-    void didFailLoading(LocalFrame* frame, unsigned long identifier, const ResourceError&);
+    void didFailLoading(LocalFrame* frame, unsigned long identifier, const ResourceError&, bool isInternalRequest = false);
 
     [Resource]
     void documentThreadableLoaderStartedLoadingForClient(ExecutionContext*, unsigned long identifier, ThreadableLoaderClient* client);

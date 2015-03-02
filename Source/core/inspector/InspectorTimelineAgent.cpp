@@ -791,7 +791,7 @@ void InspectorTimelineAgent::didFinishLoading(unsigned long identifier, Document
     didFinishLoadingResource(identifier, false, monotonicFinishTime * msPerSecond);
 }
 
-void InspectorTimelineAgent::didFailLoading(unsigned long identifier, const ResourceError& error)
+void InspectorTimelineAgent::didFailLoading(unsigned long identifier, const ResourceError& error, bool isInternalRequest)
 {
     didFinishLoadingResource(identifier, true, 0);
 }

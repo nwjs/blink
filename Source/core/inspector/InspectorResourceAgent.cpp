@@ -447,7 +447,7 @@ void InspectorResourceAgent::didReceiveCORSRedirectResponse(LocalFrame* frame, u
     didFinishLoading(identifier, loader, 0, blink::WebURLLoaderClient::kUnknownEncodedDataLength);
 }
 
-void InspectorResourceAgent::didFailLoading(unsigned long identifier, const ResourceError& error)
+void InspectorResourceAgent::didFailLoading(unsigned long identifier, const ResourceError& error, bool isInternalRequest)
 {
     String requestId = IdentifiersFactory::requestId(identifier);
     bool canceled = error.isCancellation();

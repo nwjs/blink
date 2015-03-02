@@ -98,7 +98,7 @@ public:
 
     void didFinishXHRLoading(XMLHttpRequest*, ThreadableLoaderClient*, unsigned long requestIdentifier, ScriptString, const AtomicString& method, const String& url, const String& sendURL, unsigned sendLineNumber);
     void didReceiveResourceResponse(LocalFrame*, unsigned long requestIdentifier, DocumentLoader*, const ResourceResponse&, ResourceLoader*);
-    void didFailLoading(unsigned long requestIdentifier, const ResourceError&);
+    void didFailLoading(unsigned long requestIdentifier, const ResourceError&, bool isInternalRequest);
     void addProfileFinishedMessageToConsole(PassRefPtrWillBeRawPtr<ScriptProfile>, unsigned lineNumber, const String& sourceURL);
     void addStartProfilingMessageToConsole(const String& title, unsigned lineNumber, const String& sourceURL);
     virtual void setMonitoringXHREnabled(ErrorString*, bool enabled) OVERRIDE;

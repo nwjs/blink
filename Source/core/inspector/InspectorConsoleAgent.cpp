@@ -311,8 +311,11 @@ void InspectorConsoleAgent::didReceiveResourceResponse(LocalFrame*, unsigned lon
     }
 }
 
-void InspectorConsoleAgent::didFailLoading(unsigned long requestIdentifier, const ResourceError& error)
+void InspectorConsoleAgent::didFailLoading(unsigned long requestIdentifier, const ResourceError& error, bool isInternalRequest)
 {
+    if (isInternalRequest)
+        return;
+    
     if (error.isCancellation()) // Report failures only.
         return;
     StringBuilder message;

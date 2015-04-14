@@ -118,11 +118,8 @@ static void messageHandlerInMainThread(v8::Handle<v8::Message> message, v8::Hand
                 node_context->Exit();
             }
         } else {
-            v8::Local<v8::Context> node_context =
-                v8::Local<v8::Context>::New(isolate, node::g_context);
-            node_context->Enter();
             node::OnMessage(message, data);
-            node_context->Exit();
+            return;
         }
     }
 

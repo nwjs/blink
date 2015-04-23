@@ -787,9 +787,11 @@ void FrameLoader::load(const FrameLoadRequest& passedRequest)
 
     FrameLoadType newLoadType = determineFrameLoadType(request);
     NavigationPolicy policy = navigationPolicyForRequest(request);
-    if (shouldOpenInNewWindow(targetFrame.get(), request, policy)) {
+//    if (shouldOpenInNewWindow(targetFrame.get(), request, policy)) {
         if (request.frameName() == "_blank")
             policy = NavigationPolicyNewWindow;
+	//FIXME: We need to process navigation policy aslo for opening a new tab
+	if (policy != NavigationPolicyCurrentTab) {
         WebString manifest;
         client()->willHandleNavigationPolicy(request.resourceRequest(), &policy, &manifest);
         if (policy == NavigationPolicyIgnore)

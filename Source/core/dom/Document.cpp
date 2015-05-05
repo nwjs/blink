@@ -2903,7 +2903,12 @@ bool Document::canNavigate(const Frame& targetFrame)
     if (!m_frame)
         return false;
 
-    // Frame-busting is generally allowed, but blocked for sandboxed frames lacking the 'allow-top-navigation' flag.
+	// Always allow node frames when navigating
+	if (toLocalFrameTemporary(targetFrame).document()->securityOrigin()->hasUniversalAccess()) {
+		return true;
+	}
+
+	// Frame-busting is generally allowed, but blocked for sandboxed frames lacking the 'allow-top-navigation' flag.
     if (!isSandboxed(SandboxTopNavigation) && targetFrame == m_frame->tree().top())
         return true;
 

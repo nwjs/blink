@@ -103,6 +103,8 @@ class WebFrameClient {
 public:
     // Factory methods -----------------------------------------------------
 
+    virtual void willHandleNavigationPolicy(
+                                            WebFrame*, const WebURLRequest&, WebNavigationPolicy*, WebString* manifest = NULL, bool new_win = true) { }
     // May return null.
     virtual WebPluginPlaceholder* createPluginPlaceholder(WebLocalFrame*, const WebPluginParams&) { return 0; }
 

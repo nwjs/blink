@@ -73,7 +73,8 @@ namespace blink {
 
     class CORE_EXPORT FrameLoaderClient : public FrameClient {
     public:
-        ~FrameLoaderClient() override {}
+        virtual void willHandleNavigationPolicy(const ResourceRequest& request, NavigationPolicy* policy, WebString* manifest = NULL, bool new_win = true) {}
+        ~FrameLoaderClient() { } override;
 
         virtual bool hasWebView() const = 0; // mainly for assertions
 

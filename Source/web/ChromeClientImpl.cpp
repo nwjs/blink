@@ -288,7 +288,7 @@ WebNavigationPolicy effectiveNavigationPolicy(NavigationPolicy navigationPolicy,
 } // namespace
 
 Page* ChromeClientImpl::createWindow(LocalFrame* frame, const FrameLoadRequest& r, const WindowFeatures& features,
-    NavigationPolicy navigationPolicy, ShouldSendReferrer shouldSendReferrer)
+                                     NavigationPolicy navigationPolicy, ShouldSendReferrer shouldSendReferrer, WebString* manifest)
 {
     if (!m_webView->client())
         return nullptr;
@@ -298,7 +298,7 @@ Page* ChromeClientImpl::createWindow(LocalFrame* frame, const FrameLoadRequest& 
     Fullscreen::fullyExitFullscreen(*frame->document());
 
     WebViewImpl* newView = toWebViewImpl(
-        m_webView->client()->createView(WebLocalFrameImpl::fromFrame(frame), WrappedResourceRequest(r.resourceRequest()), features, r.frameName(), policy, shouldSendReferrer == NeverSendReferrer));
+                                         m_webView->client()->createView(WebLocalFrameImpl::fromFrame(frame), WrappedResourceRequest(r.resourceRequest()), features, r.frameName(), policy, shouldSendReferrer == NeverSendReferrer, manifest));
     if (!newView)
         return nullptr;
     return newView->page();

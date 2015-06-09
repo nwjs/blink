@@ -50,6 +50,7 @@ namespace blink {
         DOMTimeStamp eventTimeStamp() const { return m_eventTimeStamp; }
         NavigationPolicy policy() const { return m_policy; }
         bool shouldOpenInNewWindow() const { return m_policy != NavigationPolicyCurrentTab; }
+        void setPolicy(NavigationPolicy& policy) { m_policy = policy; }
 
     private:
         ResourceRequest m_resourceRequest;

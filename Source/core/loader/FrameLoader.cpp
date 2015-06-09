@@ -754,6 +754,7 @@ void FrameLoader::load(const FrameLoadRequest& passedRequest)
             navigationPolicy = NavigationPolicyNewWindow;
         WebString manifest;
         client()->willHandleNavigationPolicy(request.resourceRequest(), &navigationPolicy, &manifest);
+        action.setPolicy(navigationPolicy);
         if (navigationPolicy == NavigationPolicyIgnore)
             return;
         if (navigationPolicy != NavigationPolicyCurrentTab && shouldOpenInNewWindow(targetFrame.get(), request, action)) {

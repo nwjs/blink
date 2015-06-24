@@ -73,7 +73,7 @@ void V8Window::parentAttributeGetterCustom(const v8::PropertyCallbackInfo<v8::Va
   LocalDOMWindow* imp = toLocalDOMWindow(V8Window::toImpl(info.Holder()));
     LocalFrame* frame = imp->frame();
     ASSERT(frame);
-    if (frame->isNwFakeTop()) {
+    if (frame && frame->isNwFakeTop()) {
       v8SetReturnValue(info, toV8(imp, info.Holder(), info.GetIsolate()));
       return;
     }

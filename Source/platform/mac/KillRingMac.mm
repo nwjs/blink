@@ -28,6 +28,7 @@
 
 namespace blink {
 
+#if !defined(NWJS_MAS)
 extern "C" {
 
 // Kill ring calls. Would be better to use NSKillRing.h, but that's not available as API or SPI.
@@ -40,44 +41,59 @@ void _NSNewKillRingSequence();
 void _NSSetKillRingToYankedState();
 
 }
+#endif
 
 static void initializeKillRingIfNeeded()
 {
     static bool initializedKillRing = false;
     if (!initializedKillRing) {
         initializedKillRing = true;
+#if !defined(NWJS_MAS)
         _NSInitializeKillRing();
+#endif
     }
 }
 
 void KillRing::append(const String& string)
 {
     initializeKillRingIfNeeded();
+#if !defined(NWJS_MAS)
     _NSAppendToKillRing(string);
+#endif
 }
 
 void KillRing::prepend(const String& string)
 {
     initializeKillRingIfNeeded();
+#if !defined(NWJS_MAS)
     _NSPrependToKillRing(string);
+#endif
 }
 
 String KillRing::yank()
 {
     initializeKillRingIfNeeded();
+#if !defined(NWJS_MAS)
     return _NSYankFromKillRing();
+#else
+    return "";
+#endif
 }
 
 void KillRing::startNewSequence()
 {
     initializeKillRingIfNeeded();
+#if !defined(NWJS_MAS)
     _NSNewKillRingSequence();
+#endif
 }
 
 void KillRing::setToYankedState()
 {
     initializeKillRingIfNeeded();
+#if !defined(NWJS_MAS)
     _NSSetKillRingToYankedState();
+#endif
 }
 
 } // namespace blink

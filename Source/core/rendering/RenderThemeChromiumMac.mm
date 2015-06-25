@@ -140,12 +140,14 @@ const double progressAnimationNumFrames = 256;
 
 @end
 
+#if !defined(NWJS_MAS)
 // Forward declare Mac SPIs.
 extern "C" {
 void _NSDrawCarbonThemeBezel(NSRect frame, BOOL enabled, BOOL flipped);
 // Request for public API: rdar://13787640
 void _NSDrawCarbonThemeListBox(NSRect frame, BOOL enabled, BOOL flipped, BOOL always_yes);
 }
+#endif
 
 namespace blink {
 
@@ -700,7 +702,9 @@ bool RenderThemeChromiumMac::paintTextField(RenderObject* o, const PaintInfo& pa
     // background. We need WebCore to paint styled backgrounds, so we'll use
     // this AppKit SPI function instead.
     if (!useNSTextFieldCell) {
+#if !defined(NWJS_MAS)
         _NSDrawCarbonThemeBezel(r, isEnabled(o) && !isReadOnlyControl(o), YES);
+#endif
         return false;
     }
 #endif
@@ -781,7 +785,9 @@ bool RenderThemeChromiumMac::paintCapsLockIndicator(RenderObject*, const PaintIn
 bool RenderThemeChromiumMac::paintTextArea(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     LocalCurrentGraphicsContext localContext(paintInfo.context, r);
+#if !defined(NWJS_MAS)
     _NSDrawCarbonThemeListBox(r, isEnabled(o) && !isReadOnlyControl(o), YES, YES);
+#endif
     return false;
 }
 

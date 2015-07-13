@@ -1400,7 +1400,14 @@ bool FrameLoader::shouldInterruptLoadForXFrameOptions(const String& content, con
     Frame* topFrame = m_frame->tree().top();
     if (m_frame == topFrame)
         return false;
-    if (topFrame->isNodeJS())
+    bool shouldCheckXFrame = !topFrame->isNodeJS();
+    for(Frame* frame = m_frame; frame; frame = frame->tree().parent()) {
+        if (frame->isNwCheckXFrame()) {
+            shouldCheckXFrame = true;
+            break;
+        }
+    }
+    if (!shouldCheckXFrame)
         return false;
 
     XFrameOptionsDisposition disposition = parseXFrameOptionsHeader(content);

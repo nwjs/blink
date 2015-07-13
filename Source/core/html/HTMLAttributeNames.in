@@ -152,6 +152,7 @@ noresize
 noshade
 novalidate
 nowrap
+nwcheckxframe
 nwdirectory
 nwdisable
 nwfaketop

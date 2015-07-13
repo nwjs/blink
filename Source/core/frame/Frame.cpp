@@ -210,6 +210,14 @@ HTMLFrameOwnerElement* Frame::deprecatedLocalOwner() const
     return m_owner && m_owner->isLocal() ? toHTMLFrameOwnerElement(m_owner) : 0;
 }
 
+bool Frame::isNwCheckXFrame() const
+{
+    HTMLFrameOwnerElement* owner = deprecatedLocalOwner();
+    if (owner && owner->fastHasAttribute(nwcheckxframeAttr))
+        return true;
+    return false;
+}
+
 bool Frame::isNwDisabledChildFrame() const
 {
     HTMLFrameOwnerElement* owner = deprecatedLocalOwner();

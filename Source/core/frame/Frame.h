@@ -100,6 +100,7 @@ public:
 
     void setNodeJS(bool node) { m_nodejs = node; }
     bool isNodeJS() const;
+    bool isNwCheckXFrame() const;
     bool isNwDisabledChildFrame() const;
     bool isNwFakeTop() const;
     void setDevtoolsJail(Frame* iframe);

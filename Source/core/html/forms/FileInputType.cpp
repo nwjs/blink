@@ -198,22 +198,19 @@ bool FileInputType::canSetValue(const String& value)
 
 bool FileInputType::getTypeSpecificValue(String& value)
 {
-    if (m_fileList->isEmpty()) {
-        value = String();
-        return true;
-    }
+	if (m_fileList->isEmpty()) {
+		value = String();
+		return true;
+	}
 
-    // HTML5 tells us that we're supposed to use this goofy value for
-    // file input controls. Historically, browsers revealed the real
-    // file path, but that's a privacy problem. Code on the web
-    // decided to try to parse the value by looking for backslashes
-    // (because that's what Windows file paths use). To be compatible
-    // with that code, we make up a fake path for the file.
-    unsigned numFiles = m_fileList->length();
-    value = m_fileList->item(0)->path();
-    for (unsigned i = 1; i < numFiles; ++i)
-        value.append(String(";") + m_fileList->item(i)->path());
-    return true;
+	// HTML5 tells us that we're supposed to use this goofy value for
+	// file input controls. Historically, browsers revealed the real
+	// file path, but that's a privacy problem. Code on the web
+	// decided to try to parse the value by looking for backslashes
+	// (because that's what Windows file paths use). To be compatible
+	// with that code, we make up a fake path for the file.
+	value = "C:\\fakepath\\" + m_fileList->item(0)->name();
+	return true;
 }
 
 void FileInputType::setValue(const String&, bool valueChanged, TextFieldEventBehavior)

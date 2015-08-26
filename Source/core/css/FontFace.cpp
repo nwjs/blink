@@ -108,7 +108,7 @@ PassRefPtrWillBeRawPtr<FontFace> FontFace::create(Document* document, const Styl
     if (!src || !src->isValueList())
         return nullptr;
 
-    RefPtrWillBeRawPtr<FontFace> fontFace = adoptRefWillBeNoop(new FontFace());
+    RefPtrWillBeRawPtr<FontFace> fontFace = adoptRefWillBeNoop(new FontFace(document));
 
     if (fontFace->setFamilyValue(toCSSValueList(family.get()))
         && fontFace->setPropertyFromStyle(properties, CSSPropertyFontStyle)
@@ -125,14 +125,17 @@ PassRefPtrWillBeRawPtr<FontFace> FontFace::create(Document* document, const Styl
     return nullptr;
 }
 
-FontFace::FontFace()
-    : m_status(Unloaded)
+FontFace::FontFace(ExecutionContext* context)
+    : ActiveDOMObject(context)
+    , m_status(Unloaded)
 {
     ScriptWrappable::init(this);
+    suspendIfNeeded();
 }
 
 FontFace::FontFace(ExecutionContext* context, const AtomicString& family, const Dictionary& descriptors)
-    : m_family(family)
+    : ActiveDOMObject(context)
+    , m_family(family)
     , m_status(Unloaded)
 {
     ScriptWrappable::init(this);
@@ -151,6 +154,8 @@ FontFace::FontFace(ExecutionContext* context, const AtomicString& family, const 
         setPropertyFromString(document, value, CSSPropertyFontVariant);
     if (DictionaryHelper::get(descriptors, "featureSettings", value))
         setPropertyFromString(document, value, CSSPropertyWebkitFontFeatureSettings);
+
+    suspendIfNeeded();
 }
 
 FontFace::~FontFace()
@@ -594,6 +599,11 @@ void FontFace::trace(Visitor* visitor)
 bool FontFace::hadBlankText() const
 {
     return m_cssFontFace->hadBlankText();
+}
+
+bool FontFace::hasPendingActivity() const
+{
+    return m_status == Loading && executionContext() && !executionContext()->activeDOMObjectsAreStopped();
 }
 
 } // namespace blink

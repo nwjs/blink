@@ -1063,13 +1063,8 @@ RenderListMarker::RenderListMarker(RenderListItem* item)
 
 RenderListMarker::~RenderListMarker()
 {
-}
-
-void RenderListMarker::destroy()
-{
     if (m_image)
         m_image->removeClient(this);
-    RenderBox::destroy();
 }
 
 void RenderListMarker::trace(Visitor* visitor)
@@ -1847,7 +1842,7 @@ LayoutRect RenderListMarker::selectionRectForPaintInvalidation(const RenderLayer
     LayoutRect rect(0, root.selectionTop() - y(), width(), root.selectionHeight());
 
     if (clipToVisibleContent)
-        mapRectToPaintInvalidationBacking(paintInvalidationContainer, rect);
+        mapRectToPaintInvalidationBacking(paintInvalidationContainer, rect, ViewportConstraintDoesNotMatter, 0);
     else
         rect = localToContainerQuad(FloatRect(rect), paintInvalidationContainer).enclosingBoundingBox();
 

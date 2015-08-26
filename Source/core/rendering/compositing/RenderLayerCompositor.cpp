@@ -446,8 +446,10 @@ bool RenderLayerCompositor::allocateOrClearCompositedLayerMapping(RenderLayer* l
         break;
     }
 
-    if (layer->hasCompositedLayerMapping() && layer->compositedLayerMapping()->updateRequiresOwnBackingStoreForIntrinsicReasons())
+    if (layer->hasCompositedLayerMapping() && layer->compositedLayerMapping()->updateRequiresOwnBackingStoreForIntrinsicReasons()) {
         compositedLayerMappingChanged = true;
+        layer->compositedLayerMapping()->setNeedsGraphicsLayerUpdate(GraphicsLayerUpdateSubtree);
+    }
 
     if (compositedLayerMappingChanged && layer->renderer()->isRenderPart()) {
         RenderLayerCompositor* innerCompositor = frameContentsCompositor(toRenderPart(layer->renderer()));
@@ -488,6 +490,7 @@ void RenderLayerCompositor::frameViewDidChangeSize()
     if (m_containerLayer) {
         FrameView* frameView = m_renderView.frameView();
         m_containerLayer->setSize(frameView->unscaledVisibleContentSize());
+        m_overflowControlsHostLayer->setSize(frameView->unscaledVisibleContentSize(IncludeScrollbars));
 
         frameViewDidScroll();
         updateOverflowControlsLayers();
@@ -712,6 +715,7 @@ void RenderLayerCompositor::updateRootLayerPosition()
     if (m_containerLayer) {
         FrameView* frameView = m_renderView.frameView();
         m_containerLayer->setSize(frameView->unscaledVisibleContentSize());
+        m_overflowControlsHostLayer->setSize(frameView->unscaledVisibleContentSize(IncludeScrollbars));
     }
 }
 
@@ -982,6 +986,7 @@ void RenderLayerCompositor::ensureRootLayer()
                 containerMasksToBounds = true;
         }
         m_containerLayer->setMasksToBounds(containerMasksToBounds);
+        m_overflowControlsHostLayer->setMasksToBounds(containerMasksToBounds);
 
         m_scrollLayer = GraphicsLayer::create(graphicsLayerFactory(), this);
         if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator())

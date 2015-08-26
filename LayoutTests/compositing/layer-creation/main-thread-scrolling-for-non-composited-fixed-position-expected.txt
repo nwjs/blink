@@ -1,9 +1,9 @@
 TEST
 {
-  "bounds": [800, 600],
+  "bounds": [785, 5021],
   "children": [
     {
-      "bounds": [800, 600],
+      "bounds": [785, 5021],
       "contentsOpaque": true,
       "drawsContent": true
     }

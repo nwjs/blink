@@ -216,7 +216,7 @@ static void appendImagesFromStyle(Vector<ImageResource*>& images, RenderStyle& b
         appendImageIfNotNull(images, blockStyle.shapeOutside()->image());
 }
 
-void RenderBlock::removeFromGlobalMaps()
+RenderBlock::~RenderBlock()
 {
     if (hasColumns())
         gColumnInfoMap->take(this);
@@ -224,22 +224,6 @@ void RenderBlock::removeFromGlobalMaps()
         removeBlockFromDescendantAndContainerMaps(this, gPercentHeightDescendantsMap, gPercentHeightContainerMap);
     if (gPositionedDescendantsMap)
         removeBlockFromDescendantAndContainerMaps(this, gPositionedDescendantsMap, gPositionedContainerMap);
-}
-
-RenderBlock::~RenderBlock()
-{
-#if !ENABLE(OILPAN)
-    removeFromGlobalMaps();
-#endif
-}
-
-void RenderBlock::destroy()
-{
-    RenderBox::destroy();
-#if ENABLE(OILPAN)
-    // RenderObject::removeChild called in destory() depends on gColumnInfoMap.
-    removeFromGlobalMaps();
-#endif
 }
 
 void RenderBlock::willBeDestroyed()
@@ -1736,8 +1720,10 @@ void RenderBlock::layoutPositionedObjects(bool relayoutChildren, PositionedLayou
             oldLogicalTop = logicalTopForChild(r);
         }
 
+        // FIXME: We should be able to do a r->setNeedsPositionedMovementLayout() here instead of a full layout. Need
+        // to investigate why it does not trigger the correct invalidations in that case. crbug.com/350756
         if (info == ForcedLayoutAfterContainingBlockMoved)
-            r->setNeedsPositionedMovementLayout();
+            r->setNeedsLayout();
 
         r->layoutIfNeeded();
 

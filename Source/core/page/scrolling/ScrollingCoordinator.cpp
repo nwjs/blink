@@ -898,6 +898,12 @@ bool ScrollingCoordinator::hasVisibleSlowRepaintViewportConstrainedObjects(Frame
         if (!layer->scrollsWithViewport())
             continue;
 
+        // If the whole subtree is invisible, there's no reason to scroll on
+        // the main thread because we don't need to generate invalidations
+        // for invisible content.
+        if (layer->subtreeIsInvisible())
+            continue;
+
         // We're only smart enough to scroll viewport-constrainted objects
         // in the compositor if they have their own backing or they paint
         // into a grouped back (which necessarily all have the same viewport
@@ -911,23 +917,20 @@ bool ScrollingCoordinator::hasVisibleSlowRepaintViewportConstrainedObjects(Frame
 
 MainThreadScrollingReasons ScrollingCoordinator::mainThreadScrollingReasons() const
 {
-    // The main thread scrolling reasons are applicable to scrolls of the main
-    // frame. If it does not exist or if it is not scrollable, there is no
-    // reason to force main thread scrolling.
+    MainThreadScrollingReasons reasons = static_cast<MainThreadScrollingReasons>(0);
+
     if (!m_page->mainFrame()->isLocalFrame())
-        return static_cast<MainThreadScrollingReasons>(0);
+        return reasons;
     FrameView* frameView = m_page->deprecatedLocalMainFrame()->view();
     if (!frameView)
-        return static_cast<MainThreadScrollingReasons>(0);
-
-    MainThreadScrollingReasons mainThreadScrollingReasons = (MainThreadScrollingReasons)0;
+        return reasons;
 
     if (frameView->hasSlowRepaintObjects())
-        mainThreadScrollingReasons |= HasSlowRepaintObjects;
-    if (hasVisibleSlowRepaintViewportConstrainedObjects(frameView))
-        mainThreadScrollingReasons |= HasNonLayerViewportConstrainedObjects;
+        reasons |= HasSlowRepaintObjects;
+    if (frameView->isScrollable() && hasVisibleSlowRepaintViewportConstrainedObjects(frameView))
+        reasons |= HasNonLayerViewportConstrainedObjects;
 
-    return mainThreadScrollingReasons;
+    return reasons;
 }
 
 String ScrollingCoordinator::mainThreadScrollingReasonsAsText(MainThreadScrollingReasons reasons)

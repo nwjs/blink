@@ -54,6 +54,7 @@
 #include "platform/LengthFunctions.h"
 #include "platform/RuntimeEnabledFeatures.h"
 #include "platform/fonts/FontCache.h"
+#include "platform/geometry/TransformState.h"
 #include "platform/graphics/GraphicsContext.h"
 #include "wtf/CurrentTime.h"
 #include "wtf/text/StringBuilder.h"
@@ -291,12 +292,21 @@ void CompositedLayerMapping::updateIsRootForIsolatedGroup()
 
 void CompositedLayerMapping::updateContentsOpaque()
 {
-    // For non-root layers, background is always painted by the primary graphics layer.
     ASSERT(m_isMainFrameRenderViewLayer || !m_backgroundLayer);
-    if (m_backgroundLayer) {
+    if (isAcceleratedCanvas(renderer())) {
+        // Determine whether the rendering context's external texture layer is opaque.
+        CanvasRenderingContext* context = toHTMLCanvasElement(renderer()->node())->renderingContext();
+        if (!context->hasAlpha())
+            m_graphicsLayer->setContentsOpaque(true);
+        else if (WebLayer* layer = context->platformLayer())
+            m_graphicsLayer->setContentsOpaque(!Color(layer->backgroundColor()).hasAlpha());
+        else
+            m_graphicsLayer->setContentsOpaque(false);
+    } else if (m_backgroundLayer) {
         m_graphicsLayer->setContentsOpaque(false);
         m_backgroundLayer->setContentsOpaque(m_owningLayer.backgroundIsKnownToBeOpaqueInRect(compositedBounds()));
     } else {
+        // For non-root layers, background is always painted by the primary graphics layer.
         m_graphicsLayer->setContentsOpaque(m_owningLayer.backgroundIsKnownToBeOpaqueInRect(compositedBounds()));
     }
 }
@@ -761,11 +771,12 @@ void CompositedLayerMapping::updateOverflowControlsHostLayerGeometry(const Rende
 
             m_overflowControlsHostLayer->setPosition(IntPoint(-m_overflowControlsClippingLayer->offsetFromRenderer()));
         } else {
-            ASSERT(m_owningLayer.transformAncestor() == compositingStackingContext->transformAncestor());
-            LayoutPoint localOffsetToTransformedAncestor = m_owningLayer.computeOffsetFromTransformedAncestor();
-            LayoutPoint compositingStackingContextOffsetToTransformedAncestor = compositingStackingContext->computeOffsetFromTransformedAncestor();
-
-            m_overflowControlsHostLayer->setPosition(FloatPoint(localOffsetToTransformedAncestor - compositingStackingContextOffsetToTransformedAncestor));
+            // The controls are in the same 2D space as the compositing container, so we can map them into the space of the container.
+            TransformState transformState(TransformState::ApplyTransformDirection, FloatPoint());
+            m_owningLayer.renderer()->mapLocalToContainer(compositingStackingContext->renderer(), transformState, ApplyContainerFlip);
+            transformState.flatten();
+            LayoutPoint offsetFromStackingContainer = LayoutPoint(transformState.lastPlanarPoint());
+            m_overflowControlsHostLayer->setPosition(FloatPoint(offsetFromStackingContainer));
         }
     } else {
         m_overflowControlsHostLayer->setPosition(FloatPoint());
@@ -1108,6 +1119,7 @@ void CompositedLayerMapping::updateDrawsContent()
             Color bgColor(Color::transparent);
             if (contentLayerSupportsDirectBackgroundComposition(renderer())) {
                 bgColor = rendererBackgroundColor();
+                hasPaintedContent = false;
             }
             contentLayer->setBackgroundColor(bgColor.rgb());
         }
@@ -1141,6 +1153,7 @@ bool CompositedLayerMapping::updateClippingLayers(bool needsAncestorClip, bool n
         if (!m_ancestorClippingLayer) {
             m_ancestorClippingLayer = createGraphicsLayer(CompositingReasonLayerForAncestorClip);
             m_ancestorClippingLayer->setMasksToBounds(true);
+            m_ancestorClippingLayer->setShouldFlattenTransform(false);
             layersChanged = true;
         }
     } else if (m_ancestorClippingLayer) {
@@ -1274,13 +1287,13 @@ bool CompositedLayerMapping::hasUnpositionedOverflowControlsLayers() const
 }
 
 enum ApplyToGraphicsLayersModeFlags {
-    ApplyToCoreLayers = (1 << 0),
+    ApplyToLayersAffectedByPreserve3D = (1 << 0),
     ApplyToSquashingLayer = (1 << 1),
     ApplyToScrollbarLayers = (1 << 2),
     ApplyToBackgroundLayer = (1 << 3),
     ApplyToMaskLayers = (1 << 4),
     ApplyToContentLayers = (1 << 5),
-    ApplyToAllGraphicsLayers = (ApplyToSquashingLayer | ApplyToScrollbarLayers | ApplyToBackgroundLayer | ApplyToMaskLayers | ApplyToCoreLayers | ApplyToContentLayers)
+    ApplyToAllGraphicsLayers = (ApplyToSquashingLayer | ApplyToScrollbarLayers | ApplyToBackgroundLayer | ApplyToMaskLayers | ApplyToLayersAffectedByPreserve3D | ApplyToContentLayers)
 };
 typedef unsigned ApplyToGraphicsLayersMode;
 
@@ -1289,23 +1302,19 @@ static void ApplyToGraphicsLayers(const CompositedLayerMapping* mapping, const F
 {
     ASSERT(mode);
 
-    if ((mode & ApplyToCoreLayers) && mapping->squashingContainmentLayer())
-        f(mapping->squashingContainmentLayer());
-    if ((mode & ApplyToCoreLayers) && mapping->childTransformLayer())
+    if ((mode & ApplyToLayersAffectedByPreserve3D) && mapping->childTransformLayer())
         f(mapping->childTransformLayer());
-    if ((mode & ApplyToCoreLayers) && mapping->ancestorClippingLayer())
-        f(mapping->ancestorClippingLayer());
-    if (((mode & ApplyToCoreLayers) || (mode & ApplyToContentLayers)) && mapping->mainGraphicsLayer())
+    if (((mode & ApplyToLayersAffectedByPreserve3D) || (mode & ApplyToContentLayers)) && mapping->mainGraphicsLayer())
         f(mapping->mainGraphicsLayer());
-    if ((mode & ApplyToCoreLayers) && mapping->clippingLayer())
+    if ((mode & ApplyToLayersAffectedByPreserve3D) && mapping->clippingLayer())
         f(mapping->clippingLayer());
-    if ((mode & ApplyToCoreLayers) && mapping->scrollingLayer())
+    if ((mode & ApplyToLayersAffectedByPreserve3D) && mapping->scrollingLayer())
         f(mapping->scrollingLayer());
-    if ((mode & ApplyToCoreLayers) && mapping->scrollingBlockSelectionLayer())
+    if ((mode & ApplyToLayersAffectedByPreserve3D) && mapping->scrollingBlockSelectionLayer())
         f(mapping->scrollingBlockSelectionLayer());
-    if (((mode & ApplyToCoreLayers) || (mode & ApplyToContentLayers)) && mapping->scrollingContentsLayer())
+    if (((mode & ApplyToLayersAffectedByPreserve3D) || (mode & ApplyToContentLayers)) && mapping->scrollingContentsLayer())
         f(mapping->scrollingContentsLayer());
-    if (((mode & ApplyToCoreLayers) || (mode & ApplyToContentLayers)) && mapping->foregroundLayer())
+    if (((mode & ApplyToLayersAffectedByPreserve3D) || (mode & ApplyToContentLayers)) && mapping->foregroundLayer())
         f(mapping->foregroundLayer());
 
     if ((mode & ApplyToSquashingLayer) && mapping->squashingLayer())
@@ -1366,7 +1375,7 @@ void CompositedLayerMapping::updateShouldFlattenTransform()
     // All CLM-managed layers that could affect a descendant layer should update their
     // should-flatten-transform value (the other layers' transforms don't matter here).
     UpdateShouldFlattenTransformFunctor functor = { !m_owningLayer.shouldPreserve3D() };
-    ApplyToGraphicsLayersMode mode = ApplyToCoreLayers;
+    ApplyToGraphicsLayersMode mode = ApplyToLayersAffectedByPreserve3D;
     ApplyToGraphicsLayers(this, functor, mode);
 
     // Note, if we apply perspective, we have to set should flatten differently
@@ -1570,6 +1579,7 @@ bool CompositedLayerMapping::updateSquashingLayers(bool needsSquashingLayers)
         } else {
             if (!m_squashingContainmentLayer) {
                 m_squashingContainmentLayer = createGraphicsLayer(CompositingReasonLayerForSquashingContainer);
+                m_squashingContainmentLayer->setShouldFlattenTransform(false);
                 layersChanged = true;
             }
         }
@@ -1885,11 +1895,13 @@ bool CompositedLayerMapping::updateRequiresOwnBackingStoreForAncestorReasons(con
         && (compositingAncestorLayer->compositedLayerMapping()->mainGraphicsLayer()->drawsContent()
             || compositingAncestorLayer->compositedLayerMapping()->paintsIntoCompositedAncestor());
 
-    if (paintsIntoCompositedAncestor() != previousPaintsIntoCompositedAncestor)
-        compositor()->paintInvalidationOnCompositingChange(&m_owningLayer);
-
-    // FIXME: this is bogus. We need to make this assignment before the check above.
     m_requiresOwnBackingStoreForAncestorReasons = !canPaintIntoAncestor;
+    if (paintsIntoCompositedAncestor() != previousPaintsIntoCompositedAncestor) {
+        // Back out the change temporarily while invalidating with respect to the old container.
+        m_requiresOwnBackingStoreForAncestorReasons = !m_requiresOwnBackingStoreForAncestorReasons;
+        compositor()->paintInvalidationOnCompositingChange(&m_owningLayer);
+        m_requiresOwnBackingStoreForAncestorReasons = !m_requiresOwnBackingStoreForAncestorReasons;
+    }
 
     return m_requiresOwnBackingStoreForAncestorReasons != previousRequiresOwnBackingStoreForAncestorReasons;
 }
@@ -1908,8 +1920,12 @@ bool CompositedLayerMapping::updateRequiresOwnBackingStoreForIntrinsicReasons()
         || renderer->hasReflection()
         || renderer->hasFilter();
 
-    if (paintsIntoCompositedAncestor() != previousPaintsIntoCompositedAncestor)
+    if (paintsIntoCompositedAncestor() != previousPaintsIntoCompositedAncestor) {
+        // Back out the change temporarily while invalidating with respect to the old container.
+        m_requiresOwnBackingStoreForIntrinsicReasons = !m_requiresOwnBackingStoreForIntrinsicReasons;
         compositor()->paintInvalidationOnCompositingChange(&m_owningLayer);
+        m_requiresOwnBackingStoreForIntrinsicReasons = !m_requiresOwnBackingStoreForIntrinsicReasons;
+    }
 
     return m_requiresOwnBackingStoreForIntrinsicReasons != previousRequiresOwnBackingStoreForIntrinsicReasons;
 }

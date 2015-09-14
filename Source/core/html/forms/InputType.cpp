@@ -586,10 +586,6 @@ String InputType::sanitizeValue(const String& proposedValue) const
     return proposedValue;
 }
 
-void InputType::warnIfValueIsInvalid(const String&) const
-{
-}
-
 bool InputType::receiveDroppedFiles(const DragData*)
 {
     ASSERT_NOT_REACHED();

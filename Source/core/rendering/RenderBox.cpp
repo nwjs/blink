@@ -882,7 +882,8 @@ void RenderBox::applyCachedClipAndScrollOffsetForRepaint(LayoutRect& paintRect) 
     flipForWritingMode(paintRect);
     paintRect.move(-scrolledContentOffset()); // For overflow:auto/scroll/hidden.
 
-    // Do not clip scroll layer contents to reduce the number of repaints while scrolling.
+    // Do not clip scroll layer contents because the compositor expects the whole layer
+    // to be always invalidated in-time.
     if (usesCompositedScrolling()) {
         flipForWritingMode(paintRect);
         return;
@@ -1766,7 +1767,9 @@ LayoutUnit RenderBox::perpendicularContainingBlockLogicalHeight() const
 
     // FIXME: For now just support fixed heights.  Eventually should support percentage heights as well.
     if (!logicalHeightLength.isFixed()) {
-        LayoutUnit fillFallbackExtent = containingBlockStyle->isHorizontalWritingMode() ? view()->frameView()->visibleHeight() : view()->frameView()->visibleWidth();
+        LayoutUnit fillFallbackExtent = containingBlockStyle->isHorizontalWritingMode()
+            ? view()->frameView()->unscaledVisibleContentSize().height()
+            : view()->frameView()->unscaledVisibleContentSize().width();
         LayoutUnit fillAvailableExtent = containingBlock()->availableLogicalHeight(ExcludeMarginBorderPadding);
         return std::min(fillAvailableExtent, fillFallbackExtent);
     }
@@ -1971,11 +1974,12 @@ LayoutRect RenderBox::clippedOverflowRectForPaintInvalidation(const RenderLayerM
     }
 
     LayoutRect r = visualOverflowRect();
-    mapRectToPaintInvalidationBacking(paintInvalidationContainer, r, false /*fixed*/, paintInvalidationState);
+    ViewportConstrainedPosition viewportConstraint = style()->position() == FixedPosition ? IsFixedPosition : IsNotFixedPosition;
+    mapRectToPaintInvalidationBacking(paintInvalidationContainer, r, viewportConstraint, paintInvalidationState);
     return r;
 }
 
-void RenderBox::mapRectToPaintInvalidationBacking(const RenderLayerModelObject* paintInvalidationContainer, LayoutRect& rect, bool fixed, const PaintInvalidationState* paintInvalidationState) const
+void RenderBox::mapRectToPaintInvalidationBacking(const RenderLayerModelObject* paintInvalidationContainer, LayoutRect& rect, ViewportConstrainedPosition, const PaintInvalidationState* paintInvalidationState) const
 {
     // The rect we compute at each step is shifted by our x/y offset in the parent container's coordinate space.
     // Only when we cross a writing mode boundary will we have to possibly flipForWritingMode (to convert into a more appropriate
@@ -1987,7 +1991,9 @@ void RenderBox::mapRectToPaintInvalidationBacking(const RenderLayerModelObject* 
     // physical coordinate space of the paintInvalidationContainer.
     RenderStyle* styleToUse = style();
 
-    if (paintInvalidationState && paintInvalidationState->canMapToContainer(paintInvalidationContainer) && styleToUse->position() != FixedPosition) {
+    EPosition position = styleToUse->position();
+
+    if (paintInvalidationState && paintInvalidationState->canMapToContainer(paintInvalidationContainer) && position != FixedPosition) {
         if (layer() && layer()->transform())
             rect = layer()->transform()->mapRect(pixelSnappedIntRect(rect));
 
@@ -2022,17 +2028,13 @@ void RenderBox::mapRectToPaintInvalidationBacking(const RenderLayerModelObject* 
     LayoutPoint topLeft = rect.location();
     topLeft.move(locationOffset());
 
-    EPosition position = styleToUse->position();
-
     // We are now in our parent container's coordinate space.  Apply our transform to obtain a bounding box
     // in the parent's coordinate space that encloses us.
     if (hasLayer() && layer()->transform()) {
-        fixed = position == FixedPosition;
         rect = layer()->transform()->mapRect(pixelSnappedIntRect(rect));
         topLeft = rect.location();
         topLeft.move(locationOffset());
-    } else if (position == FixedPosition)
-        fixed = true;
+    }
 
     if (position == AbsolutePosition && o->isRelPositioned() && o->isRenderInline()) {
         topLeft += toRenderInline(o)->offsetForInFlowPositionedInline(*this);
@@ -2068,7 +2070,8 @@ void RenderBox::mapRectToPaintInvalidationBacking(const RenderLayerModelObject* 
         return;
     }
 
-    o->mapRectToPaintInvalidationBacking(paintInvalidationContainer, rect, fixed, paintInvalidationState);
+    ViewportConstrainedPosition viewportConstraint = position == FixedPosition ? IsFixedPosition : IsNotFixedPosition;
+    o->mapRectToPaintInvalidationBacking(paintInvalidationContainer, rect, viewportConstraint, paintInvalidationState);
 }
 
 void RenderBox::invalidatePaintForOverhangingFloats(bool)
@@ -2853,7 +2856,7 @@ LayoutUnit RenderBox::availableLogicalHeight(AvailableLogicalHeightType heightTy
 LayoutUnit RenderBox::availableLogicalHeightUsing(const Length& h, AvailableLogicalHeightType heightType) const
 {
     if (isRenderView())
-        return isHorizontalWritingMode() ? toRenderView(this)->frameView()->visibleHeight() : toRenderView(this)->frameView()->visibleWidth();
+        return isHorizontalWritingMode() ? toRenderView(this)->frameView()->unscaledVisibleContentSize().height() : toRenderView(this)->frameView()->unscaledVisibleContentSize().width();
 
     // We need to stop here, since we don't want to increase the height of the table
     // artificially.  We're going to rely on this cell getting expanded to some new

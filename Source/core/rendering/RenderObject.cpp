@@ -1327,11 +1327,16 @@ void RenderObject::addChildFocusRingRects(Vector<IntRect>& rects, const LayoutPo
                 box->addFocusRingRects(layerFocusRingRects, LayoutPoint(), box);
                 for (size_t i = 0; i < layerFocusRingRects.size(); ++i) {
                     FloatQuad quadInBox = box->localToContainerQuad(FloatRect(layerFocusRingRects[i]), paintContainer);
-                    rects.append(pixelSnappedIntRect(LayoutRect(quadInBox.boundingBox())));
+                    FloatRect rect = quadInBox.boundingBox();
+                    // Floor the location instead of using pixelSnappedIntRect to match the !hasLayer() path.
+                    // FIXME: roundedIntSize matches pixelSnappedIntRect in other places of addFocusRingRects
+                    // because we always floor the offset.
+                    // This assumption is fragile and should be replaced by better solution.
+                    rects.append(IntRect(flooredIntPoint(rect.location()), roundedIntSize(rect.size())));
                 }
             } else {
                 FloatPoint pos(additionalOffset);
-                pos.move(box->locationOffset()); // FIXME: Snap offsets? crbug.com/350474
+                pos.move(box->locationOffset());
                 box->addFocusRingRects(rects, flooredIntPoint(pos), paintContainer);
             }
         } else {
@@ -1771,7 +1776,7 @@ LayoutRect RenderObject::clippedOverflowRectForPaintInvalidation(const RenderLay
     return LayoutRect();
 }
 
-void RenderObject::mapRectToPaintInvalidationBacking(const RenderLayerModelObject* paintInvalidationContainer, LayoutRect& rect, bool fixed, const PaintInvalidationState* paintInvalidationState) const
+void RenderObject::mapRectToPaintInvalidationBacking(const RenderLayerModelObject* paintInvalidationContainer, LayoutRect& rect, ViewportConstrainedPosition, const PaintInvalidationState* paintInvalidationState) const
 {
     if (paintInvalidationContainer == this)
         return;
@@ -1790,11 +1795,12 @@ void RenderObject::mapRectToPaintInvalidationBacking(const RenderLayerModelObjec
                 return;
         }
 
-        o->mapRectToPaintInvalidationBacking(paintInvalidationContainer, rect, fixed, paintInvalidationState);
+        // RenderBox must override this method and pass correct ViewportConstrainedPosition for fixed-position.
+        o->mapRectToPaintInvalidationBacking(paintInvalidationContainer, rect, IsNotFixedPosition, paintInvalidationState);
     }
 }
 
-void RenderObject::computeFloatRectForPaintInvalidation(const RenderLayerModelObject*, FloatRect&, bool, const PaintInvalidationState*) const
+void RenderObject::computeFloatRectForPaintInvalidation(const RenderLayerModelObject*, FloatRect&, const PaintInvalidationState*) const
 {
     ASSERT_NOT_REACHED();
 }

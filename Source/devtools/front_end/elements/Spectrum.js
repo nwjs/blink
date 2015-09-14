@@ -365,6 +365,7 @@ WebInspector.SpectrumPopupHelper.prototype = {
             this.hide(true);
         }
 
+        delete this._isHidden;
         this._anchorElement = element;
 
         this._spectrum.setColor(color);
@@ -373,6 +374,7 @@ WebInspector.SpectrumPopupHelper.prototype = {
 
         document.addEventListener("mousedown", this._hideProxy, false);
         window.addEventListener("blur", this._hideProxy, false);
+        window.addEventListener("resize", this._hideProxy, false);
         return true;
     },
 
@@ -389,12 +391,14 @@ WebInspector.SpectrumPopupHelper.prototype = {
      */
     hide: function(commitEdit)
     {
-        if (!this._popover.isShowing())
+        if (this._isHidden)
             return;
+        this._isHidden = true;
         this._popover.hide();
 
         document.removeEventListener("mousedown", this._hideProxy, false);
         window.removeEventListener("blur", this._hideProxy, false);
+        window.removeEventListener("resize", this._hideProxy, false);
 
         this.dispatchEventToListeners(WebInspector.SpectrumPopupHelper.Events.Hidden, !!commitEdit);
 

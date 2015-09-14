@@ -9,9 +9,11 @@
 <iframe id="target" src="resources/event-delegator.html"></iframe>
 <div id=console></div>
 <script>
+var removalEventType;
+
 function onEventInFrame(e) {
     debug("Received " + e.type + " in child frame");
-    if (e.type == 'mousemove') {
+    if (e.type == removalEventType) {
         debug('Removing iframe');
         target.parentNode.removeChild(target);
         internals.gc();
@@ -27,29 +29,55 @@ document.addEventListener('mousedown', eventLogger);
 document.addEventListener('mouseup', eventLogger);
 document.addEventListener('click', eventLogger);
 
+description("Verifies that a tap occuring on an iframe that gets removed during tap handling doesn't cause a crash.");
+
 var rect = target.getBoundingClientRect();
 var point = {
     x: rect.left + rect.width / 2,
     y: rect.top + rect.height / 2
 };
 
-description("Verifies that a tap occuring on an iframe that gets removed during tap handling doesn't cause a crash.");
+function doTapAndRemove(type)
+{
+    return new Promise(function(resolve, reject) {
+
+        var clone = target.cloneNode();
+        var insertionPoint = target.nextSibling;
+
+        debug('Test case: Remove during ' + type);
+        removalEventType = type;
+
+        eventSender.gestureTapDown(point.x, point.y);
+        eventSender.gestureShowPress(point.x, point.y);
+        debug("Sending GestureTap");
+        eventSender.gestureTap(point.x, point.y);
+
+        // Verify that the iframe was removed.
+        shouldBeNull("document.getElementById('target')");
+
+        // Ensure the event is done being processed.
+        setTimeout(function() {
+            // Reinsert the target node for the next run.
+            insertionPoint.parentNode.insertBefore(clone, insertionPoint);
+            clone.addEventListener('load', function() {
+                debug('iframe loaded');
+                debug('');
+                setTimeout(resolve, 0);
+            });
+            window.target = clone;
+        }, 0);
+    });
+}
 
 if (window.eventSender) {
     jsTestIsAsync = true;
     target.onload = function() {
-        debug("Sending GestureTapDown");
-        eventSender.gestureTapDown(point.x, point.y);
-
-        debug("Sending GestureShowPress");
-        eventSender.gestureShowPress(point.x, point.y);
-
-        debug("Sending GestureTap");
-        eventSender.gestureTap(point.x, point.y);
-
-        shouldBeNull("document.getElementById('target')");
-
-        setTimeout(finishJSTest, 0);
+        doTapAndRemove('mousemove')
+        .then(function() { return doTapAndRemove('mousedown'); })
+        .then(function() { return doTapAndRemove('mouseup'); })
+        .catch(function(err) {
+            testFailed("Promise rejected: " + err.message);
+        }).then(finishJSTest);
     }
 } else {
     debug("This test requires eventSender");

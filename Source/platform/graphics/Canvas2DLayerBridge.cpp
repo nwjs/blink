@@ -175,6 +175,8 @@ void Canvas2DLayerBridge::willAccessPixels()
 void Canvas2DLayerBridge::freeTransientResources()
 {
     ASSERT(!m_destructionInProgress);
+    if (!m_isSurfaceValid)
+        return;
     freeReleasedMailbox();
     flush();
     freeMemoryIfPossible(bytesAllocated());
@@ -424,6 +426,17 @@ bool Canvas2DLayerBridge::prepareMailbox(WebExternalTextureMailbox* outMailbox, 
 
     ASSERT(mailboxInfo->m_mailbox.syncPoint == 0);
     ASSERT(mailboxInfo->m_image.get());
+
+    // set m_parentLayerBridge to make sure 'this' stays alive as long as it has
+    // live mailboxes
+    ASSERT(!mailboxInfo->m_parentLayerBridge);
+    mailboxInfo->m_parentLayerBridge = this;
+    *outMailbox = mailboxInfo->m_mailbox;
+
+    GrContext* grContext = m_contextProvider->grContext();
+    if (!grContext)
+        return true; // for testing: skip gl stuff when using a mock graphics context.
+
     ASSERT(mailboxInfo->m_image->getTexture());
 
     // Because of texture sharing with the compositor, we must invalidate
@@ -448,13 +461,7 @@ bool Canvas2DLayerBridge::prepareMailbox(WebExternalTextureMailbox* outMailbox, 
     webContext->bindTexture(GL_TEXTURE_2D, 0);
     // Because we are changing the texture binding without going through skia,
     // we must dirty the context.
-    m_contextProvider->grContext()->resetContext(kTextureBinding_GrGLBackendState);
-
-    // set m_parentLayerBridge to make sure 'this' stays alive as long as it has
-    // live mailboxes
-    ASSERT(!mailboxInfo->m_parentLayerBridge);
-    mailboxInfo->m_parentLayerBridge = this;
-    *outMailbox = mailboxInfo->m_mailbox;
+    grContext->resetContext(kTextureBinding_GrGLBackendState);
 
     return true;
 }
@@ -505,16 +512,29 @@ void Canvas2DLayerBridge::mailboxReleased(const WebExternalTextureMailbox& mailb
                 // texture and remove the mailbox from list to avoid reusing it
                 // in future.
                 if (mailboxInfo->m_image) {
-                    mailboxInfo->m_image->getTexture()->resetFlag(
-                        static_cast<GrTextureFlags>(GrTexture::kReturnToCache_FlagBit));
-                    mailboxInfo->m_image->getTexture()->textureParamsModified();
+                    GrTexture* texture = mailboxInfo->m_image->getTexture();
+                    if (texture) {
+                        texture->resetFlag(static_cast<GrTextureFlags>(GrTexture::kReturnToCache_FlagBit));
+                        texture->textureParamsModified();
+                    }
                     mailboxInfo->m_image.clear();
                 }
-                size_t i = mailboxInfo - m_mailboxes.begin();
-                m_mailboxes.remove(i);
-                Canvas2DLayerManager::get().layerTransientResourceAllocationChanged(this);
-                // Here we need to return early since mailboxInfo removal would
-                // also clear m_parentLayerBridge reference.
+                if (m_destructionInProgress) {
+                    mailboxInfo->m_status = MailboxAvailable; // To satisfy assert in destructor
+
+                    // The following line may trigger self destruction. We do not care about
+                    // not cleaning up m_mailboxes during destruction sequence because
+                    // mailboxes will not be recycled after this point. Calling remove()
+                    // could trigger a memory use after free, so we just clear the self
+                    // reference to be safe, and we let the Canvas2DLayerBridge destructor
+                    // take care of freeing m_mailboxes.
+                    mailboxInfo->m_parentLayerBridge.clear();
+                } else {
+                    size_t i = mailboxInfo - m_mailboxes.begin();
+                    m_mailboxes.remove(i); // indirectly clears mailboxInfo->m_parentLayerBridge
+                    Canvas2DLayerManager::get().layerTransientResourceAllocationChanged(this);
+                }
+                // mailboxInfo is not valid from this point, so we return immediately.
                 return;
             } else {
                 mailboxInfo->m_status = MailboxReleased;
@@ -543,10 +563,11 @@ WebLayer* Canvas2DLayerBridge::layer() const
     return m_layer->layer();
 }
 
-void Canvas2DLayerBridge::finalizeFrame()
+void Canvas2DLayerBridge::finalizeFrame(const FloatRect &dirtyRect)
 {
     ASSERT(!m_destructionInProgress);
     Canvas2DLayerManager::get().layerDidDraw(this);
+    m_layer->layer()->invalidateRect(dirtyRect);
     m_didRecordDrawCommand = true;
 }
 
@@ -566,10 +587,11 @@ Platform3DObject Canvas2DLayerBridge::getBackingTexture()
 
 Canvas2DLayerBridge::MailboxInfo::MailboxInfo(const MailboxInfo& other) {
     // This copy constructor should only be used for Vector reallocation
-    // Assuming 'other' is to be destroyed, we transfer m_image ownership
-    // rather than do a refcount dance.
+    // Assuming 'other' is to be destroyed, we transfer m_image and
+    // m_parentLayerBridge ownership rather than do a refcount dance.
     memcpy(&m_mailbox, &other.m_mailbox, sizeof(m_mailbox));
     m_image = const_cast<MailboxInfo*>(&other)->m_image.release();
+    m_parentLayerBridge = const_cast<MailboxInfo*>(&other)->m_parentLayerBridge.release();
     m_status = other.m_status;
 }
 

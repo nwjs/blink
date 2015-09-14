@@ -57,6 +57,15 @@ public:
     ExternalPopupMenu(LocalFrame&, PopupMenuClient*, WebViewImpl&);
     virtual ~ExternalPopupMenu();
 
+
+    // Fills |info| with the popup menu information contained in the
+    // PopupMenuClient associated with this ExternalPopupMenu.
+    // FIXME: public only for test access. Need to revert once gtest
+    // helpers from chromium are available for blink.
+    static void getPopupMenuInfo(WebPopupMenuInfo&, PopupMenuClient&);
+    static int toPopupMenuItemIndex(int index, PopupMenuClient&);
+    static int toExternalPopupMenuItemIndex(int index, PopupMenuClient&);
+
 private:
     // PopupMenu methods:
     virtual void show(const FloatQuad& controlPosition, const IntSize&, int index) OVERRIDE;
@@ -71,11 +80,6 @@ private:
     virtual void didCancel() OVERRIDE;
 
     void dispatchEvent(Timer<ExternalPopupMenu>*);
-    // Fills |info| with the popup menu information contained in the
-    // PopupMenuClient associated with this ExternalPopupMenu.
-    void getPopupMenuInfo(WebPopupMenuInfo* info);
-    int toPopupMenuItemIndex(int index);
-    int toExternalPopupMenuItemIndex(int index);
 
     PopupMenuClient* m_popupMenuClient;
     RefPtr<FrameView> m_frameView;

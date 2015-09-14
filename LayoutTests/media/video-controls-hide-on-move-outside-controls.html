@@ -29,7 +29,7 @@ function runTest()
     eventSender.mouseUp();
     testExpected("video.paused", false);
 
-    runAfterControlsHidden(function()
+    runAfterHideMediaControlsTimerFired(function()
     {
         controls = mediaControlsButton(video, "panel");
         testExpected("getComputedStyle(controls).opacity", 0);

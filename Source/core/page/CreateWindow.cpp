@@ -162,7 +162,7 @@ DOMWindow* createWindow(const String& urlString, const AtomicString& frameName, 
     if (navigationPolicy != NavigationPolicyIgnore &&
         navigationPolicy != NavigationPolicyCurrentTab) {
       
-      newFrame = createWindow(*activeFrame, openerFrame, frameRequest, windowFeatures, NavigationPolicyIgnore, MaybeSendReferrer);
+      newFrame = createWindow(*activeFrame, openerFrame, frameRequest, windowFeatures, NavigationPolicyIgnore, MaybeSendReferrer, &manifest);
       if (!newFrame)
         return nullptr;
       newFrame->client()->setOpener(&openerFrame);

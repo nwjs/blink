@@ -19,6 +19,7 @@ class DOMWrapperWorld;
 class ExecutionContext;
 class LocalFrame;
 class ScriptValue;
+extern v8::Handle<v8::Context> nodeToDOMContext(v8::Handle<v8::Context>);
 
 // ScriptState is created when v8::Context is created.
 // ScriptState is destroyed when v8::Context is garbage-collected and
@@ -58,6 +59,9 @@ public:
     static ScriptState* from(v8::Handle<v8::Context> context)
     {
         ASSERT(!context.IsEmpty());
+        if (context == node::g_context) {
+            context = nodeToDOMContext(context);
+        }
         ScriptState* scriptState = static_cast<ScriptState*>(context->GetAlignedPointerFromEmbedderData(v8ContextPerContextDataIndex));
         // ScriptState::from() must not be called for a context that does not have
         // valid embedder data in the embedder field.

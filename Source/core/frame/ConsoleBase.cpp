@@ -185,6 +185,12 @@ void ConsoleBase::internalAddMessage(MessageType type, MessageLevel level, Scrip
     if (gotStringMessage) {
         message = "";
         for (unsigned i = 0; i < arguments->argumentCount(); ++i) {
+            // enumeration of the properties of an object may cause an exception
+            // to be raised (e.g. an input element of type radio). this
+            // try/catched is designed to silence these cases: it's harmless
+            // since we've gotten the message before (hence there should be no
+            // exception for any other reason).
+            v8::TryCatch try_catch;
             String argAsString;
             RefPtr<JSONValue> value = arguments->argumentAt(i).toJSONValue(scriptState);
             if (!value)
